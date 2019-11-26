@@ -11,6 +11,7 @@
  */
 extension Array where Element == Limb {
 
+    // Works only when the remainder of the division is known to be 0
     static func divideBy3(_ d: BInt) -> BInt {
         var quotient = Limbs(repeating: 0, count: d.magnitude.count)
         var remainder = Limb(0)

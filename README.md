@@ -39,9 +39,9 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><th width="35%">Operation</th><th width="35%">Swift code</th><th width="15%" align="right">Swift time</th><th width="15%" align="right">Java time</th></tr>
 <tr><td>As string</td><td align="right">c2000.asString()</td><td align="right">89 uSec</td><td align="right">59 uSec</td></tr>
 <tr><td>As magnitude bytes</td><td align="right">c2000.asMagnitudeBytes()</td><td align="right">0.42 uSec</td><td align="right">0.45 uSec</td></tr>
-<tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">1.6 uSec</td><td align="right">0.065 uSec</td></tr>
-<tr><td>Bitwise or</td><td align="right">a1000 | b1000</td><td align="right">1.6 uSec</td><td align="right">0.066 uSec</td></tr>
-<tr><td>Bitwise xor</td><td align="right">a1000 ^ b1000</td><td align="right">1.6 uSec</td><td align="right">0.088 uSec</td></tr>
+<tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.48 uSec</td><td align="right">0.065 uSec</td></tr>
+<tr><td>Bitwise or</td><td align="right">a1000 | b1000</td><td align="right">0.46 uSec</td><td align="right">0.066 uSec</td></tr>
+<tr><td>Bitwise xor</td><td align="right">a1000 ^ b1000</td><td align="right">0.47 uSec</td><td align="right">0.088 uSec</td></tr>
 <tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.22 uSec</td><td align="right">0.14 uSec</td></tr>
 <tr><td>Test bit</td><td align="right">c2000.testBit(701)</td><td align="right">0.0010 uSec</td><td align="right">0.0040 uSec</td></tr>
 <tr><td>Flip bit</td><td align="right">c2000.flipBit(701)</td><td align="right">0.0055 uSec</td><td align="right">0.12 uSec</td></tr>
@@ -56,10 +56,10 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">6.9 mSec</td><td align="right">2.0 mSec</td></tr>
 <tr><td>Equal</td><td align="right">c2000 + 1 == c2000</td><td align="right">0.0016 uSec</td><td align="right">0.027 uSec</td></tr>
 <tr><td>Less than</td><td align="right">b1000 + 1 < b1000</td><td align="right">0.020 uSec</td><td align="right">0.016 uSec</td></tr>
-<tr><td>Shift 1 left</td><td align="right">c2000 << 1</td><td align="right">0.45 uSec</td><td align="right">0.076 uSec</td></tr>
-<tr><td>Shift 1 right</td><td align="right">c2000 >> 1</td><td align="right">0.49 uSec</td><td align="right">0.082 uSec</td></tr>
-<tr><td>Shift 100 left</td><td align="right">c2000 << 100</td><td align="right">0.71 uSec</td><td align="right">0.063 uSec</td></tr>
-<tr><td>Shift 100 right</td><td align="right">c2000 >> 100</td><td align="right">0.51 uSec</td><td align="right">0.067 uSec</td></tr>
+<tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.22 uSec</td><td align="right">0.076 uSec</td></tr>
+<tr><td>Shift 1 right</td><td align="right">c2000 >>= 1</td><td align="right">0.22 uSec</td><td align="right">0.082 uSec</td></tr>
+<tr><td>Shift 100 left</td><td align="right">c2000 <<= 100</td><td align="right">0.42 uSec</td><td align="right">0.063 uSec</td></tr>
+<tr><td>Shift 100 right</td><td align="right">c2000 >>= 100</td><td align="right">0.26 uSec</td><td align="right">0.067 uSec</td></tr>
 <tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">11 mSec</td><td align="right">10 mSec</td></tr>
 <tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">100 mSec</td><td align="right">42 mSec</td></tr>
 <tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">0.26 mSec</td><td align="right">0.066 mSec</td></tr>

@@ -445,25 +445,72 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
         }
         return result
     }
-    
-    static func toSignedBytesPair(_ x: BInt, _ y: BInt) -> (bx: Bytes, by: Bytes) {
-        var bx = x.asSignedBytes()
-        var by = y.asSignedBytes()
-        let x0 = bx[0] > Byte(0x7f) ? Byte(0xff) : 0
-        let y0 = by[0] > Byte(0x7f) ? Byte(0xff) : 0
+
+    static func toSignedLimbsPair(_ x: BInt, _ y: BInt) -> (bx: Limbs, by: Limbs) {
+        var bx = x.magnitude
+        var by = y.magnitude
+        if x.isNegative {
+            invert(&bx)
+            if bx.last! & 0x8000000000000000 == 0 {
+                bx.append(0xffffffffffffffff)
+            }
+        } else {
+            if bx.last! & 0x8000000000000000 != 0 {
+                bx.append(0)
+            }
+        }
+        if y.isNegative {
+            invert(&by)
+            if by.last! & 0x8000000000000000 == 0 {
+                by.append(0xffffffffffffffff)
+            }
+        } else {
+            if by.last! & 0x8000000000000000 != 0 {
+                by.append(0)
+            }
+        }
+        let x0: Limb = bx.last! & 0x8000000000000000 == 0 ? 0 : 0xffffffffffffffff
+        let y0: Limb = by.last! & 0x8000000000000000 == 0 ? 0 : 0xffffffffffffffff
         while bx.count < by.count {
-            bx.insert(x0, at: 0)
+            bx.append(x0)
         }
         while by.count < bx.count {
-            by.insert(y0, at: 0)
+            by.append(y0)
         }
         return (bx, by)
     }
 
+    static func fromSignedLimbs(_ x: inout Limbs) -> BInt {
+        if x.last! & 0x8000000000000000 != 0 {
+            invert(&x)
+            return BInt(x, true)
+        }
+        return BInt(x)
+    }
+
+    static func invert(_ x: inout Limbs) {
+        // flip the bits
+        for i in 0 ..< x.count {
+            x[i] ^= 0xffffffffffffffff
+        }
+        // and add 1
+        var i = 0
+        var carry = true
+        while carry && i < x.count {
+            x[i] = x[i] &+ 1
+            carry = x[i] == 0
+            i += 1
+        }
+        if carry {
+            x.append(1)
+        }
+    }
+
     
     // MARK: Bit operation functions
-    
-    /// Bitwise **and** operator
+
+    /// Bitwise **and** operator - behaves as if two's complement representation were used,</br>
+    /// although this is not actually the case
     ///
     /// - Parameters:
     ///   - x: First value
@@ -472,13 +519,13 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     ///   - bx = x.asSignedBytes()
     ///   - by = y.asSignedBytes()
     public static func &(x: BInt, y: BInt) -> BInt {
-        var (bx, by) = BInt.toSignedBytesPair(x, y)
+        var (bx, by) = toSignedLimbsPair(x, y)
         for i in 0 ..< bx.count {
-            bx[i] &= by[i]
+            bx[i] = bx[i] & by[i]
         }
-        return BInt(signed: bx)
+        return fromSignedLimbs(&bx)
     }
-    
+
     /// x = x & y
     ///
     /// - Parameters:
@@ -488,7 +535,8 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
         x = x & y
     }
     
-    /// Bitwise **or** operator
+    /// Bitwise **or** operator - behaves as if two's complement representation were used,</br>
+    /// although this is not actually the case
     ///
     /// - Parameters:
     ///   - x: First value
@@ -497,13 +545,13 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     ///   - bx = x.asSignedBytes()
     ///   - by = y.asSignedBytes()
     public static func |(x: BInt, y: BInt) -> BInt {
-        var (bx, by) = BInt.toSignedBytesPair(x, y)
+        var (bx, by) = toSignedLimbsPair(x, y)
         for i in 0 ..< bx.count {
-            bx[i] |= by[i]
+            bx[i] = bx[i] | by[i]
         }
-        return BInt(signed: bx)
+        return fromSignedLimbs(&bx)
     }
-    
+
     /// x = x | y
     ///
     /// - Parameters:
@@ -513,7 +561,8 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
         x = x | y
     }
     
-    /// Bitwise **xor** operator
+    /// Bitwise **xor** operator - behaves as if two's complement representation were used,</br>
+    /// although this is not actually the case
     ///
     /// - Parameters:
     ///   - x: First value
@@ -522,13 +571,13 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     ///   - bx = x.asSignedBytes()
     ///   - by = y.asSignedBytes()
     public static func ^(x: BInt, y: BInt) -> BInt {
-        var (bx, by) = BInt.toSignedBytesPair(x, y)
+        var (bx, by) = toSignedLimbsPair(x, y)
         for i in 0 ..< bx.count {
-            bx[i] ^= by[i]
+            bx[i] = bx[i] ^ by[i]
         }
-        return BInt(signed: bx)
+        return fromSignedLimbs(&bx)
     }
-    
+
     /// x = x ^ y
     ///
     /// - Parameters:
@@ -538,7 +587,8 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
         x = x ^ y
     }
     
-    /// Bitwise **not** operator
+    /// Bitwise **not** operator - behaves as if two's complement arithmetic were used,</br>
+    /// although this is not actually the case
     ///
     /// - Parameter x: BInt value
     /// - Returns: -x - 1

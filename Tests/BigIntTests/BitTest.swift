@@ -21,6 +21,7 @@ class BitTest: XCTestCase {
         var x2 = x1
         x2.negate()
         XCTAssertEqual(x1, -x2)
+        XCTAssertEqual(~x1 + 1, -x1)
     }
 
     func test1() {
@@ -79,6 +80,27 @@ class BitTest: XCTestCase {
         XCTAssertEqual(~bm3, BInt(2))
         XCTAssertEqual(~b7, BInt(-8))
         XCTAssertEqual(~bm7, BInt(6))
+    }
+
+    func test6() {
+        for _ in 0 ..< 100 {
+            let x = BInt(bitWidth: 100)
+            let y = BInt(bitWidth: 300)
+            doTest(x)
+            doTest(y)
+            XCTAssertEqual(x & y, y & x)
+            XCTAssertEqual(x & -y, -y & x)
+            XCTAssertEqual(-x & y, y & -x)
+            XCTAssertEqual(-x & -y, -y & -x)
+            XCTAssertEqual(x | y, y | x)
+            XCTAssertEqual(x | -y, -y | x)
+            XCTAssertEqual(-x | y, y | -x)
+            XCTAssertEqual(-x | -y, -y | -x)
+            XCTAssertEqual(x ^ y, y ^ x)
+            XCTAssertEqual(x ^ -y, -y ^ x)
+            XCTAssertEqual(-x ^ y, y ^ -x)
+            XCTAssertEqual(-x ^ -y, -y ^ -x)
+        }
     }
 
 }

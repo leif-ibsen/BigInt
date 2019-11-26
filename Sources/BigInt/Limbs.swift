@@ -26,6 +26,7 @@ extension Array where Element == Limb {
         0x100000000000000,0x200000000000000,0x400000000000000,0x800000000000000,
         0x1000000000000000,0x2000000000000000,0x4000000000000000,0x8000000000000000]
 
+    // Ensure no leading 0 Limbs - except if self = [0]
     mutating func normalize() {
         let sc = self.count
         if sc == 0 {
@@ -165,20 +166,22 @@ extension Array where Element == Limb {
     mutating func shiftLeft(_ shifts: Int) {
         let limbShifts = shifts >> 6
         let bitShifts = shifts & 0x3f
+        var b = self[0] >> (64 - bitShifts)
         if bitShifts > 0 {
-            let b = self[self.count - 1] >> (64 - bitShifts)
-            for i in (0 ..< self.count).reversed() {
+            self[0] <<= bitShifts
+            for i in 1 ..< self.count {
+                let b1 = self[i] >> (64 - bitShifts)
                 self[i] <<= bitShifts
-                if i > 0 {
-                    self[i] |= self[i - 1] >> (64 - bitShifts)
-                }
+                self[i] |= b
+                b = b1
             }
+        }
+        if b != 0 {
             self.append(b)
         }
         for _ in 0 ..< limbShifts {
             self.insert(0, at: 0)
         }
-        self.normalize()
     }
     
     // return self << 1
