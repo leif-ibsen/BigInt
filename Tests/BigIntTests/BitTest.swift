@@ -29,6 +29,12 @@ class BitTest: XCTestCase {
         doTest(BInt(1))
         doTest(BInt(-1))
         doTest(BInt(bitWidth: 200))
+        var x1 = BInt.ONE << 37
+        x1.clearBit(37)
+        XCTAssert(x1.isZero)
+        var x2 = BInt.ONE << 150
+        x2.clearBit(150)
+        XCTAssert(x2.isZero)
     }
 
     func test2() {

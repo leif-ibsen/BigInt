@@ -90,6 +90,7 @@ extension Array where Element == Limb {
             self[limbIndex] |= Limbs.UMasks[i & 0x3f]
         } else {
             self[limbIndex] &= ~Limbs.UMasks[i & 0x3f]
+            self.normalize()
         }
     }
 
