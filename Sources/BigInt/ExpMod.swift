@@ -229,8 +229,8 @@ extension BInt {
             q.multiply(self.modulus)
             moduloK1(&q)
             if t.compare(q) < 0 {
-                var bk = Limbs(repeating: 0, count: self.k1)
-                bk[self.k1 - 1] = 1
+                var bk = Limbs(repeating: 0, count: self.k1 + 1)
+                bk[self.k1] = 1
                 t.add(bk)
             }
             t.difference(q)
