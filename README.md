@@ -21,7 +21,7 @@ In your projects Package.swift file add a dependency like<br/>
 ```
 dependencies: [
 // Dependencies declare other packages that this package depends on.
-.package(url: "https://github.com/leif-ibsen/BigInt", from: "1.0.0"),
+.package(url: "https://github.com/leif-ibsen/BigInt", from: "1.1.0"),
 ],
 ```
 
@@ -64,6 +64,7 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">100 mSec</td><td align="right">42 mSec</td></tr>
 <tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">0.26 mSec</td><td align="right">0.066 mSec</td></tr>
 <tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">9.4 uSec</td><td align="right">0.97 uSec</td></tr>
+<tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">4.5 mSec</td><td align="right">n.a.</td></tr>
 </table>
 
 a1000 = 3187705437890850041662973758105262878153514794996698172406519277876060364087986868049465132757493318066301987043192958841748826350731448419937544810921786918975580180410200630645469411588934094075222404396990984350815153163569041641732160380739556436955287671287935796642478260435292021117614349253825</br>

@@ -37,7 +37,9 @@ class RootTest: XCTestCase {
             for _ in 0 ..< 100 {
                 let x = BInt(bitWidth: 300)
                 let s = x.sqrtMod(p)
-                XCTAssert(x.jacobiSymbol(p) != 1 || (s! ** 2).mod(p) == x.mod(p))
+                let j = x.jacobiSymbol(p)
+                XCTAssert(j == 1 || s == nil)
+                XCTAssert(j != 1 || (s! ** 2).mod(p) == x.mod(p))
             }
         }
     }

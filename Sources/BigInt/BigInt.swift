@@ -1618,6 +1618,9 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     /// - Parameter p: An odd prime number
     /// - Returns: x, such that x^2 mod p = *self*, or *nil* if no such x exists
     public func sqrtMod(_ p: BInt) -> BInt? {
+        if self.jacobiSymbol(p) != 1 {
+            return nil
+        }
         let A = self % p
         switch (p % 8).asInt() {
         case 3, 7:
@@ -1632,11 +1635,11 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
 
         case 1:
             let p_1 = p - 1
-            var d: BInt?
+            var d = BInt.ZERO
             let p_3 = p - 3
             while true {
                 d = p_3.randomLessThan() + 2
-                if d!.jacobiSymbol(p) == -1 {
+                if d.jacobiSymbol(p) == -1 {
                     break
                 }
             }
@@ -1647,12 +1650,11 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
                 t >>= 1
             }
             let A1 = A.expMod(t, p)
-            let D = d!.expMod(t, p)
+            let D = d.expMod(t, p)
             var m = BInt.ZERO
-            var exp = BInt.TWO ** (s - 1)
+            var exp = BInt.ONE << (s - 1)
             for i in 0 ..< s {
-                let DD = (D ** m.asInt()!) * A1
-                if DD.expMod(exp, p) == p_1 {
+                if ((D.expMod(m * exp, p) * A1.expMod(exp, p))).mod(p) == p_1 {
                     m.setBit(i)
                 }
                 exp >>= 1
