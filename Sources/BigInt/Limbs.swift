@@ -376,9 +376,9 @@ extension Array where Element == Limb {
      * Multiplication
      */
 
-    // Threshold for Karatsuba multplication
+    // Threshold for Karatsuba multiplication
     static let KA_THR = 100
-    // Threshold for Toom Cook multplication
+    // Threshold for Toom Cook multiplication
     static let TC_THR = 200
 
     // self = self * x
@@ -438,64 +438,9 @@ extension Array where Element == Limb {
 
     // self = self * self
     mutating func square() {
-        let m = self.count
-        var w: Limbs
-        if m > Limbs.TC_THR {
-            w = self.toomCookSquared()
-        } else if m > Limbs.KA_THR {
-            w = self.karatsubaSquared()
-        } else {
-            w = Limbs(repeating: 0, count: m << 1)
-            // Compute diagonal elements and divide by 2
-            (w[1], w[0]) = self[0].multipliedFullWidth(by: self[0])
-            w[0] >>= 1
-            if w[1] & 1 == 1 {
-                w[0] |= 0x8000000000000000
-            }
-            w[1] >>= 1
-            var j = 2
-            for i in 1 ..< m {
-                (w[j + 1], w[j]) = self[i].multipliedFullWidth(by: self[i])
-                if w[j] & 1 == 1 {
-                    w[j - 1] |= 0x8000000000000000
-                }
-                w[j] >>= 1
-                if w[j + 1] & 1 == 1 {
-                    w[j] |= 0x8000000000000000
-                }
-                w[j + 1] >>= 1
-                j += 2
-            }
-            // Add off-diagonal products
-            var carry: Limb
-            var ovfl1, ovfl2: Bool
-            for i in 0 ..< m {
-                carry = 0
-                for j in i + 1 ..< m {
-                    let (hi, lo) = self[i].multipliedFullWidth(by: self[j])
-                    (w[i + j], ovfl1) = w[i + j].addingReportingOverflow(lo)
-                    (w[i + j], ovfl2) = w[i + j].addingReportingOverflow(carry)
-                    carry = hi &+ ((ovfl1 ? 1 : 0) + (ovfl2 ? 1 : 0))
-                }
-                (w[i + m], ovfl1) = w[i + m].addingReportingOverflow(carry)
-                if ovfl1 {
-                    w[i + m + 1] += 1
-                }
-            }
-            // Multiply by 2 and adjust last bit
-            w.shift1Left()
-            w[0] |= (self[0] & 1)
-        }
-        w.normalize()
-        self = w
+        multiply(self)
     }
     
-    func squared() -> Limbs {
-        var w = self
-        w.square()
-        return w
-    }
-
     /*
      * Division and modulus
      */

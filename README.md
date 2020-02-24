@@ -21,7 +21,7 @@ In your projects Package.swift file add a dependency like<br/>
 ```
 dependencies: [
 // Dependencies declare other packages that this package depends on.
-.package(url: "https://github.com/leif-ibsen/BigInt", from: "1.1.0"),
+.package(url: "https://github.com/leif-ibsen/BigInt", from: "1.1.1"),
 ],
 ```
 

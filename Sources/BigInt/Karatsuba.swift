@@ -56,21 +56,4 @@ extension Array where Element == Limb {
         return w0
     }
     
-    func karatsubaSquared() -> Limbs {
-        let k = (self.count + 1) >> 1
-        var s0 = self.getLower(k)
-        let s1 = self.getUpper(k)
-        var w0 = s0
-        w0.square()
-        var w1 = s1
-        w1.square()
-        s0.difference(s1)
-        s0.square()
-        w0.add(w0, k)
-        w0.add(w1, k << 1)
-        w0.add(w1, k)
-        w0.subtract(s0, k)
-        return w0
-    }
-    
 }

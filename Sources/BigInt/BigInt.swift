@@ -1060,7 +1060,7 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     /// - Returns: a^x
     public static func **(a: BInt, x: Int) -> BInt {
         precondition(x >= 0, "Exponent must be non-negative")
-        return x == 2 ? BInt(a.magnitude.squared()) : BInt(a.magnitude.raisedTo(x), a.isNegative && (x & 1 == 1))
+        return x == 2 ? a * a : BInt(a.magnitude.raisedTo(x), a.isNegative && (x & 1 == 1))
     }
 
     /*

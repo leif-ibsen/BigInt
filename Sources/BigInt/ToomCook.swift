@@ -81,40 +81,4 @@ extension Array where Element == Limb {
         return r0.magnitude
     }
     
-    func toomCookSquared() -> Limbs {
-        let k = (self.count + 2) / 3
-        let s0 = self.getSlice(0, k)
-        let s1 = self.getSlice(1, k)
-        let s2 = self.getSlice(2, k)
-        
-        let qq = s0 + s2
-        let q1 = qq + s1
-        let qm1 = qq - s1
-        let qm2 = ((qm1 + s2) << 1) - s0
-        
-        var r0 = s0 ** 2
-        let r1 = q1 ** 2
-        let rm1 = qm1 ** 2
-        let rm2 = qm2 ** 2
-        let rinf = s2 ** 2
-
-        var rr3 = Limbs.divideBy3(rm2 - r1)
-        var rr1 = (r1 - rm1) >> 1
-        var rr2 = rm1 - r0
-        
-        rr3 = (rr2 - rr3) >> 1 + (rinf << 1)
-        rr2 += rr1
-        rr2 -= rinf
-        rr1 -= rr3
-
-        var offset = k << 2
-        r0.magnitude.add(rinf.magnitude, offset)
-        offset -= k
-        r0.magnitude.add(rr3.magnitude, offset)
-        offset -= k
-        r0.magnitude.add(rr2.magnitude, offset)
-        r0.magnitude.add(rr1.magnitude, k)
-        return r0.magnitude
-    }
-
 }
