@@ -403,7 +403,13 @@ extension Array where Element == Limb {
                     let (hi, lo) = self[i].multipliedFullWidth(by: x[j])
                     (w[i + j], ovfl1) = w[i + j].addingReportingOverflow(lo)
                     (w[i + j], ovfl2) = w[i + j].addingReportingOverflow(carry)
-                    carry = hi &+ ((ovfl1 ? 1 : 0) + (ovfl2 ? 1 : 0))
+                    carry = hi
+                    if ovfl1 {
+                        carry = carry &+ 1
+                    }
+                    if ovfl2 {
+                        carry = carry &+ 1
+                    }
                 }
                 w[i + n] = carry
             }
@@ -416,15 +422,14 @@ extension Array where Element == Limb {
     mutating func multiply(_ x: Limb) {
         let m = self.count
         var w = Limbs(repeating: 0, count: m + 1)
-        var carry: Limb
-        var ovfl1, ovfl2: Bool
+        var ovfl: Bool
         for i in 0 ..< m {
-            carry = 0
             let (hi, lo) = self[i].multipliedFullWidth(by: x)
-            (w[i], ovfl1) = w[i].addingReportingOverflow(lo)
-            (w[i], ovfl2) = w[i].addingReportingOverflow(carry)
-            carry = hi &+ ((ovfl1 ? 1 : 0) + (ovfl2 ? 1 : 0))
-            w[i + 1] = carry
+            (w[i], ovfl) = w[i].addingReportingOverflow(lo)
+            w[i + 1] = hi
+            if ovfl {
+                w[i + 1] = w[i + 1] &+ 1
+            }
         }
         w.normalize()
         self = w
@@ -436,11 +441,6 @@ extension Array where Element == Limb {
         return w
     }
 
-    // self = self * self
-    mutating func square() {
-        multiply(self)
-    }
-    
     /*
      * Division and modulus
      */
@@ -649,7 +649,7 @@ extension Array where Element == Limb {
             if exponent & 1 != 0 {
                 y.multiply(base)
             }
-            base.square()
+            base.multiply(base)
             exponent >>= 1
         }
         return base.times(y)

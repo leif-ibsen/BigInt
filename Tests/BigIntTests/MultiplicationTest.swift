@@ -28,7 +28,7 @@ class MultiplicationTest: XCTestCase {
         XCTAssertEqual(r1, BInt(0))
         XCTAssertEqual(q1, a)
         var am = a.magnitude
-        am.square()
+        am = am.times(am)
         XCTAssertEqual(a * a, BInt(am))
     }
 

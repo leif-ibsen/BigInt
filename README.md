@@ -1,4 +1,4 @@
-<h3><b>Description</b></h3>
+<h2><b>Description</b></h2>
 
 The BigInt package provides arbitrary-precision integer arithmetic in Swift.
 Its functionality is comparable to that of the Java BigInteger class. It falls in the following categories:
@@ -15,17 +15,57 @@ Its functionality is comparable to that of the Java BigInteger class. It falls i
 
 BigInt requires Swift 5.0.
 
-
-<h3><b>Usage</b></h3>
+<h2><b>Usage</b></h2>
 In your projects Package.swift file add a dependency like<br/>
-```
-dependencies: [
-// Dependencies declare other packages that this package depends on.
-.package(url: "https://github.com/leif-ibsen/BigInt", from: "1.1.1"),
-],
-```
 
-<h3><b>Performance</b></h3>
+	  dependencies: [
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.1.2"),
+	  ]
+
+<h2><b>Examples</b></h2>
+<h3><b>Creating BInt's</b></h3>
+
+	  // From an integer
+	  let a = BInt(27)
+	  
+	  // From string literals
+	  let b = BInt("123456789012345678901234567890")!
+	  let c = BInt("1234567890abcdef1234567890abcdef", radix: 16)!
+	  
+	  // From magnitude and sign
+	  let m: Limbs = [1, 2, 3]
+	  let d = BInt(m) // d = 1020847100762815390427017310442723737601
+	  let e = BInt(m, true) // e = -1020847100762815390427017310442723737601
+	  
+	  // From a big-endian 2's complement byte array
+	  let f = BInt(signed: [255, 255, 127]) // f = -129
+	  
+	  // From a big-endian magnitude byte array
+	  let g = BInt(magnitude: [255, 255, 127]) // g = 16777087
+	  
+	  // Random value with specified bitwidth
+	  let h = BInt(bitWidth: 43) // For example h = 3965245974702 (=0b111001101100111011000100111110100010101110)
+	  
+	  // Random value less than a given value
+	  let i = h.randomLessThan() // For example i = 583464003284
+	  
+
+<h3><b>Converting BInt's</b></h3>
+
+	  let x = BInt(16777087)
+	  
+	  // To strings
+	  let s1 = x.asString() // s1 = "16777087"
+	  let s2 = x.asString(radix: 16) // s2 = "ffff7f"
+	  
+	  // To big-endian magnitude byte array
+	  let b1 = x.asMagnitudeBytes() // b1 = [255, 255, 127]
+	  
+	  // To big-endian 2's complement byte array
+	  let b2 = x.asSignedBytes() // b2 = [0, 255, 255, 127]
+	  
+
+<h2><b>Performance</b></h2>
 
 To assess the performance of BigInt, the execution times for a number of common operations were measured on a MacBook Pro 2018, 2,2 GHz 6-Core Intel Core i7.
 Each execution time was then compared to the execution time for the same operation in Java using the BigInteger class.
@@ -36,7 +76,7 @@ Based on these measurements it seems that Java BigInteger is roughly 2-5 times f
 Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout the measurements. Their actual values are shown under the table.
 
 <table width="90%">
-<tr><th width="35%">Operation</th><th width="35%">Swift code</th><th width="15%" align="right">Swift time</th><th width="15%" align="right">Java time</th></tr>
+<tr><th width="35%" align="left">Operation</th><th width="35%" align="right">Swift code</th><th width="15%" align="right">Swift time</th><th width="15%" align="right">Java time</th></tr>
 <tr><td>As string</td><td align="right">c2000.asString()</td><td align="right">89 uSec</td><td align="right">59 uSec</td></tr>
 <tr><td>As magnitude bytes</td><td align="right">c2000.asMagnitudeBytes()</td><td align="right">0.42 uSec</td><td align="right">0.45 uSec</td></tr>
 <tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.48 uSec</td><td align="right">0.065 uSec</td></tr>
@@ -73,20 +113,20 @@ c2000 = 119058333268108312932358868491084535937991536745975924210661806726195685
 p1000 (probably a prime) = 7662841304438384296568220077355872003841475576593385710590818274399706072141018649398767137142090308734613594718593893634649122767374115742644499040193270857876678047220373151142747088797516044505739487695946446362769947024029728822155570722524629197074319602110260674029276185098937139753025851896997</br>
 
 
-<h3><b>References</b></h3>
+<h2><b>References</b></h2>
 
 Algorithms from the following books have been used in the implementation.
 There are references in the source code where appropriate.
 
 <ul>
-<li>Donald E. Knuth: Seminumerical Algorithms. Addison-Wesley 1971</li>
-<li>Crandall and Pomerance: Prime Numbers - A Computational Perspective. Second Edition, Springer 2005</li>
-<li>Henry S. Warren, Jr: Hacker's Delight. Second Edition, Addison-Wesley 2013</li>
-<li>Menezes, Oorschot, Vanstone: Handbook of Applied Cryptography. CRC Press 1996</li>
+<li>[CRANDALL] - Crandall and Pomerance: Prime Numbers - A Computational Perspective. Second Edition, Springer 2005</li>
+<li>[HANDBOOK] - Menezes, Oorschot, Vanstone: Handbook of Applied Cryptography. CRC Press 1996</li>
+<li>[KNUTH] - Donald E. Knuth: Seminumerical Algorithms. Addison-Wesley 1971</li>
+<li>[WARREN] - Henry S. Warren, Jr: Hacker's Delight. Second Edition, Addison-Wesley 2013</li>
 </ul>
 
 
-<h3><b>Acknowledgement</b></h3>
+<h2><b>Acknowledgement</b></h2>
 
 The BitSieve class used in the implementation is a translation to Swift of the corresponding class from Java BigInteger.
 The GCD algorithm and the Karatsuba and ToomCook multiplication algorithms are modelled after the corresponding algorithms in Java BigInteger.

@@ -86,8 +86,7 @@ extension BInt {
             let k = bw < 200 ? 4 : (bw < 700 ? 5 : 6)
             var g = Array(repeating: Limbs(repeating: 0, count: 0), count: 1 << k)
             g[0] = toMspace(self.base)
-            var g2 = g[0]
-            g2.square()
+            var g2 = g[0].times(g[0])
             reduce(&g2)
             for i in 1 ..< g.count {
                 g[i] = g[i - 1].times(g2)
@@ -102,7 +101,7 @@ extension BInt {
                         l += 1
                     }
                     for _ in 0 ..< i - l + 1 {
-                        result.square()
+                        result.multiply(result)
                         reduce(&result)
                     }
                     var ndx = 0
@@ -117,7 +116,7 @@ extension BInt {
                     reduce(&result)
                     i = l - 1
                 } else {
-                    result.square()
+                    result.multiply(result)
                     reduce(&result)
                     i -= 1
                 }
@@ -171,7 +170,7 @@ extension BInt {
                 if exponent.equalTo(0) {
                     break
                 }
-                self.base.square()
+                self.base.multiply(self.base)
                 reduce(&self.base)
             }
             return BInt(result)
@@ -251,7 +250,7 @@ extension BInt {
                 if exponent.equalTo(0) {
                     break
                 }
-                self.base.square()
+                self.base.multiply(self.base)
                 reduce(&self.base)
             }
             return BInt(result)

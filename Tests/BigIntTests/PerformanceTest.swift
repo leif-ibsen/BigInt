@@ -58,7 +58,7 @@ class PerformanceTest: XCTestCase {
         self.measure {
             for _ in 0 ..< N {
                 a = a1000.magnitude
-                a.square()
+                a = a.times(a)
             }
         }
     }
