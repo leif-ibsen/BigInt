@@ -19,7 +19,7 @@ BigInt requires Swift 5.0.
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.1.2"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.0"),
 	  ]
 
 <h2><b>Examples</b></h2>
@@ -93,7 +93,7 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Division</td><td align="right">c2000 / a1000</td><td align="right">8.1 uSec</td><td align="right">2.7 uSec</td></tr>
 <tr><td>Modulus</td><td align="right">c2000.mod(a1000)</td><td align="right">8.1 uSec</td><td align="right">2.7 uSec</td></tr>
 <tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">1.8 mSec</td><td align="right">0.25 mSec</td></tr>
-<tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">6.9 mSec</td><td align="right">2.0 mSec</td></tr>
+<tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">5.9 mSec</td><td align="right">2.0 mSec</td></tr>
 <tr><td>Equal</td><td align="right">c2000 + 1 == c2000</td><td align="right">0.0016 uSec</td><td align="right">0.027 uSec</td></tr>
 <tr><td>Less than</td><td align="right">b1000 + 1 < b1000</td><td align="right">0.020 uSec</td><td align="right">0.016 uSec</td></tr>
 <tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.22 uSec</td><td align="right">0.076 uSec</td></tr>

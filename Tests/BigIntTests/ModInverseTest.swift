@@ -18,13 +18,16 @@ class ModInverseTest: XCTestCase {
     }
 
     func doTest(_ n: Int, _ m: Int) {
-        let p1 = BInt.probablePrime(m)
-        var x1 = BInt(bitWidth: n)
-        if x1 == 0 {
-            x1 = BInt(1)
-        }
-        if x1 % p1 == BInt.ONE {
-            XCTAssert((x1 * x1.modInverse(p1)).mod(p1) == BInt.ONE)
+        for _ in 0 ..< 100 {
+            let p1 = BInt.probablePrime(m)
+            var x1 = BInt(bitWidth: n)
+            if x1 == 0 {
+                x1 = BInt(1)
+            }
+            if x1.gcd(p1) == BInt.ONE {
+                XCTAssert((x1 * x1.modInverse(p1)).mod(p1) == BInt.ONE)
+                XCTAssert(((-x1) * (-x1).modInverse(p1)).mod(p1) == BInt.ONE)
+            }
         }
     }
 

@@ -31,7 +31,7 @@ infix operator ** : ExponentiationPrecedence
 /// The representation is little-endian, least significant Limb has index 0.
 /// The representation is minimal, there is no leading zero Limbs.
 /// The exception is that the value 0 is represented as a single 64 bit zero Limb and sign *false*
-public struct BInt: CustomStringConvertible, Equatable, Hashable {
+public struct BInt: CustomStringConvertible, Equatable, Hashable {    
 
     static let digits: [Character] = [
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -272,6 +272,11 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
         return self.magnitude.count == 1 && self.magnitude[0] == 0
     }
     
+    /// The absolute value of *self*
+    public var abs: BInt {
+        return BInt(self.magnitude)
+    }
+
     /// The number of leading zero bits in the magnitude of *self*. 0 if *self* = 0
     public var leadingZeroBitCount: Int {
         return self.isZero ? 0 : self.magnitude.last!.leadingZeroBitCount
@@ -1022,18 +1027,19 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
             return r.isNegative ? r + x : r
         }
     }
-    
+
     /*
-     * Prime Numbers - algorithm 2.1.4
+     * [CRANDALL] - algorithm 2.1.4
      *
      * Return self modinverse m
      */
     /// Inverse modulus
     ///
-    /// - Precondition: *self* and modulus are coprime
+    /// - Precondition: *self* and modulus are coprime, modulus is positive
     /// - Parameter m: Modulus
     /// - Returns: If *self* and m are coprime, x such that (*self* * x) mod m = 1
     public func modInverse(_ m: BInt) -> BInt {
+        precondition(m.isPositive, "Modulus must be positive")
         var a = BInt.ONE
         var b = BInt.ZERO
         var g = self.mod(m)
@@ -1066,7 +1072,7 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     /*
      * Return (self ** x) mod m
      *
-     * Use Barrett reduction algorithm for x.bitWidth < 512, else use Montgomery reduction algorithm
+     * Use Barrett reduction algorithm for x.bitWidth < 2048, else use Montgomery reduction algorithm
      */
     /// Modular exponentiation
     ///
@@ -1082,25 +1088,22 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
         }
         let exponent = x.isNegative ? -x : x
         var result: BInt
-        if exponent.magnitude.count < 9 {
+        if exponent.magnitude.count <= 32 {
             result = BarrettModulus(self, m).expMod(exponent)
+        } else if m.isOdd {
+            result = MontgomeryModulus(self, m).expMod(exponent)
         } else {
+            
+            // Split the modulus into an odd part and a power of 2 part
+            
             let trailing = m.trailingZeroBitCount
-            let pow2Modulus = BInt.ONE << trailing
             let oddModulus = m >> trailing
-            if pow2Modulus.isOne {
-                result = OddModulus(self, oddModulus).expMod(exponent)
-            } else if oddModulus.isOne {
-                result = Pow2Modulus(self, pow2Modulus).expMod(exponent)
-            } else {
-                let pow2Mod = Pow2Modulus(self, pow2Modulus)
-                let oddMod = OddModulus(self, oddModulus)
-                let a1 = oddMod.expMod(exponent)
-                let a2 = pow2Mod.expMod(exponent)
-                let y1 = pow2Modulus.modInverse(oddModulus)
-                let y2 = oddModulus.modInverse(pow2Modulus)
-                result = (a1 * pow2Modulus * y1 + a2 * oddModulus * y2).mod(m)
-            }
+            let pow2Modulus = BInt.ONE << trailing
+            let a1 = MontgomeryModulus(self, oddModulus).expMod(exponent)
+            let a2 = Pow2Modulus(self, pow2Modulus).expMod(exponent)
+            let y1 = pow2Modulus.modInverse(oddModulus)
+            let y2 = oddModulus.modInverse(pow2Modulus)
+            result = (a1 * pow2Modulus * y1 + a2 * oddModulus * y2).mod(m)
         }
         if x.isNegative {
             result = result.modInverse(m)
@@ -1112,7 +1115,7 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
         }
     }
 
-    
+
     // MARK: Comparison functions
     
     /// Equal
@@ -1503,13 +1506,6 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
 
     // MARK: Miscellaneous functions
 
-    /// Absolute value
-    ///
-    /// - Returns: The absolute value of *self*
-    public func abs() -> BInt {
-        return BInt(self.magnitude)
-    }
-
     /// Greatest common divisor
     ///
     /// - Parameter x: Operand
@@ -1519,7 +1515,7 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     }
     
     /*
-     * Prime Numbers - algorithm 2.3.5
+     * [CRANDALL] - algorithm 2.3.5
      */
     /// Jacobi symbol
     ///
@@ -1560,7 +1556,7 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     }
 
     /*
-     * Prime Numbers - exercise 4.11
+     * [CRANDALL] - exercise 4.11
      */
     /// n'th root of a non-negative number
     ///
@@ -1589,7 +1585,7 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     }
         
     /*
-     * Prime Numbers - algorithm 9.2.11
+     * [CRANDALL] - algorithm 9.2.11
      */
     /// Square root of a non-negative number
     ///
@@ -1611,7 +1607,7 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     }
 
     /*
-     * Prime Numbers - algorithm 2.3.8
+     * [CRANDALL] - algorithm 2.3.8
      */
     /// Square root modulo a prime number
     ///

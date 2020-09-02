@@ -8,6 +8,9 @@
     <script src="../js/jquery.min.js" defer></script>
     <script src="../js/jazzy.js" defer></script>
     
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
   </head>
   <body>
     <a name="//apple_ref/swift/Struct/BInt" class="dashAnchor"></a>
@@ -15,6 +18,11 @@
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html"> Docs</a> (100% documented)</p>
+        <p class="header-right">
+          <form role="search" action="../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -60,6 +68,7 @@
             <h1>BInt</h1>
               <div class="declaration">
                 <div class="language">
+                  
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">BInt</span> <span class="p">:</span> <span class="kt">CustomStringConvertible</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Hashable</span></code></pre>
 
                 </div>
@@ -78,9 +87,11 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
               <div class="task-name-container">
                 <a name="/Constants"></a>
                 <a name="//apple_ref/swift/Section/Constants" class="dashAnchor"></a>
-                <a href="#/Constants">
-                  <h3 class="section-name">Constants</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Constants"></a>
+                  <h3 class="section-name"><p>Constants</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -224,9 +235,11 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
               <div class="task-name-container">
                 <a name="/Initializers"></a>
                 <a name="//apple_ref/swift/Section/Initializers" class="dashAnchor"></a>
-                <a href="#/Initializers">
-                  <h3 class="section-name">Initializers</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Initializers"></a>
+                  <h3 class="section-name"><p>Initializers</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -234,7 +247,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                     <code>
                     <a name="/s:6BigInt4BIntVyACSays6UInt64VG_Sbtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntVyACSays6UInt64VG_Sbtcfc">init(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntVyACSays6UInt64VG_Sbtcfc">init(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -292,7 +305,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                     <code>
                     <a name="/s:6BigInt4BIntVyACSicfc"></a>
                     <a name="//apple_ref/swift/Method/init(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntVyACSicfc">init(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntVyACSicfc">init(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -338,7 +351,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                     <code>
                     <a name="/s:6BigInt4BIntV_5radixACSgSS_Sitcfc"></a>
                     <a name="//apple_ref/swift/Method/init(_:radix:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV_5radixACSgSS_Sitcfc">init(_:radix:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV_5radixACSgSS_Sitcfc">init(_:<wbr>radix:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -351,9 +364,9 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
 <p>Examples:</p>
 
 <ul>
-<li>BInt(<q>90abcdef</q>, radix = 16)</li>
-<li>BInt(<q>111110010</q>, radix = 2)</li>
-<li>BInt(<q>1cdefghijk44</q>, radix = 26)</li>
+<li>BInt(&ldquo;90abcdef&rdquo;, radix = 16)</li>
+<li>BInt(&ldquo;111110010&rdquo;, radix = 2)</li>
+<li>BInt(&ldquo;1cdefghijk44&rdquo;, radix = 26)</li>
 </ul>
 
                       </div>
@@ -404,7 +417,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                     <code>
                     <a name="/s:6BigInt4BIntV8bitWidthACSi_tcfc"></a>
                     <a name="//apple_ref/swift/Method/init(bitWidth:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV8bitWidthACSi_tcfc">init(bitWidth:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV8bitWidthACSi_tcfc">init(bitWidth:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -455,7 +468,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                     <code>
                     <a name="/s:6BigInt4BIntV9magnitudeACSays5UInt8VG_tcfc"></a>
                     <a name="//apple_ref/swift/Method/init(magnitude:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV9magnitudeACSays5UInt8VG_tcfc">init(magnitude:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV9magnitudeACSays5UInt8VG_tcfc">init(magnitude:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -514,7 +527,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                     <code>
                     <a name="/s:6BigInt4BIntV6signedACSays5UInt8VG_tcfc"></a>
                     <a name="//apple_ref/swift/Method/init(signed:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV6signedACSays5UInt8VG_tcfc">init(signed:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV6signedACSays5UInt8VG_tcfc">init(signed:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -574,9 +587,11 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
               <div class="task-name-container">
                 <a name="/Stored%20properties"></a>
                 <a name="//apple_ref/swift/Section/Stored properties" class="dashAnchor"></a>
-                <a href="#/Stored%20properties">
-                  <h3 class="section-name">Stored properties</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Stored%20properties"></a>
+                  <h3 class="section-name"><p>Stored properties</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -599,7 +614,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">isNegative</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">isNegative</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -626,7 +641,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">magnitude</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:6BigInt5Limbsa">Limbs</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">magnitude</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:6BigInt5Limbsa">Limbs</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -639,9 +654,11 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
               <div class="task-name-container">
                 <a name="/Computed%20properties"></a>
                 <a name="//apple_ref/swift/Section/Computed properties" class="dashAnchor"></a>
-                <a href="#/Computed%20properties">
-                  <h3 class="section-name">Computed properties</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Computed%20properties"></a>
+                  <h3 class="section-name"><p>Computed properties</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -863,6 +880,33 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6BigInt4BIntV3absACvp"></a>
+                    <a name="//apple_ref/swift/Property/abs" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6BigInt4BIntV3absACvp">abs</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The absolute value of <em>self</em></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">abs</span><span class="p">:</span> <span class="kt">BInt</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6BigInt4BIntV19leadingZeroBitCountSivp"></a>
                     <a name="//apple_ref/swift/Property/leadingZeroBitCount" class="dashAnchor"></a>
                     <a class="token" href="#/s:6BigInt4BIntV19leadingZeroBitCountSivp">leadingZeroBitCount</a>
@@ -945,11 +989,13 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Conversion%20functions%20to%20Int,%20String,%20and%20Bytes"></a>
+                <a name="/Conversion%20functions%20to%20Int%2C%20String%2C%20and%20Bytes"></a>
                 <a name="//apple_ref/swift/Section/Conversion functions to Int, String, and Bytes" class="dashAnchor"></a>
-                <a href="#/Conversion%20functions%20to%20Int,%20String,%20and%20Bytes">
-                  <h3 class="section-name">Conversion functions to Int, String, and Bytes</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Conversion%20functions%20to%20Int%2C%20String%2C%20and%20Bytes"></a>
+                  <h3 class="section-name"><p>Conversion functions to Int, String, and Bytes</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1064,7 +1110,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                     <code>
                     <a name="/s:6BigInt4BIntV8asString5radix9uppercaseSSSi_SbtF"></a>
                     <a name="//apple_ref/swift/Method/asString(radix:uppercase:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV8asString5radix9uppercaseSSSi_SbtF">asString(radix:uppercase:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV8asString5radix9uppercaseSSSi_SbtF">asString(radix:<wbr>uppercase:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1132,9 +1178,11 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
               <div class="task-name-container">
                 <a name="/Bit%20operation%20functions"></a>
                 <a name="//apple_ref/swift/Section/Bit operation functions" class="dashAnchor"></a>
-                <a href="#/Bit%20operation%20functions">
-                  <h3 class="section-name">Bit operation functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Bit%20operation%20functions"></a>
+                  <h3 class="section-name"><p>Bit operation functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1142,7 +1190,7 @@ The exception is that the value 0 is represented as a single 64 bit zero Limb an
                     <code>
                     <a name="/s:6BigInt4BIntV1aoiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&amp;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1aoiyA2C_ACtFZ">&amp;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1aoiyA2C_ACtFZ">&(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1210,7 +1258,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2aeoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&amp;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2aeoiyyACz_ACtFZ">&amp;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2aeoiyyACz_ACtFZ">&=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1268,7 +1316,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1ooiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/|(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1ooiyA2C_ACtFZ">|(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1ooiyA2C_ACtFZ">|(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1336,7 +1384,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2oeoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/|=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2oeoiyyACz_ACtFZ">|=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2oeoiyyACz_ACtFZ">|=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1394,7 +1442,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1xoiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/^(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1xoiyA2C_ACtFZ">^(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1xoiyA2C_ACtFZ">^(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1462,7 +1510,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2xeoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/^=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2xeoiyyACz_ACtFZ">^=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2xeoiyyACz_ACtFZ">^=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1520,7 +1568,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1topyA2CFZ"></a>
                     <a name="//apple_ref/swift/Method/~(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1topyA2CFZ">~(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1topyA2CFZ">~(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1571,7 +1619,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV8clearBityySiF"></a>
                     <a name="//apple_ref/swift/Method/clearBit(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV8clearBityySiF">clearBit(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV8clearBityySiF">clearBit(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1617,7 +1665,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV7flipBityySiF"></a>
                     <a name="//apple_ref/swift/Method/flipBit(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV7flipBityySiF">flipBit(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV7flipBityySiF">flipBit(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1663,7 +1711,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV6setBityySiF"></a>
                     <a name="//apple_ref/swift/Method/setBit(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV6setBityySiF">setBit(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV6setBityySiF">setBit(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1709,7 +1757,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV7testBitySbSiF"></a>
                     <a name="//apple_ref/swift/Method/testBit(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV7testBitySbSiF">testBit(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV7testBitySbSiF">testBit(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1760,9 +1808,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Addition%20functions"></a>
                 <a name="//apple_ref/swift/Section/Addition functions" class="dashAnchor"></a>
-                <a href="#/Addition%20functions">
-                  <h3 class="section-name">Addition functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Addition%20functions"></a>
+                  <h3 class="section-name"><p>Addition functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1770,7 +1820,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1popyA2CFZ"></a>
                     <a name="//apple_ref/swift/Method/+(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1popyA2CFZ">+(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1popyA2CFZ">+(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1820,7 +1870,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1poiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/+(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1poiyA2C_ACtFZ">+(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1poiyA2C_ACtFZ">+(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1882,7 +1932,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1poiyACSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/+(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1poiyACSi_ACtFZ">+(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1poiyACSi_ACtFZ">+(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1944,7 +1994,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1poiyA2C_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/+(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1poiyA2C_SitFZ">+(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1poiyA2C_SitFZ">+(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2006,7 +2056,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2peoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/+=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2peoiyyACz_ACtFZ">+=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2peoiyyACz_ACtFZ">+=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2064,7 +2114,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2peoiyyACz_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/+=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2peoiyyACz_SitFZ">+=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2peoiyyACz_SitFZ">+=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2123,9 +2173,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Negation%20functions"></a>
                 <a name="//apple_ref/swift/Section/Negation functions" class="dashAnchor"></a>
-                <a href="#/Negation%20functions">
-                  <h3 class="section-name">Negation functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Negation%20functions"></a>
+                  <h3 class="section-name"><p>Negation functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2160,7 +2212,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1sopyA2CFZ"></a>
                     <a name="//apple_ref/swift/Method/-(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1sopyA2CFZ">-(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1sopyA2CFZ">-(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2211,9 +2263,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Subtraction%20functions"></a>
                 <a name="//apple_ref/swift/Section/Subtraction functions" class="dashAnchor"></a>
-                <a href="#/Subtraction%20functions">
-                  <h3 class="section-name">Subtraction functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Subtraction%20functions"></a>
+                  <h3 class="section-name"><p>Subtraction functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2221,7 +2275,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1soiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/-(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1soiyA2C_ACtFZ">-(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1soiyA2C_ACtFZ">-(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2283,7 +2337,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1soiyACSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/-(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1soiyACSi_ACtFZ">-(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1soiyACSi_ACtFZ">-(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2345,7 +2399,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1soiyA2C_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/-(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1soiyA2C_SitFZ">-(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1soiyA2C_SitFZ">-(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2407,7 +2461,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2seoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/-=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2seoiyyACz_ACtFZ">-=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2seoiyyACz_ACtFZ">-=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2465,7 +2519,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2seoiyyACz_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/-=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2seoiyyACz_SitFZ">-=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2seoiyyACz_SitFZ">-=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2524,9 +2578,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Multiplication%20functions"></a>
                 <a name="//apple_ref/swift/Section/Multiplication functions" class="dashAnchor"></a>
-                <a href="#/Multiplication%20functions">
-                  <h3 class="section-name">Multiplication functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Multiplication%20functions"></a>
+                  <h3 class="section-name"><p>Multiplication functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2534,7 +2590,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1moiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/*(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1moiyA2C_ACtFZ">*(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1moiyA2C_ACtFZ">*(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2596,7 +2652,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1moiyACSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/*(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1moiyACSi_ACtFZ">*(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1moiyACSi_ACtFZ">*(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2658,7 +2714,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1moiyA2C_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/*(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1moiyA2C_SitFZ">*(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1moiyA2C_SitFZ">*(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2720,7 +2776,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2meoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/*=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2meoiyyACz_ACtFZ">*=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2meoiyyACz_ACtFZ">*=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2778,7 +2834,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2meoiyyACz_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/*=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2meoiyyACz_SitFZ">*=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2meoiyyACz_SitFZ">*=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2837,9 +2893,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Division%20functions"></a>
                 <a name="//apple_ref/swift/Section/Division functions" class="dashAnchor"></a>
-                <a href="#/Division%20functions">
-                  <h3 class="section-name">Division functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Division%20functions"></a>
+                  <h3 class="section-name"><p>Division functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2847,7 +2905,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV20quotientAndRemainder10dividingByAC0D0_AC9remaindertAC_tF"></a>
                     <a name="//apple_ref/swift/Method/quotientAndRemainder(dividingBy:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV20quotientAndRemainder10dividingByAC0D0_AC9remaindertAC_tF">quotientAndRemainder(dividingBy:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV20quotientAndRemainder10dividingByAC0D0_AC9remaindertAC_tF">quotientAndRemainder(dividingBy:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2902,7 +2960,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV20quotientAndRemainder10dividingBy__yAC_ACzACztF"></a>
                     <a name="//apple_ref/swift/Method/quotientAndRemainder(dividingBy:_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV20quotientAndRemainder10dividingBy__yAC_ACzACztF">quotientAndRemainder(dividingBy:_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV20quotientAndRemainder10dividingBy__yAC_ACzACztF">quotientAndRemainder(dividingBy:<wbr>_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2977,7 +3035,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1doiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method//(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1doiyA2C_ACtFZ">/(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1doiyA2C_ACtFZ">/(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3044,7 +3102,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1doiyACSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method//(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1doiyACSi_ACtFZ">/(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1doiyACSi_ACtFZ">/(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3111,7 +3169,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1doiyA2C_SitFZ"></a>
                     <a name="//apple_ref/swift/Method//(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1doiyA2C_SitFZ">/(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1doiyA2C_SitFZ">/(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3178,7 +3236,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2deoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method//=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2deoiyyACz_ACtFZ">/=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2deoiyyACz_ACtFZ">/=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3241,7 +3299,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2deoiyyACz_SitFZ"></a>
                     <a name="//apple_ref/swift/Method//=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2deoiyyACz_SitFZ">/=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2deoiyyACz_SitFZ">/=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3305,9 +3363,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Remainder%20and%20modulus%20functions"></a>
                 <a name="//apple_ref/swift/Section/Remainder and modulus functions" class="dashAnchor"></a>
-                <a href="#/Remainder%20and%20modulus%20functions">
-                  <h3 class="section-name">Remainder and modulus functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Remainder%20and%20modulus%20functions"></a>
+                  <h3 class="section-name"><p>Remainder and modulus functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -3315,7 +3375,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1roiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/%(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1roiyA2C_ACtFZ">%(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1roiyA2C_ACtFZ">%(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3382,7 +3442,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1roiyACSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/%(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1roiyACSi_ACtFZ">%(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1roiyACSi_ACtFZ">%(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3449,7 +3509,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1roiyA2C_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/%(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1roiyA2C_SitFZ">%(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1roiyA2C_SitFZ">%(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3516,7 +3576,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2reoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/%=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2reoiyyACz_ACtFZ">%=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2reoiyyACz_ACtFZ">%=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3579,7 +3639,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2reoiyyACz_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/%=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2reoiyyACz_SitFZ">%=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2reoiyyACz_SitFZ">%=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3642,7 +3702,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV3modyA2CF"></a>
                     <a name="//apple_ref/swift/Method/mod(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV3modyA2CF">mod(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV3modyA2CF">mod(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3697,7 +3757,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV10modInverseyA2CF"></a>
                     <a name="//apple_ref/swift/Method/modInverse(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV10modInverseyA2CF">modInverse(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV10modInverseyA2CF">modInverse(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3708,7 +3768,7 @@ although this is not actually the case</p>
                         <p>Inverse modulus</p>
 <div class="aside aside-precondition">
     <p class="aside-title">Precondition</p>
-    <em>self</em> and modulus are coprime
+    <em>self</em> and modulus are coprime, modulus is positive
 
 </div>
 
@@ -3753,9 +3813,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Exponentiation%20functions"></a>
                 <a name="//apple_ref/swift/Section/Exponentiation functions" class="dashAnchor"></a>
-                <a href="#/Exponentiation%20functions">
-                  <h3 class="section-name">Exponentiation functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Exponentiation%20functions"></a>
+                  <h3 class="section-name"><p>Exponentiation functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -3763,7 +3825,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2mmoiyA2C_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/**(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2mmoiyA2C_SitFZ">**(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2mmoiyA2C_SitFZ">**(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3830,7 +3892,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV6expModyA2C_ACtF"></a>
                     <a name="//apple_ref/swift/Method/expMod(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV6expModyA2C_ACtF">expMod(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV6expModyA2C_ACtF">expMod(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3898,9 +3960,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Comparison%20functions"></a>
                 <a name="//apple_ref/swift/Section/Comparison functions" class="dashAnchor"></a>
-                <a href="#/Comparison%20functions">
-                  <h3 class="section-name">Comparison functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Comparison%20functions"></a>
+                  <h3 class="section-name"><p>Comparison functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -3908,7 +3972,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2eeoiySbAC_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2eeoiySbAC_ACtFZ">==(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2eeoiySbAC_ACtFZ">==(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3970,7 +4034,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2eeoiySbAC_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2eeoiySbAC_SitFZ">==(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2eeoiySbAC_SitFZ">==(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4032,7 +4096,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2eeoiySbSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2eeoiySbSi_ACtFZ">==(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2eeoiySbSi_ACtFZ">==(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4094,7 +4158,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2neoiySbAC_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/!=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2neoiySbAC_ACtFZ">!=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2neoiySbAC_ACtFZ">!=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4156,7 +4220,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2neoiySbAC_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/!=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2neoiySbAC_SitFZ">!=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2neoiySbAC_SitFZ">!=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4218,7 +4282,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2neoiySbSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/!=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2neoiySbSi_ACtFZ">!=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2neoiySbSi_ACtFZ">!=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4280,7 +4344,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1loiySbAC_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&lt;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1loiySbAC_ACtFZ">&lt;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1loiySbAC_ACtFZ"><(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4342,7 +4406,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1loiySbAC_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/&lt;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1loiySbAC_SitFZ">&lt;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1loiySbAC_SitFZ"><(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4404,7 +4468,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1loiySbSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&lt;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1loiySbSi_ACtFZ">&lt;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1loiySbSi_ACtFZ"><(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4466,7 +4530,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1goiySbAC_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&gt;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1goiySbAC_ACtFZ">&gt;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1goiySbAC_ACtFZ">>(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4528,7 +4592,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1goiySbSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&gt;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1goiySbSi_ACtFZ">&gt;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1goiySbSi_ACtFZ">>(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4590,7 +4654,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV1goiySbAC_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/&gt;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV1goiySbAC_SitFZ">&gt;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV1goiySbAC_SitFZ">>(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4652,7 +4716,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2leoiySbAC_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&lt;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2leoiySbAC_ACtFZ">&lt;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2leoiySbAC_ACtFZ"><=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4714,7 +4778,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2leoiySbSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&lt;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2leoiySbSi_ACtFZ">&lt;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2leoiySbSi_ACtFZ"><=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4776,7 +4840,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2leoiySbAC_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/&lt;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2leoiySbAC_SitFZ">&lt;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2leoiySbAC_SitFZ"><=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4838,7 +4902,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2geoiySbAC_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&gt;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2geoiySbAC_ACtFZ">&gt;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2geoiySbAC_ACtFZ">>=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4900,7 +4964,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2geoiySbSi_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/&gt;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2geoiySbSi_ACtFZ">&gt;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2geoiySbSi_ACtFZ">>=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -4962,7 +5026,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2geoiySbAC_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/&gt;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2geoiySbAC_SitFZ">&gt;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2geoiySbAC_SitFZ">>=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5025,9 +5089,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Shift%20functions"></a>
                 <a name="//apple_ref/swift/Section/Shift functions" class="dashAnchor"></a>
-                <a href="#/Shift%20functions">
-                  <h3 class="section-name">Shift functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Shift%20functions"></a>
+                  <h3 class="section-name"><p>Shift functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -5035,7 +5101,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2lloiyA2C_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/&lt;&lt;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2lloiyA2C_SitFZ">&lt;&lt;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2lloiyA2C_SitFZ"><<(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5101,7 +5167,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV3lleoiyyACz_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/&lt;&lt;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV3lleoiyyACz_SitFZ">&lt;&lt;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV3lleoiyyACz_SitFZ"><<=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5159,7 +5225,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV2ggoiyA2C_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/&gt;&gt;(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV2ggoiyA2C_SitFZ">&gt;&gt;(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV2ggoiyA2C_SitFZ">>>(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5225,7 +5291,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV3ggeoiyyACz_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/&gt;&gt;=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV3ggeoiyyACz_SitFZ">&gt;&gt;=(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV3ggeoiyyACz_SitFZ">>>=(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5284,9 +5350,11 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Prime%20number%20functions"></a>
                 <a name="//apple_ref/swift/Section/Prime number functions" class="dashAnchor"></a>
-                <a href="#/Prime%20number%20functions">
-                  <h3 class="section-name">Prime number functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Prime%20number%20functions"></a>
+                  <h3 class="section-name"><p>Prime number functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -5294,7 +5362,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV15isProbablyPrimeySbSiF"></a>
                     <a name="//apple_ref/swift/Method/isProbablyPrime(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV15isProbablyPrimeySbSiF">isProbablyPrime(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV15isProbablyPrimeySbSiF">isProbablyPrime(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5344,7 +5412,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV13probablePrimeyACSi_SitFZ"></a>
                     <a name="//apple_ref/swift/Method/probablePrime(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV13probablePrimeyACSi_SitFZ">probablePrime(_:_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV13probablePrimeyACSi_SitFZ">probablePrime(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5407,48 +5475,19 @@ although this is not actually the case</p>
               <div class="task-name-container">
                 <a name="/Miscellaneous%20functions"></a>
                 <a name="//apple_ref/swift/Section/Miscellaneous functions" class="dashAnchor"></a>
-                <a href="#/Miscellaneous%20functions">
-                  <h3 class="section-name">Miscellaneous functions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Miscellaneous%20functions"></a>
+                  <h3 class="section-name"><p>Miscellaneous functions</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6BigInt4BIntV3absACyF"></a>
-                    <a name="//apple_ref/swift/Method/abs()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV3absACyF">abs()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Absolute value</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">abs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">BInt</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The absolute value of <em>self</em></p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:6BigInt4BIntV3gcdyA2CF"></a>
                     <a name="//apple_ref/swift/Method/gcd(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV3gcdyA2CF">gcd(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV3gcdyA2CF">gcd(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5498,7 +5537,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV12jacobiSymbolySiACF"></a>
                     <a name="//apple_ref/swift/Method/jacobiSymbol(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV12jacobiSymbolySiACF">jacobiSymbol(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV12jacobiSymbolySiACF">jacobiSymbol(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5584,7 +5623,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV4rootyACSiF"></a>
                     <a name="//apple_ref/swift/Method/root(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV4rootyACSiF">root(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV4rootyACSiF">root(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5678,7 +5717,7 @@ although this is not actually the case</p>
                     <code>
                     <a name="/s:6BigInt4BIntV7sqrtModyACSgACF"></a>
                     <a name="//apple_ref/swift/Method/sqrtMod(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6BigInt4BIntV7sqrtModyACSgACF">sqrtMod(_:)</a>
+                    <a class="token" href="#/s:6BigInt4BIntV7sqrtModyACSgACF">sqrtMod(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5728,8 +5767,8 @@ although this is not actually the case</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2020-02-25)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2020-09-01)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

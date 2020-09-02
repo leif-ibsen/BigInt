@@ -382,7 +382,7 @@ extension Array where Element == Limb {
     static let TC_THR = 200
 
     // self = self * x
-    // Seminumerical Algorithms chapter 4.3.1 - algorithm M
+    // [KNUTH] - chapter 4.3.1, algorithm M
     mutating func multiply(_ x: Limbs) {
         let m = self.count
         var w: Limbs
@@ -445,7 +445,7 @@ extension Array where Element == Limb {
      * Division and modulus
      */
     
-    // Hacker's Delight - algorithm 9.2
+    // [WARREN] - algorithm 9.2
     // (hi || lo) / d => (q, r)
     static func div128(_ hi: Limb, _ lo: Limb, _ d: Limb) -> (q: Limb, r: Limb) {
         precondition(d > 0, "Division by zero")
@@ -463,7 +463,7 @@ extension Array where Element == Limb {
         return (lo, hi)
     }
 
-    // Seminumerical Algorithms chapter 4.3.1 - exercise 16
+    // [KNUTH] - chapter 4.3.1, exercise 16
     func divMod1(_ v: Limb) -> (quotient: Limbs, remainder: Limb) {
         if self.equalTo(0) {
             return ([0], 0)
@@ -484,7 +484,7 @@ extension Array where Element == Limb {
         return (quotient, remainder)
     }
 
-    // Seminumerical Algorithms chapter 4.3.1 - algorithm D
+    // [KNUTH] - chapter 4.3.1, algorithm D
     func divMod(_ v: Limbs, _ quotient: inout Limbs, _ remainder: inout Limbs) {
         if self.lessThan(v) {
             quotient = [0]
