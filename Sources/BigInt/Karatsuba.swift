@@ -34,26 +34,25 @@ extension Array where Element == Limb {
 
     func karatsubaTimes(_ x: Limbs) -> Limbs {
         let k = (Swift.max(self.count, x.count) + 1) >> 1
-        var x0 = x.getLower(k)
-        let x1 = x.getUpper(k)
-        var s0 = self.getLower(k)
-        let s1 = self.getUpper(k)
-        var w0 = x0
-        w0.multiply(s0)
-        var w1 = x1
-        w1.multiply(s1)
-        let xcmp = x0.difference(x1)
-        let scmp = s0.difference(s1)
-        x0.multiply(s0)
-        w0.add(w0, k)
-        w0.add(w1, k << 1)
-        w0.add(w1, k)
-        if xcmp * scmp < 0 {
-            w0.add(x0, k)
-        } else {
-            w0.subtract(x0, k)
-        }
-        return w0
+        let x1 = x.getLower(k)
+        var x2 = x.getUpper(k)
+        let s1 = self.getLower(k)
+        var s2 = self.getUpper(k)
+        var p1 = x2
+        p1.multiply(s2)
+        var p2 = x1
+        p2.multiply(s1)
+        x2.add(x1)
+        s2.add(s1)
+        var p3 = x2
+        p3.multiply(s2)
+        p3.subtract(p1, 0)
+        p3.subtract(p2, 0)
+        var w = Limbs(repeating: 0, count: 4 * k)
+        w.add(p1, 2 * k)
+        w.add(p3, k)
+        w.add(p2, 0)
+        return w
     }
-    
+
 }

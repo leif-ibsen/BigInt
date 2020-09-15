@@ -376,24 +376,18 @@ extension Array where Element == Limb {
      * Multiplication
      */
 
-    // Threshold for Karatsuba multiplication
+    // Limb threshold for Karatsuba multiplication
     static let KA_THR = 100
-    // Threshold for Toom Cook multiplication
+    // Limb threshold for ToomCook multiplication
     static let TC_THR = 200
 
     // self = self * x
     // [KNUTH] - chapter 4.3.1, algorithm M
     mutating func multiply(_ x: Limbs) {
         let m = self.count
+        let n = x.count
         var w: Limbs
-        if m > Limbs.KA_THR && x.count > Limbs.KA_THR {
-            if m > Limbs.TC_THR || x.count > Limbs.TC_THR {
-                w = self.toomCookTimes(x)
-            } else {
-                w = self.karatsubaTimes(x)
-            }
-        } else {
-            let n = x.count
+        if m < Limbs.KA_THR || n < Limbs.KA_THR {
             w = Limbs(repeating: 0, count: m + n)
             var carry: Limb
             var ovfl1, ovfl2: Bool
@@ -413,6 +407,10 @@ extension Array where Element == Limb {
                 }
                 w[i + n] = carry
             }
+        } else if m < Limbs.TC_THR && n < Limbs.TC_THR {
+            w = self.karatsubaTimes(x)
+        } else {
+            w = self.toomCookTimes(x)
         }
         w.normalize()
         self = w

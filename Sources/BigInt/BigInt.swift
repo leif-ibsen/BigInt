@@ -96,32 +96,59 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
         if radix < 2 || radix > 36 {
             return nil
         }
+        var sign = false
         var number = x
-        var sign: Bool
-        if x.hasPrefix("-") {
+        if number.hasPrefix("-") {
             sign = true
             number.remove(at: number.startIndex)
-        } else {
-            sign = false
+        } else if number.hasPrefix("+") {
+            number.remove(at: number.startIndex)
+        }
+        if number.isEmpty {
+            return nil
         }
         var magnitude = [Limb(0)]
-        var base = [Limb(1)]
-        let lrdx = [Limb(radix)]
-        for s in number.reversed() {
-            if let digit = BInt.digits.firstIndex(of: s) {
+        
+        // Find the number of digits that fits in a single Limb for the given radix
+        // Process that number of digits at a time
+        let digits = BInt.limbDigits[radix]
+        
+        // Groups of digits
+        let digitGroups = number.count / digits
+        
+        // Pow = radix ** digits
+        let pow = BInt.limbRadix[radix].magnitude
+        
+        // Number of digits to process
+        var g = number.count - digitGroups * digits
+        if g == 0 {
+            g = digits
+        }
+        var i = 0
+        var l = Limb(0)
+        for c in number {
+            if let digit = BInt.digits.firstIndex(of: c) {
                 let d = digit < 36 ? digit : digit - 26
                 if d >= radix {
                     return nil
                 }
-                magnitude.add(base.times([Limb(d)]))
-                base.multiply(lrdx)
+                l *= Limb(radix)
+                l += Limb(d)
             } else {
                 return nil
+            }
+            i += 1
+            if i == g {
+                magnitude.multiply(pow)
+                magnitude.add(l)
+                g = digits
+                l = 0
+                i = 0
             }
         }
         self.init(magnitude, sign)
     }
-    
+
     /// Constructs a random BInt with a specified number of bits
     ///
     /// - Precondition: bitWidth is positive

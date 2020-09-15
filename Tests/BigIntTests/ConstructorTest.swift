@@ -114,4 +114,25 @@ class ConstructorTest: XCTestCase {
         XCTAssertEqual(x7, BInt("fffffffffffffffffffffffffffffffeffffffffffffffff", radix: 16)!)
     }
 
+    func doTest6(_ n: Int) {
+        let x = BInt(bitWidth: n)
+        for r in 2 ... 36 {
+            let s = x.asString(radix: r)
+            XCTAssertEqual(x, BInt(s, radix: r))
+            XCTAssertEqual(x, BInt("+" + s, radix: r))
+            XCTAssertEqual(-x, BInt("-" + s, radix: r))
+        }
+    }
+
+    func test6() {
+        doTest6(1)
+        doTest6(10)
+        doTest6(100)
+        doTest6(1000)
+        XCTAssertNil(BInt(""))
+        XCTAssertNil(BInt("+"))
+        XCTAssertNil(BInt("-"))
+        XCTAssertNil(BInt("+ 1"))
+        XCTAssertNil(BInt("- 1"))
+    }
 }
