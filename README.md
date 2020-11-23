@@ -19,7 +19,7 @@ BigInt requires Swift 5.0.
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.1"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.2"),
 	  ]
 
 <h2><b>Examples</b></h2>

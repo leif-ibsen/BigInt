@@ -1419,7 +1419,7 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     }
         
     // Small prime product
-    static let SPP = BInt(3 * 5 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31 * 37 * 41)
+    static let SPP = BInt("152125131763605")! // = 3 * 5 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31 * 37 * 41
 
     static func smallPrime(_ bitLength: Int) -> BInt {
         let multiple8 = bitLength & 0x7 == 0
