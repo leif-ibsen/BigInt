@@ -31,7 +31,7 @@ infix operator ** : ExponentiationPrecedence
 /// The representation is little-endian, least significant Limb has index 0.
 /// The representation is minimal, there is no leading zero Limbs.
 /// The exception is that the value 0 is represented as a single 64 bit zero Limb and sign *false*
-public struct BInt: CustomStringConvertible, Equatable, Hashable {    
+public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
 
     static let digits: [Character] = [
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -49,6 +49,18 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     public static let TWO = BInt(2)
     /// BInt(3)
     public static let THREE = BInt(3)
+    /// BInt(4)
+    public static let FOUR = BInt(4)
+    /// BInt(5)
+    public static let FIVE = BInt(5)
+    /// BInt(6)
+    public static let SIX = BInt(6)
+    /// BInt(7)
+    public static let SEVEN = BInt(7)
+    /// BInt(8)
+    public static let EIGHT = BInt(8)
+    /// BInt(9)
+    public static let NINE = BInt(9)
     /// BInt(10)
     public static let TEN = BInt(10)
 
@@ -324,7 +336,21 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     }
 
     
-    // MARK: Conversion functions to Int, String, and Bytes
+    // MARK: Conversion functions to Double, Int, String, and Bytes
+    
+    static let d264 = Double(sign: .plus, exponent: 64, significand: 1.0) // = 2.0 ^ 64
+    
+    /// *self* as a Double
+    ///
+    /// - Returns: *self* as a Double or *Infinity* if *self* is not representable as a Double
+    public func asDouble() -> Double {
+        var d = 0.0
+        for m in self.magnitude.reversed() {
+            d *= BInt.d264
+            d += Double(m)
+        }
+        return self.isNegative ? -d : d
+    }
 
     /// *self* as an Int
     ///
@@ -1544,20 +1570,49 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
     /*
      * [CRANDALL] - algorithm 2.3.5
      */
-    /// Jacobi symbol
+    /// Jacobi symbol - BInt parameter
     ///
     /// - Parameters:
     ///   - m: An integer value
-    /// - Returns: The Jacobi symbol of *self* and m, or 0 if it does not exist
+    /// - Returns: The Jacobi symbol of *self* and m: -1, 0, or 1
     public func jacobiSymbol(_ m: BInt) -> Int {
         var m1 = m
-        var a = self % m1
+        var a = self.mod(m1)
         var t = 1
         while a.isNotZero {
             var x: BInt
             while a.isEven {
                 a >>= 1
-                x = m1 % 8
+                x = m1 & BInt.SEVEN
+                if x == BInt.THREE || x == BInt.FIVE {
+                    t = -t
+                }
+            }
+            x = a
+            a = m1
+            m1 = x
+            if a & BInt.THREE == BInt.THREE && m1 & BInt.THREE == BInt.THREE {
+                t = -t
+            }
+            a = a.mod(m1)
+        }
+        return m1.isOne ? t : 0
+    }
+
+    /// Jacobi symbol - Int parameter
+    ///
+    /// - Parameters:
+    ///   - m: An integer value
+    /// - Returns: The Jacobi symbol of *self* and m: -1, 0, or 1
+    public func jacobiSymbol(_ m: Int) -> Int {
+        var m1 = m
+        var a = self.mod(BInt(m1)).asInt()!
+        var t = 1
+        while a != 0 {
+            var x: Int
+            while a & 1 == 0 {
+                a >>= 1
+                x = m1 & 7
                 if x == 3 || x == 5 {
                     t = -t
                 }
@@ -1565,14 +1620,14 @@ public struct BInt: CustomStringConvertible, Equatable, Hashable {
             x = a
             a = m1
             m1 = x
-            if a % 4 == 3 && m1 % 4 == 3 {
+            if a & 3 == 3 && m1 & 3 == 3 {
                 t = -t
             }
             a %= m1
         }
         return m1 == 1 ? t : 0
     }
-    
+
     /// Random value
     ///
     /// - Precondition: *self* is positive
