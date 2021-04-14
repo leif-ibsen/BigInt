@@ -3903,7 +3903,7 @@ although this is not actually the case</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Modulus</p>
+                        <p>Modulus - BInt parameter</p>
 <div class="aside aside-precondition">
     <p class="aside-title">Precondition</p>
     Divisor is not zero
@@ -3948,6 +3948,61 @@ although this is not actually the case</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6BigInt4BIntV3modyS2iF"></a>
+                    <a name="//apple_ref/swift/Method/mod(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6BigInt4BIntV3modyS2iF">mod(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Modulus - Int parameter</p>
+<div class="aside aside-precondition">
+    <p class="aside-title">Precondition</p>
+    Divisor is not zero
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">mod</span><span class="p">(</span><span class="n">_</span> <span class="nv">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>x</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Divisor</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><em>self</em> <em>mod</em> x, a non-negative value</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6BigInt4BIntV10modInverseyA2CF"></a>
                     <a name="//apple_ref/swift/Method/modInverse(_:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:6BigInt4BIntV10modInverseyA2CF">modInverse(_:<wbr>)</a>
@@ -3958,7 +4013,7 @@ although this is not actually the case</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Inverse modulus</p>
+                        <p>Inverse modulus - BInt parameter</p>
 <div class="aside aside-precondition">
     <p class="aside-title">Precondition</p>
     <em>self</em> and modulus are coprime, modulus is positive
@@ -3971,6 +4026,61 @@ although this is not actually the case</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">modInverse</span><span class="p">(</span><span class="n">_</span> <span class="nv">m</span><span class="p">:</span> <span class="kt">BInt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">BInt</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>m</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Modulus</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>If <em>self</em> and m are coprime, x such that (<em>self</em> * x) mod m = 1</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6BigInt4BIntV10modInverseyS2iF"></a>
+                    <a name="//apple_ref/swift/Method/modInverse(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6BigInt4BIntV10modInverseyS2iF">modInverse(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Inverse modulus - Int parameter</p>
+<div class="aside aside-precondition">
+    <p class="aside-title">Precondition</p>
+    <em>self</em> and modulus are coprime, modulus is positive
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">modInverse</span><span class="p">(</span><span class="n">_</span> <span class="nv">m</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -6010,7 +6120,7 @@ although this is not actually the case</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2021-01-24)</p>
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2021-04-14)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
