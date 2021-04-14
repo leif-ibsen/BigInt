@@ -447,18 +447,18 @@ extension Array where Element == Limb {
     // (hi || lo) / d => (q, r)
     static func div128(_ hi: Limb, _ lo: Limb, _ d: Limb) -> (q: Limb, r: Limb) {
         precondition(d > 0, "Division by zero")
-        var hi = hi
-        var lo = lo
+        var r = hi
+        var q = lo
         for _ in 0 ..< 64 {
-            let t: Limb = hi & 0x8000000000000000 == 0 ? 0 : 0xffffffffffffffff
-            hi = (hi << 1) | (lo >> 63)
-            lo <<= 1
-            if (hi | t) >= d {
-                hi = hi &- d
-                lo = lo &+ 1
+            let t: Limb = r & 0x8000000000000000 == 0 ? 0 : 0xffffffffffffffff
+            r = (r << 1) | (q >> 63)
+            q <<= 1
+            if (r | t) >= d {
+                r = r &- d
+                q = q &+ 1
             }
         }
-        return (lo, hi)
+        return (q, r)
     }
 
     // [KNUTH] - chapter 4.3.1, exercise 16

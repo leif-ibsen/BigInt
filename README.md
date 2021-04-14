@@ -8,18 +8,18 @@ Its functionality is comparable to that of the Java BigInteger class. It falls i
 <li>Shifting: logical left shift and rigth shift</li>
 <li>Logical: bitwise and, or, xor, and not</li>
 <li>Modulo: normal modulus, inverse modulus, and modular exponentiation</li>
-<li>Conversion: to string, to magnitude byte array, and to 2's complement byte array</li>
+<li>Conversion: to double, to integer, to string, to magnitude byte array, and to 2's complement byte array</li>
 <li>Primes: prime number testing and probable prime number generation</li>
 <li>Miscellaneous: random number generation, greatest common divisor, n-th root, square root modulo an odd prime, and Jacobi symbol</li>
 </ul>
 
-BigInt requires Swift 5.0.
+BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bit types.
 
 <h2><b>Usage</b></h2>
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.2"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.5"),
 	  ]
 
 <h2><b>Examples</b></h2>
@@ -54,6 +54,9 @@ In your projects Package.swift file add a dependency like<br/>
 
 	  let x = BInt(16777087)
 	  
+	  // To double
+	  let d = x.asDouble() // d = 16777087.0
+	  
 	  // To strings
 	  let s1 = x.asString() // s1 = "16777087"
 	  let s2 = x.asString(radix: 16) // s2 = "ffff7f"
@@ -70,8 +73,6 @@ In your projects Package.swift file add a dependency like<br/>
 To assess the performance of BigInt, the execution times for a number of common operations were measured on a MacBook Pro 2018, 2,2 GHz 6-Core Intel Core i7.
 Each execution time was then compared to the execution time for the same operation in Java using the BigInteger class.
 The results are in the table below. It shows the operation being measured and the time it took in Swift and in Java (in microseconds or milliseconds).
-
-Based on these measurements it seems that Java BigInteger is roughly 2-5 times faster than Swift BigInt.
 
 Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout the measurements. Their actual values are shown under the table.
 

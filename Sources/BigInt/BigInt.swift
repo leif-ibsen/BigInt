@@ -1053,7 +1053,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameters:
     ///   - x: Dividend
     ///   - y: Divisor
-    public static func %=(x: inout BInt,y: BInt) {
+    public static func %=(x: inout BInt, y: BInt) {
         x = x % y
     }
 
@@ -1067,7 +1067,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         x = x % y
     }
     
-    /// Modulus
+    /// Modulus - BInt parameter
     ///
     /// - Precondition: Divisor is not zero
     /// - Parameter x: Divisor
@@ -1080,13 +1080,31 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return r.isNegative ? r + x : r
         }
     }
+    
+    /// Modulus - Int parameter
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameter x: Divisor
+    /// - Returns: *self* *mod* x, a non-negative value
+    public func mod(_ x: Int) -> Int {
+        if x == Int.min {
+            let m = Int(self.magnitude[0] & 0x7fffffffffffffff)
+            return self.isNegative && m > 0 ? -(Int.min + m) : m
+        }
+        var r = 0
+        let absx = Swift.abs(x)
+        for m in self.magnitude.reversed() {
+            (_, r) = absx.dividingFullWidth((r, UInt(m)))
+        }
+        return self.isNegative && r > 0 ? absx - r : r
+    }
 
     /*
      * [CRANDALL] - algorithm 2.1.4
      *
      * Return self modinverse m
      */
-    /// Inverse modulus
+    /// Inverse modulus - BInt parameter
     ///
     /// - Precondition: *self* and modulus are coprime, modulus is positive
     /// - Parameter m: Modulus
@@ -1105,6 +1123,27 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         precondition(g.isOne, "Modulus and self are not coprime")
         return a.isNegative ? a + m : a
+    }
+
+    /// Inverse modulus - Int parameter
+    ///
+    /// - Precondition: *self* and modulus are coprime, modulus is positive
+    /// - Parameter m: Modulus
+    /// - Returns: If *self* and m are coprime, x such that (*self* * x) mod m = 1
+    public func modInverse(_ m: Int) -> Int {
+        precondition(m > 0, "Modulus must be positive")
+        var a = 1
+        var b = 0
+        var g = self.mod(m)
+        var u = 0
+        var v = 1
+        var w = m
+        while w > 0 {
+            let q = g / w
+            (a, b, g, u, v, w) = (u, v, w, a - q * u, b - q * v, g - q * w)
+        }
+        precondition(g == 1, "Modulus and self are not coprime")
+        return a < 0 ? a + m : a
     }
 
 
@@ -1606,7 +1645,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: The Jacobi symbol of *self* and m: -1, 0, or 1
     public func jacobiSymbol(_ m: Int) -> Int {
         var m1 = m
-        var a = self.mod(BInt(m1)).asInt()!
+        var a = self.mod(m1)
         var t = 1
         while a != 0 {
             var x: Int

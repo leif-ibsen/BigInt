@@ -135,4 +135,15 @@ class ConstructorTest: XCTestCase {
         XCTAssertNil(BInt("+ 1"))
         XCTAssertNil(BInt("- 1"))
     }
+    
+    func test7() {
+        XCTAssertEqual(BInt.ZERO.asDouble(), 0.0)
+        XCTAssertEqual((-BInt.ZERO).asDouble(), 0.0)
+        XCTAssertEqual(BInt.ONE.asDouble(), 1.0)
+        XCTAssertEqual((-BInt.ONE).asDouble(), -1.0)
+        XCTAssertEqual((BInt.ONE << 1024).asDouble(), Double.infinity)
+        XCTAssertEqual(-(BInt.ONE << 1024).asDouble(), -Double.infinity)
+        XCTAssert((BInt.ONE << 1023).asDouble().isFinite)
+        XCTAssert((-(BInt.ONE << 1023)).asDouble().isFinite)
+    }
 }

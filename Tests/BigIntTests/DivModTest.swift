@@ -35,6 +35,7 @@ class DivModTest: XCTestCase {
         x1.quotientAndRemainder(dividingBy: x2, &q3, &r3)
         XCTAssertEqual(q1, q3)
         XCTAssertEqual(r1, r3)
+        XCTAssertEqual(x1.mod(Int.min), x1.mod(BInt(Int.min)).asInt()!)
     }
 
     func test1() {
@@ -49,10 +50,22 @@ class DivModTest: XCTestCase {
         XCTAssertEqual(BInt(-7) % BInt(4), BInt(-3))
         XCTAssertEqual(BInt(7) % BInt(-4), BInt(3))
         XCTAssertEqual(BInt(-7) % BInt(-4), BInt(-3))
+        XCTAssertEqual(BInt(7) % 4, BInt(3))
+        XCTAssertEqual(BInt(-7) % 4, BInt(-3))
+        XCTAssertEqual(BInt(7) % (-4), BInt(3))
+        XCTAssertEqual(BInt(-7) % (-4), BInt(-3))
         XCTAssertEqual(BInt(7).mod(BInt(4)), BInt(3))
         XCTAssertEqual(BInt(-7).mod(BInt(4)), BInt(1))
         XCTAssertEqual(BInt(7).mod(BInt(-4)), BInt(3))
         XCTAssertEqual(BInt(-7).mod(BInt(-4)), BInt(1))
+        XCTAssertEqual(BInt(7).mod(4), 3)
+        XCTAssertEqual(BInt(-7).mod(4), 1)
+        XCTAssertEqual(BInt(7).mod(-4), 3)
+        XCTAssertEqual(BInt(-7).mod(-4), 1)
+        XCTAssertEqual(BInt(8).mod(4), 0)
+        XCTAssertEqual(BInt(-8).mod(4), 0)
+        XCTAssertEqual(BInt(8).mod(-4), 0)
+        XCTAssertEqual(BInt(-8).mod(-4), 0)
         doTest2(BInt(7), BInt(4))
         doTest2(BInt(-7), BInt(4))
         doTest2(BInt(7), BInt(-4))
@@ -69,6 +82,10 @@ class DivModTest: XCTestCase {
         XCTAssertEqual(BInt(-7) % BInt(7), BInt.ZERO)
         XCTAssertEqual(BInt(7) % BInt(-7), BInt.ZERO)
         XCTAssertEqual(BInt(-7) % BInt(-7), BInt.ZERO)
+        XCTAssertEqual(BInt(7) % 7, BInt.ZERO)
+        XCTAssertEqual(BInt(-7) % 7, BInt.ZERO)
+        XCTAssertEqual(BInt(7) % (-7), BInt.ZERO)
+        XCTAssertEqual(BInt(-7) % (-7), BInt.ZERO)
     }
     
 }

@@ -27,11 +27,14 @@ class ModInverseTest: XCTestCase {
             if x1.gcd(p1) == BInt.ONE {
                 XCTAssert((x1 * x1.modInverse(p1)).mod(p1) == BInt.ONE)
                 XCTAssert(((-x1) * (-x1).modInverse(p1)).mod(p1) == BInt.ONE)
+                if let pp1 = p1.asInt() {
+                    XCTAssert(x1.modInverse(p1) == x1.modInverse(pp1))
+                }
             }
         }
     }
 
-    func test1() {
+    func test() {
         doTest(3, 4)
         doTest(30, 40)
         doTest(300, 400)
