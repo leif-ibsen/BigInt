@@ -6,6 +6,8 @@
 //  Copyright © 2018 Leif Ibsen. All rights reserved.
 //
 
+import Foundation
+
 /// Unsigned 8 bit value
 public typealias Byte = UInt8
 /// Array of unsigned 8 bit values
@@ -1469,17 +1471,15 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     // MARK: Prime number functions
     
-    static internal var random = SystemRandomNumberGenerator()
-
     static internal func randomBytes(_ bytes: inout Bytes) {
-        for i in 0 ..< bytes.count {
-            bytes[i] = BInt.random.next()
+        guard SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess else {
+            fatalError("randomBytes failed")
         }
     }
         
     static internal func randomLimbs(_ limbs: inout Limbs) {
-        for i in 0 ..< limbs.count {
-            limbs[i] = BInt.random.next()
+        guard SecRandomCopyBytes(kSecRandomDefault, 8 * limbs.count, &limbs) == errSecSuccess else {
+            fatalError("randomLimbs failed")
         }
     }
         
