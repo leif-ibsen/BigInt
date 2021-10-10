@@ -38,7 +38,7 @@ extension BInt {
             let k = x.bitWidth < 512 ? 4 : 5
             var g = Array(repeating: Limbs(repeating: 0, count: 0), count: 1 << k)
             g[0] = toMspace(self.base)
-            var g2 = g[0].times(g[0])
+            var g2 = g[0].squared()
             reduce(&g2)
             for i in 1 ..< g.count {
                 g[i] = g[i - 1].times(g2)
@@ -48,12 +48,12 @@ extension BInt {
             var i = x.bitWidth - 1
             while i >= 0 {
                 if x.testBit(i) {
-                    var l = max(0, i - k + 1)
+                    var l = Swift.max(0, i - k + 1)
                     while !x.testBit(l) {
                         l += 1
                     }
                     for _ in 0 ..< i - l + 1 {
-                        result.multiply(result)
+                        result.square()
                         reduce(&result)
                     }
                     var ndx = 0
@@ -68,7 +68,7 @@ extension BInt {
                     reduce(&result)
                     i = l - 1
                 } else {
-                    result.multiply(result)
+                    result.square()
                     reduce(&result)
                     i -= 1
                 }
@@ -196,7 +196,7 @@ extension BInt {
                     self.Rinv.add(self.modulus)
                     self.Rinv.shift1Right()
                     self.mprime.shift1Right()
-                    self.mprime.setBitAt(Rsize * 64 - 1, to: true)
+                    self.mprime.setBitAt(Rsize * 64 - 1)
                 }
             }
         }

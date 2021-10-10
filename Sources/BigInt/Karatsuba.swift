@@ -10,48 +10,59 @@
  * Karatsuba multiplication modelled after the Karatsuba algorithm in Java BigInteger
  */
 extension Array where Element == Limb {
-    
-    func getUpper(_ k: Int) -> Limbs {
-        var w: Limbs
-        if self.count <= k {
-            w = [0]
-        } else {
-            w = Limbs(repeating: 0, count: self.count - k)
-            for i in 0 ..< w.count {
-                w[i] = self[k + i]
-            }
-        }
-        return w
+
+    func karatsubaSlice0(_ k: Int) -> Limbs {
+        return k < self.count ? Limbs(self[0 ..< k]) : self
     }
 
-    func getLower(_ k: Int) -> Limbs {
-        var w = Limbs(repeating: 0, count: k < self.count ? k : self.count)
-        for i in 0 ..< w.count {
-            w[i] = self[i]
-        }
-        return w
+    func karatsubaSlice1(_ k: Int) -> Limbs {
+        return k < self.count ? Limbs(self[k ..< self.count]) : [0]
     }
 
     func karatsubaTimes(_ x: Limbs) -> Limbs {
         let k = (Swift.max(self.count, x.count) + 1) >> 1
-        let x1 = x.getLower(k)
-        var x2 = x.getUpper(k)
-        let s1 = self.getLower(k)
-        var s2 = self.getUpper(k)
-        var p1 = x2
-        p1.multiply(s2)
-        var p2 = x1
-        p2.multiply(s1)
-        x2.add(x1)
-        s2.add(s1)
-        var p3 = x2
-        p3.multiply(s2)
+        let xl = x.karatsubaSlice0(k)
+        var xh = x.karatsubaSlice1(k)
+        let sl = self.karatsubaSlice0(k)
+        var sh = self.karatsubaSlice1(k)
+        var p1 = xh
+        p1.multiply(sh)
+        var p2 = xl
+        p2.multiply(sl)
+        xh.add(xl)
+        sh.add(sl)
+        var p3 = xh
+        p3.multiply(sh)
         p3.subtract(p1, 0)
         p3.subtract(p2, 0)
         var w = Limbs(repeating: 0, count: 4 * k)
         w.add(p1, 2 * k)
         w.add(p3, k)
         w.add(p2, 0)
+        return w
+    }
+
+    func karatsubaSquare() -> Limbs {
+        let k = (self.count + 1) >> 1
+        let xl = self.karatsubaSlice0(k)
+        let xh = self.karatsubaSlice1(k)
+        let xls = xl.squared()
+        let xhs = xh.squared()
+        var p: Limbs
+        if xh.compare(xl) > 0 {
+            p = xh
+            p.subtract(xl, 0)
+        } else {
+            p = xl
+            p.subtract(xh, 0)
+        }
+        p.square()
+        var w = Limbs(repeating: 0, count: 4 * k)
+        w.add(xhs, 2 * k)
+        w.add(xhs, k)
+        w.add(xls, k)
+        w.subtract(p, k)
+        w.add(xls, 0)
         return w
     }
 

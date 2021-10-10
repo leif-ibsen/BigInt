@@ -54,11 +54,20 @@ class PerformanceTest: XCTestCase {
 
     func testSquaring() {
         let N = 1000
-        var a = Limbs(repeating: 0, count: 0)
+        var x = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                a = a1000.magnitude
-                a = a.times(a)
+                x = a1000 ** 2
+            }
+        }
+    }
+
+    func testSqrt() {
+        let N = 1000
+        var x = BInt.ZERO
+        self.measure {
+            for _ in 0 ..< N {
+                x = a1000.sqrt()
             }
         }
     }

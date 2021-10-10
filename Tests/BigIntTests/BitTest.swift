@@ -108,5 +108,30 @@ class BitTest: XCTestCase {
             XCTAssertEqual(-x ^ -y, -y ^ -x)
         }
     }
+    
+    func test7() {
+        let x = BInt(bitWidth: 50)
+        var y = x
+        y.setBit(-1)
+        XCTAssertEqual(x, y)
+        y.clearBit(-1)
+        XCTAssertEqual(x, y)
+        y.flipBit(-1)
+        XCTAssertEqual(x, y)
+        XCTAssertFalse(y.testBit(-1))
+        y = BInt(0)
+        y.setBit(200)
+        XCTAssertEqual(y.magnitude.count, 4)
+        XCTAssertEqual(y, BInt.ONE << 200)
+        XCTAssertTrue(y.testBit(200))
+        y.clearBit(200)
+        XCTAssertEqual(y.magnitude.count, 1)
+        XCTAssertFalse(y.testBit(200))
+        XCTAssertEqual(y, BInt.ZERO)
+        y.flipBit(200)
+        XCTAssertEqual(y, BInt.ONE << 200)
+        y.flipBit(200)
+        XCTAssertEqual(y, BInt.ZERO)
+ }
 
 }

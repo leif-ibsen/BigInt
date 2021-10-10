@@ -656,33 +656,33 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return -x - 1
     }
     
-    /// Clear a specified bit
+    /// Clear a specified bit - a no-op if bit number < 0
     ///
     /// - Parameter n: Bit number
     public mutating func clearBit(_ n: Int) {
-        self.magnitude.setBitAt(n, to: false)
+        self.magnitude.clearBitAt(n)
     }
     
-    /// Invert a specified bit
+    /// Invert a specified bit - a no-op if bit number < 0
     ///
     /// - Parameter n: Bit number
     public mutating func flipBit(_ n: Int) {
-        self.magnitude.setBitAt(n, to: !self.magnitude.getBitAt(n))
+        self.magnitude.flipBitAt(n)
     }
     
-    /// Set a specified bit
+    /// Set a specified bit - a no-op if bit number < 0
     ///
     /// - Parameter n: Bit number
     public mutating func setBit(_ n: Int) {
-        self.magnitude.setBitAt(n, to: true)
+        self.magnitude.setBitAt(n)
     }
     
-    /// Test a specified bit
+    /// Test a specified bit - *false* if bit number < 0
     ///
     /// - Parameter n: Bit number
     /// - Returns: *true* if bit is set, *false* otherwise
     public func testBit(_ n: Int) -> Bool {
-        return self.magnitude.getBitAt(n)
+        return self.magnitude.testBitAt(n)
     }
 
     
@@ -756,18 +756,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - x: Left hand addend
     ///   - y: Right hand addend
     public static func +=(x: inout BInt, y: Int) {
-        let absy = Limb(Swift.abs(y))
-        if (y < 0 && x.isNegative) || (y >= 0 && !x.isNegative) {
-            x.magnitude.add(absy)
-        } else {
-            let cmp = x.magnitude.compare(absy)
-            x.magnitude.difference(absy)
-            if cmp < 0 {
-                x.isNegative = !x.isNegative
-            } else if cmp == 0 {
-                x.isNegative = false
-            }
-        }
+        x += BInt(y)
     }
 
     
@@ -853,18 +842,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - x: Left hand minuend
     ///   - y: Right hand subtrahend
     public static func -=(x: inout BInt, y: Int) {
-        let absy = Limb(Swift.abs(y))
-        if (y < 0 && !x.isNegative) || (y >= 0 && x.isNegative) {
-            x.magnitude.add(absy)
-        } else {
-            let cmp = x.magnitude.compare(absy)
-            x.magnitude.difference(absy)
-            if cmp < 0 {
-                x.isNegative = !x.isNegative
-            } else if cmp == 0 {
-                x.isNegative = false
-            }
-        }
+        x -= BInt(y)
     }
 
 
@@ -925,7 +903,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if y > 0 {
             x.magnitude.multiply(Limb(y))
         } else if y < 0 {
-            x.magnitude.multiply(Limb(-y))
+            if y == Int.min {
+                x.magnitude.shiftLeft(63)
+            } else {
+                x.magnitude.multiply(Limb(-y))
+            }
             x.setSign(!x.isNegative)
         } else {
             x = BInt.ZERO
@@ -1089,6 +1071,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameter x: Divisor
     /// - Returns: *self* *mod* x, a non-negative value
     public func mod(_ x: Int) -> Int {
+        precondition(x != 0, "Division by zero")
         if x == Int.min {
             let m = Int(self.magnitude[0] & 0x7fffffffffffffff)
             return self.isNegative && m > 0 ? -(Int.min + m) : m
@@ -1160,7 +1143,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: a^x
     public static func **(a: BInt, x: Int) -> BInt {
         precondition(x >= 0, "Exponent must be non-negative")
-        return x == 2 ? a * a : BInt(a.magnitude.raisedTo(x), a.isNegative && (x & 1 == 1))
+        return x == 2 ? (a.magnitude.count > 16 ? BInt(a.magnitude.squared()) : a * a) : BInt(a.magnitude.raisedTo(x), a.isNegative && (x & 1 == 1))
     }
 
     /*
@@ -1556,7 +1539,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         } else {
             rounds = 2
         }
-        rounds = min((p + 1) / 2, rounds)
+        rounds = Swift.min((p + 1) / 2, rounds)
         let s1 = self - 1
         for _ in 0 ..< rounds {
             if !self.pass(s1.randomLessThan() + 1) {
@@ -1601,7 +1584,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// Greatest common divisor
     ///
     /// - Parameter x: Operand
-    /// - Returns: Greatest common divisor of magnitude of *self* and magnitude of x
+    /// - Returns: Greatest common divisor of *self* and x
     public func gcd(_ x: BInt) -> BInt {
         return BInt(self.magnitude.gcd(x.magnitude))
     }
@@ -1704,16 +1687,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             x = y
         }
     }
-        
+
     /*
      * [CRANDALL] - algorithm 9.2.11
      */
-    /// Square root of a non-negative number
-    ///
-    /// - Precondition: *self* is non-negative
-    /// - Returns: Largest x such that x^2 <= *self*
-    public func sqrt() -> BInt {
-        precondition(!self.isNegative, "Square root of negative number")
+    func basicSqrt() -> BInt {
         if self.isZero {
             return BInt.ZERO
         }
@@ -1725,6 +1703,40 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             }
             x = y
         }
+    }
+
+    /*
+     * [BRENT] - algorithm 1.12
+     */
+    func sqrtRem() -> (s: BInt, r: BInt) {
+        let l = (self.magnitude.count - 1) >> 2
+        if l == 0 {
+            let sq = self.basicSqrt()
+            return (sq, self - sq ** 2)
+        }
+        let shifts = l * 64
+        let a0 = BInt(Limbs(self.magnitude[0 ..< l]))
+        let a1 = BInt(Limbs(self.magnitude[l ..< 2 * l]))
+        let a2 = BInt(Limbs(self.magnitude[2 * l ..< 3 * l]))
+        let a3 = BInt(Limbs(self.magnitude[3 * l ..< self.magnitude.count]))
+        let (s1, r1) = (a3 << shifts + a2).sqrtRem()
+        let (q, u) = (r1 << shifts + a1).quotientAndRemainder(dividingBy: s1 << 1)
+        var s = s1 << shifts + q
+        var r = u << shifts + a0 - q ** 2
+        if r.isNegative {
+            r += 2 * s - 1
+            s -= 1
+        }
+        return (s, r)
+    }
+
+    /// Square root of a non-negative number
+    ///
+    /// - Precondition: *self* is non-negative
+    /// - Returns: Largest x such that x^2 <= *self*
+    public func sqrt() -> BInt {
+        precondition(!self.isNegative, "Square root of negative number")
+        return self.sqrtRem().s
     }
 
     /*

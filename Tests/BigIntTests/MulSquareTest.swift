@@ -23,18 +23,22 @@ class MulSquareTest: XCTestCase {
             let a2 = (BInt(1) << (i * 100)).randomLessThan()
             let a3 = (BInt(1) << (i * 1000)).randomLessThan()
             let a4 = (BInt(1) << (i * 10000)).randomLessThan()
+            let a5 = (BInt(1) << (i * 100000)).randomLessThan()
             let b1 = -a1
             let b2 = -a2
             let b3 = -a3
             let b4 = -a4
+            let b5 = -a5
             XCTAssertEqual(a1 ** 2, a1 * a1)
             XCTAssertEqual(a2 ** 2, a2 * a2)
             XCTAssertEqual(a3 ** 2, a3 * a3)
             XCTAssertEqual(a4 ** 2, a4 * a4)
+            XCTAssertEqual(a5 ** 2, a5 * a5)
             XCTAssertEqual(b1 ** 2, b1 * b1)
             XCTAssertEqual(b2 ** 2, b2 * b2)
             XCTAssertEqual(b3 ** 2, b3 * b3)
             XCTAssertEqual(b4 ** 2, b4 * b4)
+            XCTAssertEqual(b5 ** 2, b5 * b5)
         }
     }
 

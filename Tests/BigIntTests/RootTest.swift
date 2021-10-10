@@ -18,11 +18,8 @@ class RootTest: XCTestCase {
     }
 
     func test1() {
-        for _ in 0 ..< 1000 {
-            let x = BInt(bitWidth: 1000)
-            let y = x.sqrt()
-            XCTAssert(y * y <= x)
-            XCTAssert((y + 1) * (y + 1) > x)
+        for _ in 0 ..< 100 {
+            let x = BInt(bitWidth: 20000)
             for n in 1 ... 10 {
                 let y = x.root(n)
                 XCTAssert(y ** n <= x)
@@ -41,6 +38,20 @@ class RootTest: XCTestCase {
                 XCTAssert(j == 1 || s == nil)
                 XCTAssert(j != 1 || (s! ** 2).mod(p) == x.mod(p))
             }
+        }
+    }
+    
+    func test3() {
+        var bw = 2
+        for _ in 0 ..< 20 {
+            for _ in 0 ..< 10 {
+                let x = BInt(bitWidth: bw)
+                XCTAssertEqual((x ** 2).sqrt(), x)
+                let s = x.sqrt()
+                XCTAssert(s ** 2 <= x)
+                XCTAssert((s + 1) ** 2 >  x)
+            }
+            bw *= 2
         }
     }
 

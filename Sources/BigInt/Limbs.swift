@@ -72,24 +72,37 @@ extension Array where Element == Limb {
         return (self.count - 1) * 64 + lastBits
     }
     
-    func getBitAt(_ i: Int) -> Bool {
-        let limbIndex = i >> 6
-        if limbIndex >= self.count {
+    func testBitAt(_ i: Int) -> Bool {
+        if i < 0 {
             return false
         }
-        return (self[limbIndex] & Limbs.UMasks[i & 0x3f]) != 0
-    }
-    
-    mutating func setBitAt(_ i: Int, to bit: Bool) {
         let limbIndex = i >> 6
-        if limbIndex >= self.count && !bit {
-            return
+        return limbIndex < self.count ? (self[limbIndex] & Limbs.UMasks[i & 0x3f]) != 0 : false
+    }
+
+    mutating func clearBitAt(_ i: Int) {
+        if i >= 0 {
+            let limbIndex = i >> 6
+            if limbIndex < self.count {
+                self[limbIndex] &= ~Limbs.UMasks[i & 0x3f]
+                self.normalize()
+            }
         }
-        self.ensureSize(limbIndex + 1)
-        if bit {
+    }
+
+    mutating func setBitAt(_ i: Int) {
+        if i >= 0 {
+            let limbIndex = i >> 6
+            self.ensureSize(limbIndex + 1)
             self[limbIndex] |= Limbs.UMasks[i & 0x3f]
-        } else {
-            self[limbIndex] &= ~Limbs.UMasks[i & 0x3f]
+        }
+    }
+
+    mutating func flipBitAt(_ i: Int) {
+        if i >= 0 {
+            let limbIndex = i >> 6
+            self.ensureSize(limbIndex + 1)
+            self[limbIndex] ^= Limbs.UMasks[i & 0x3f]
             self.normalize()
         }
     }
@@ -100,8 +113,14 @@ extension Array where Element == Limb {
 
     // return -1 if self < x, +1 if self > x, and 0 if self = x
     func compare(_ x: Limbs) -> Int {
-        let scount = self.count
-        let xcount = x.count
+        var scount = self.count
+        while scount > 1 && self[scount - 1] == 0 {
+            scount -= 1
+        }
+        var xcount = x.count
+        while xcount > 1 && x[xcount - 1] == 0 {
+            xcount -= 1
+        }
         if scount < xcount {
             return -1
         } else if scount > xcount {
@@ -121,7 +140,11 @@ extension Array where Element == Limb {
 
     // return -1 if self < x, +1 if self > x, and 0 if self = x
     func compare(_ x: Limb) -> Int {
-        if self.count > 1 {
+        var scount = self.count
+        while scount > 1 && self[scount - 1] == 0 {
+            scount -= 1
+        }
+        if scount > 1 {
             return 1
         }
         return self[0] == x ? 0 : (self[0] < x ? -1 : 1)
@@ -377,9 +400,9 @@ extension Array where Element == Limb {
      */
 
     // Limb threshold for Karatsuba multiplication
-    static let KA_THR = 100
+    static let KA_THR = 150
     // Limb threshold for ToomCook multiplication
-    static let TC_THR = 200
+    static let TC_THR = 250
 
     // self = self * x
     // [KNUTH] - chapter 4.3.1, algorithm M
@@ -387,7 +410,11 @@ extension Array where Element == Limb {
         let m = self.count
         let n = x.count
         var w: Limbs
-        if m < Limbs.KA_THR || n < Limbs.KA_THR {
+        if m > Limbs.TC_THR && n > Limbs.TC_THR {
+            w = self.toomCookTimes(x)
+        } else if m > Limbs.KA_THR && n > Limbs.KA_THR {
+            w = self.karatsubaTimes(x)
+        } else {
             w = Limbs(repeating: 0, count: m + n)
             var carry: Limb
             var ovfl1, ovfl2: Bool
@@ -407,10 +434,6 @@ extension Array where Element == Limb {
                 }
                 w[i + n] = carry
             }
-        } else if m < Limbs.TC_THR && n < Limbs.TC_THR {
-            w = self.karatsubaTimes(x)
-        } else {
-            w = self.toomCookTimes(x)
         }
         w.normalize()
         self = w
@@ -439,37 +462,121 @@ extension Array where Element == Limb {
         return w
     }
 
+    func times(_ x: Limb) -> Limbs {
+        var w = self
+        w.multiply(x)
+        return w
+    }
+
+    // self = self * self
+    mutating func square() {
+        let n = self.count
+        var w: Limbs
+        if n > Limbs.TC_THR {
+            w = self.toomCookSquare()
+        } else if n > Limbs.KA_THR {
+            w = self.karatsubaSquare()
+        } else {
+            w = Limbs(repeating: 0, count: n * 2)
+            var carry: Limb
+            var ovfl1, ovfl2, ovfl3: Bool
+            
+            // Compute off-diagonal elements
+            for i in 0 ..< n {
+                carry = 0
+                for j in i + 1 ..< n {
+                    let (hi, lo) = self[i].multipliedFullWidth(by: self[j])
+                    (w[i + j], ovfl1) = w[i + j].addingReportingOverflow(lo)
+                    (w[i + j], ovfl2) = w[i + j].addingReportingOverflow(carry)
+                    carry = hi
+                    if ovfl1 {
+                        carry &+= 1
+                    }
+                    if ovfl2 {
+                        carry &+= 1
+                    }
+                }
+                w[i + n] = carry
+            }
+
+            // Multiply by 2
+            w.shift1Left()
+
+            // Add diagonal elements
+            carry = 0
+            for i in 0 ..< n {
+                let (hi, lo) = self[i].multipliedFullWidth(by: self[i])
+                (w[2 * i], ovfl1) = w[2 * i].addingReportingOverflow(lo)
+                (w[2 * i], ovfl2) = w[2 * i].addingReportingOverflow(carry)
+                (w[2 * i + 1], ovfl3) = w[2 * i + 1].addingReportingOverflow(hi)
+                if ovfl1 {
+                    (w[2 * i + 1], ovfl1) = w[2 * i + 1].addingReportingOverflow(1)
+                }
+                if ovfl2 {
+                    (w[2 * i + 1], ovfl2) = w[2 * i + 1].addingReportingOverflow(1)
+                }
+                carry = 0
+                if ovfl1 {
+                    carry &+= 1
+                }
+                if ovfl2 {
+                    carry &+= 1
+                }
+                if ovfl3 {
+                    carry &+= 1
+                }
+                assert(carry < 2)
+            }
+        }
+        w.normalize()
+        self = w
+    }
+    
+    func squared() -> Limbs {
+        var w = self
+        w.square()
+        return w
+    }
+
     /*
      * Division and modulus
      */
     
-    // [WARREN] - algorithm 9.2
-    // (hi || lo) / d => (q, r)
-    static func div128(_ hi: Limb, _ lo: Limb, _ d: Limb) -> (q: Limb, r: Limb) {
-        precondition(d > 0, "Division by zero")
-        var r = hi
-        var q = lo
-        for _ in 0 ..< 64 {
-            let t: Limb = r & 0x8000000000000000 == 0 ? 0 : 0xffffffffffffffff
-            r = (r << 1) | (q >> 63)
-            q <<= 1
-            if (r | t) >= d {
-                r = r &- d
-                q = q &+ 1
-            }
+    // [GRANLUND] - algorithm 4
+    // (u1 || u0) / d => (q, r)
+    static func div128(_ u1: Limb, _ u0: Limb, _ d: Limb, _ dReciprocal: Limb) -> (q: Limb, r: Limb) {
+        assert(u1 < d)
+        assert(d >= 0x8000000000000000)
+        var  ovfl = false
+        var (q1, q0) = dReciprocal.multipliedFullWidth(by: u1)
+        (q0, ovfl) = q0.addingReportingOverflow(u0)
+        (q1, _) = q1.addingReportingOverflow(u1)
+        if ovfl {
+            q1 &+= 1
         }
-        return (q, r)
+        q1 &+= 1
+        var r = u0 &- q1 &* d
+        if r > q0 {
+            q1 &-= 1
+            r &+= d
+        }
+        if r >= d {
+            q1 += 1
+            r -= d
+        }
+        return (q1, r)
     }
 
     // [KNUTH] - chapter 4.3.1, exercise 16
     func divMod1(_ v: Limb) -> (quotient: Limbs, remainder: Limb) {
+        precondition(v > 0, "Division by zero")
         if self.equalTo(0) {
             return ([0], 0)
         }
         var w = Limbs(repeating: 0, count: self.count)
         var r = Limb(0)
         for j in (0 ..< self.count).reversed() {
-            (w[j], r) = Limbs.div128(r, self[j], v)
+            (w[j], r) = v.dividingFullWidth((r, self[j]))
         }
         w.normalize()
         return (w, r)
@@ -503,14 +610,16 @@ extension Array where Element == Limb {
             var qhat = Limb(0)
             var rhat = Limb(0)
             var k = m - n
+            let vn1 = v[n - 1]
+            let vReciprocal = vn1.dividingFullWidth((0xffffffffffffffff - vn1, 0xffffffffffffffff)).quotient
             quotient = Limbs(repeating: 0, count: k + 1)
             var ovfl: Bool
             repeat {
-                if v[n - 1] == remainder[k + n] {
+                if vn1 == remainder[k + n] {
                     qhat = 0xffffffffffffffff
                     (rhat, ovfl) = remainder[k + n].addingReportingOverflow(remainder[k + n - 1])
                 } else {
-                    (qhat, rhat) = Limbs.div128(remainder[k + n], remainder[k + n - 1], v[n - 1])
+                    (qhat, rhat) = Limbs.div128(remainder[k + n], remainder[k + n - 1], vn1, vReciprocal)
                     ovfl = false
                 }
                 while !ovfl {
@@ -519,10 +628,10 @@ extension Array where Element == Limb {
                         break
                     }
                     qhat -= 1
-                    (rhat, ovfl) = rhat.addingReportingOverflow(v[n - 1])
+                    (rhat, ovfl) = rhat.addingReportingOverflow(vn1)
                 }
                 if qhat != 0 {
-                    let borrow = remainder.subtract(v.times([qhat]), k)
+                    let borrow = remainder.subtract(v.times(qhat), k)
                     if borrow {
                         qhat -= 1
                         remainder.add(v, k, false)
@@ -647,7 +756,7 @@ extension Array where Element == Limb {
             if exponent & 1 != 0 {
                 y.multiply(base)
             }
-            base.multiply(base)
+            base.square()
             exponent >>= 1
         }
         return base.times(y)

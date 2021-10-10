@@ -76,5 +76,5 @@ class AdditionTest: XCTestCase {
             XCTAssertEqual(b, a * 101)
         }
     }
-
+    
 }

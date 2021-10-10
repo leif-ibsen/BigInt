@@ -43,6 +43,10 @@ class DivModTest: XCTestCase {
         doTest1(30, 120)
         doTest1(130, 20)
         doTest1(130, 120)
+        doTest2(BInt.ONE << 512 - 1, BInt.ONE)
+        doTest2(BInt.ONE << 512 - 1, BInt.ONE << 512 - 1)
+        doTest2(BInt.ONE << 512, BInt.ONE)
+        doTest2(BInt.ONE << 512, BInt.ONE << 512 - 1)
     }
 
     func test2() {
@@ -86,6 +90,16 @@ class DivModTest: XCTestCase {
         XCTAssertEqual(BInt(-7) % 7, BInt.ZERO)
         XCTAssertEqual(BInt(7) % (-7), BInt.ZERO)
         XCTAssertEqual(BInt(-7) % (-7), BInt.ZERO)
+    }
+    
+    func test4() {
+        // a BInt modulo an Int
+        for _ in 0 ..< 100 {
+            let x = BInt(bitWidth: 1000)
+            let m = x.magnitude[0] == 0 ? 1 : Int(x.magnitude[0] & 0x7fffffffffffffff)
+            XCTAssertEqual(x.mod(m), x.mod(BInt(m)).asInt()!)
+            XCTAssertEqual(x.mod(-m), x.mod(-BInt(m)).asInt()!)
+        }
     }
     
 }
