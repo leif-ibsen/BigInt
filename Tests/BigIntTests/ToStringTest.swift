@@ -45,4 +45,16 @@ class ToStringTest: XCTestCase {
         }
     }
 
+    func testToString4() {
+        var bw = 10
+        for _ in 0 ..< 10 {
+            for _ in 0 ..< 100 {
+                let x = BInt(bitWidth: bw)
+                XCTAssertEqual(x, BInt(x.asString())!)
+                XCTAssertEqual(-x, BInt((-x).asString())!)
+            }
+            bw *= 2
+        }
+    }
+
 }

@@ -19,7 +19,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.7"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.8"),
 	  ]
 
 <h2><b>Examples</b></h2>
@@ -78,33 +78,34 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 
 <table width="90%">
 <tr><th width="35%" align="left">Operation</th><th width="35%" align="right">Swift code</th><th width="15%" align="right">Swift time</th><th width="15%" align="right">Java time</th></tr>
-<tr><td>As string</td><td align="right">c2000.asString()</td><td align="right">102 uSec</td><td align="right">31 uSec</td></tr>
-<tr><td>As signed bytes</td><td align="right">c2000.asSignedBytes()</td><td align="right">0.24 uSec</td><td align="right">1.0 uSec</td></tr>
-<tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.17 uSec</td><td align="right">0.076 uSec</td></tr>
+<tr><td>As string</td><td align="right">c2000.asString()</td><td align="right">23 uSec</td><td align="right">31 uSec</td></tr>
+<tr><td>As signed bytes</td><td align="right">c2000.asSignedBytes()</td><td align="right">0.23 uSec</td><td align="right">1.0 uSec</td></tr>
+<tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.16 uSec</td><td align="right">0.076 uSec</td></tr>
 <tr><td>Bitwise or</td><td align="right">a1000 | b1000</td><td align="right">0.17 uSec</td><td align="right">0.051 uSec</td></tr>
 <tr><td>Bitwise xor</td><td align="right">a1000 ^ b1000</td><td align="right">0.17 uSec</td><td align="right">0.048 uSec</td></tr>
-<tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.088 uSec</td><td align="right">0.13 uSec</td></tr>
+<tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.10 uSec</td><td align="right">0.13 uSec</td></tr>
 <tr><td>Test bit</td><td align="right">c2000.testBit(701)</td><td align="right">0.0038 uSec</td><td align="right">0.0058 uSec</td></tr>
-<tr><td>Flip bit</td><td align="right">c2000.flipBit(701)</td><td align="right">0.0065 uSec</td><td align="right">0.069 uSec</td></tr>
-<tr><td>Set bit</td><td align="right">c2000.setBit(701)</td><td align="right">0.0026 uSec</td><td align="right">0.088 uSec</td></tr>
-<tr><td>Clear bit</td><td align="right">c2000.clearBit(701)</td><td align="right">0.0051 uSec</td><td align="right">0.072 uSec</td></tr>
+<tr><td>Flip bit</td><td align="right">c2000.flipBit(701)</td><td align="right">0.0078 uSec</td><td align="right">0.069 uSec</td></tr>
+<tr><td>Set bit</td><td align="right">c2000.setBit(701)</td><td align="right">0.0023 uSec</td><td align="right">0.088 uSec</td></tr>
+<tr><td>Clear bit</td><td align="right">c2000.clearBit(701)</td><td align="right">0.0046 uSec</td><td align="right">0.072 uSec</td></tr>
 <tr><td>Addition</td><td align="right">a1000 + b1000</td><td align="right">0.096 uSec</td><td align="right">0.12 uSec</td></tr>
 <tr><td>Subtraction</td><td align="right">a1000 - b1000</td><td align="right">0.11 uSec</td><td align="right">0.25 uSec</td></tr>
-<tr><td>Multiplication</td><td align="right">a1000 * b1000</td><td align="right">0.32 uSec</td><td align="right">0,73 uSec</td></tr>
+<tr><td>Multiplication</td><td align="right">a1000 * b1000</td><td align="right">0.32 uSec</td><td align="right">0.73 uSec</td></tr>
 <tr><td>Division</td><td align="right">c2000 / a1000</td><td align="right">2.8 uSec</td><td align="right">3.4 uSec</td></tr>
 <tr><td>Modulus</td><td align="right">c2000.mod(a1000)</td><td align="right">2.8 uSec</td><td align="right">3.5 uSec</td></tr>
-<tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">0.96 mSec</td><td align="right">0.17 mSec</td></tr>
+<tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">0.60 mSec</td><td align="right">0.17 mSec</td></tr>
 <tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">3.8 mSec</td><td align="right">2.3 mSec</td></tr>
 <tr><td>Equal</td><td align="right">c2000 + 1 == c2000</td><td align="right">0.00095 uSec</td><td align="right">0.019 uSec</td></tr>
 <tr><td>Less than</td><td align="right">b1000 + 1 < b1000</td><td align="right">0.012 uSec</td><td align="right">0.011 uSec</td></tr>
-<tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.11 uSec</td><td align="right">0.060 uSec</td></tr>
+<tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.094 uSec</td><td align="right">0.060 uSec</td></tr>
 <tr><td>Shift 1 right</td><td align="right">c2000 >>= 1</td><td align="right">0.11 uSec</td><td align="right">0.058 uSec</td></tr>
 <tr><td>Shift 100 left</td><td align="right">c2000 <<= 100</td><td align="right">0.17 uSec</td><td align="right">0.045 uSec</td></tr>
 <tr><td>Shift 100 right</td><td align="right">c2000 >>= 100</td><td align="right">0.14 uSec</td><td align="right">0.060 uSec</td></tr>
 <tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">6.2 mSec</td><td align="right">12 mSec</td></tr>
-<tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">71 mSec</td><td align="right">34 mSec</td></tr>
-<tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">0.12 mSec</td><td align="right">0.031 mSec</td></tr>
-<tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">0.70 uSec</td><td align="right">0.49 uSec</td></tr>
+<tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">55 mSec</td><td align="right">34 mSec</td></tr>
+<tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">780 mSec</td><td align="right">510 mSec</td></tr>
+<tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">37 uSec</td><td align="right">31 uSec</td></tr>
+<tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">0.69 uSec</td><td align="right">0.49 uSec</td></tr>
 <tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.88 uSec</td><td align="right">0.99 uSec</td></tr>
 <tr><td>Square root</td><td align="right">c2000.sqrt()</td><td align="right">22 uSec</td><td align="right">139 uSec</td></tr>
 <tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">2.3 mSec</td><td align="right">n.a.</td></tr>
@@ -133,4 +134,4 @@ There are references in the source code where appropriate.
 <h2><b>Acknowledgement</b></h2>
 
 The BitSieve class used in the implementation is a translation to Swift of the corresponding class from Java BigInteger.
-The GCD algorithm and the Karatsuba and ToomCook multiplication algorithms are modelled after the corresponding algorithms in Java BigInteger.
+The Karatsuba and ToomCook multiplication algorithms are modelled after the corresponding algorithms in Java BigInteger.

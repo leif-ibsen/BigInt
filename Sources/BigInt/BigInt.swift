@@ -131,7 +131,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         let digitGroups = number.count / digits
         
         // Pow = radix ** digits
-        let pow = BInt.limbRadix[radix].magnitude
+        let pow = BInt.limbRadix[radix]
         
         // Number of digits to process
         var g = number.count - digitGroups * digits
@@ -370,45 +370,47 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     }
     
     static let zeros = "000000000000000000000000000000000000000000000000000000000000000"
+    // Number of digits in a 64 bit word for each radix
     static let limbDigits = [0, 0,
                              63, 40, 31, 27, 24, 22, 21, 20, 19, 18, 17, 17, 16, 16, 15, 15, 15,
                              15, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 12, 12, 12, 12, 12, 12]
-    static let limbRadix = [BInt(0), BInt(0),
-                            BInt([0x8000000000000000]),
-                            BInt([0xa8b8b452291fe821]),
-                            BInt([0x4000000000000000]),
-                            BInt([0x6765c793fa10079d]),
-                            BInt([0x41c21cb8e1000000]),
-                            BInt([0x3642798750226111]),
-                            BInt([0x8000000000000000]),
-                            BInt([0xa8b8b452291fe821]),
-                            BInt([0x8ac7230489e80000]),
-                            BInt([0x4d28cb56c33fa539]),
-                            BInt([0x1eca170c00000000]),
-                            BInt([0x780c7372621bd74d]),
-                            BInt([0x1e39a5057d810000]),
-                            BInt([0x5b27ac993df97701]),
-                            BInt([0x1000000000000000]),
-                            BInt([0x27b95e997e21d9f1]),
-                            BInt([0x5da0e1e53c5c8000]),
-                            BInt([0xd2ae3299c1c4aedb]),
-                            BInt([0x16bcc41e90000000]),
-                            BInt([0x2d04b7fdd9c0ef49]),
-                            BInt([0x5658597bcaa24000]),
-                            BInt([0xa0e2073737609371]),
-                            BInt([0xc29e98000000000]),
-                            BInt([0x14adf4b7320334b9]),
-                            BInt([0x226ed36478bfa000]),
-                            BInt([0x383d9170b85ff80b]),
-                            BInt([0x5a3c23e39c000000]),
-                            BInt([0x8e65137388122bcd]),
-                            BInt([0xdd41bb36d259e000]),
-                            BInt([0xaee5720ee830681]),
-                            BInt([0x1000000000000000]),
-                            BInt([0x172588ad4f5f0981]),
-                            BInt([0x211e44f7d02c1000]),
-                            BInt([0x2ee56725f06e5c71]),
-                            BInt([0x41c21cb8e1000000])]
+    // limbRadix[i] = i ** limbDigits[i]
+    static let limbRadix: Limbs = [0, 0,
+                            0x8000000000000000,
+                            0xa8b8b452291fe821,
+                            0x4000000000000000,
+                            0x6765c793fa10079d,
+                            0x41c21cb8e1000000,
+                            0x3642798750226111,
+                            0x8000000000000000,
+                            0xa8b8b452291fe821,
+                            0x8ac7230489e80000,
+                            0x4d28cb56c33fa539,
+                            0x1eca170c00000000,
+                            0x780c7372621bd74d,
+                            0x1e39a5057d810000,
+                            0x5b27ac993df97701,
+                            0x1000000000000000,
+                            0x27b95e997e21d9f1,
+                            0x5da0e1e53c5c8000,
+                            0xd2ae3299c1c4aedb,
+                            0x16bcc41e90000000,
+                            0x2d04b7fdd9c0ef49,
+                            0x5658597bcaa24000,
+                            0xa0e2073737609371,
+                            0xc29e98000000000,
+                            0x14adf4b7320334b9,
+                            0x226ed36478bfa000,
+                            0x383d9170b85ff80b,
+                            0x5a3c23e39c000000,
+                            0x8e65137388122bcd,
+                            0xdd41bb36d259e000,
+                            0xaee5720ee830681,
+                            0x1000000000000000,
+                            0x172588ad4f5f0981,
+                            0x211e44f7d02c1000,
+                            0x2ee56725f06e5c71,
+                            0x41c21cb8e1000000]
 
     /// Byte array representation of magnitude value
     ///
@@ -490,10 +492,10 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         let d = BInt.limbRadix[radix]
         var digitGroups = [String]()
-        var tmp = BInt(self.magnitude)
-        while tmp.isNotZero {
-            let (q, r) = tmp.quotientAndRemainder(dividingBy: d)
-            digitGroups.append(r.isZero ? "0" : String(r.magnitude[0], radix: radix, uppercase: uppercase))
+        var tmp = self.magnitude
+        while !tmp.equalTo(0) {
+            let (q, r) = tmp.divMod(d)
+            digitGroups.append(String(r, radix: radix, uppercase: uppercase))
             tmp = q
         }
         var result = self.isNegative ? "-" : ""
@@ -1097,14 +1099,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public func modInverse(_ m: BInt) -> BInt {
         precondition(m.isPositive, "Modulus must be positive")
         var a = BInt.ONE
-        var b = BInt.ZERO
         var g = self.mod(m)
         var u = BInt.ZERO
-        var v = BInt.ONE
         var w = m
         while w.isPositive {
-            let q = g / w
-            (a, b, g, u, v, w) = (u, v, w, a - q * u, b - q * v, g - q * w)
+            let (q, r) = g.quotientAndRemainder(dividingBy: w)
+            (a, g, u, w) = (u, w, a - q * u, r)
         }
         precondition(g.isOne, "Modulus and self are not coprime")
         return a.isNegative ? a + m : a
@@ -1118,14 +1118,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public func modInverse(_ m: Int) -> Int {
         precondition(m > 0, "Modulus must be positive")
         var a = 1
-        var b = 0
         var g = self.mod(m)
         var u = 0
-        var v = 1
         var w = m
         while w > 0 {
-            let q = g / w
-            (a, b, g, u, v, w) = (u, v, w, a - q * u, b - q * v, g - q * w)
+            let (q, r) = g.quotientAndRemainder(dividingBy: w)
+            (a, g, u, w) = (u, w, a - q * u, r)
         }
         precondition(g == 1, "Modulus and self are not coprime")
         return a < 0 ? a + m : a
@@ -1517,6 +1515,47 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return candidate!
     }
 
+    /// The next probable prime greater than *self*
+    ///
+    /// - Parameter p: The returned number is prime with probability > 1-1/2^p, default value is 30
+    /// - Returns: The smallest probable prime greater than *self*, returns 2 if *self* is negative
+    public func nextPrime(_ p: Int = 30) -> BInt {
+        if self < BInt.TWO {
+            return BInt.TWO
+        }
+        var result = self + BInt.ONE
+        if result.bitWidth < 100 {
+            if result.isEven {
+                result += BInt.ONE
+            }
+            while true {
+                if result.bitWidth > 6 {
+                    let r = result % BInt.SPP
+                    if r % 3 == 0 || r % 5 == 0 || r % 7 == 0 || r % 11 == 0 || r % 13 == 0 || r % 17 == 0 ||
+                        r % 19 == 0 || r % 23 == 0 || r % 29 == 0 || r % 31 == 0 || r % 37 == 0 || r % 41 == 0 {
+                        result += BInt.TWO
+                        continue
+                    }
+                }
+                if result.bitWidth < 4 || result.isProbablyPrime(p) {
+                    return result
+                }
+                result += BInt.TWO
+            }
+        }
+        if result.isOdd {
+            result -= BInt.ONE
+        }
+        while true {
+            let sieve = BitSieve(result, p)
+            let candidate = sieve.retrieve()
+            if candidate != nil {
+                return candidate!
+            }
+            result += 2 * sieve.length
+        }
+    }
+
     /// Checks whether *self* is prime using the Miller-Rabin algorithm
     ///
     /// - Parameter p: If *true* is returned, *self* is prime with probability > 1-1/2^p
@@ -1581,14 +1620,58 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
 
     // MARK: Miscellaneous functions
 
+    /*
+     * Lehmer's gcd algorithm
+     * [KNUTH] - chapter 4.5.2, algorithm L
+     */
+    // Leave one bit for the sign and one for a possible overflow
+    static let B62 = BInt.ONE << 62
+
     /// Greatest common divisor
     ///
     /// - Parameter x: Operand
     /// - Returns: Greatest common divisor of *self* and x
     public func gcd(_ x: BInt) -> BInt {
-        return BInt(self.magnitude.gcd(x.magnitude))
-    }
-    
+        var u: BInt
+        var v: BInt
+        let selfabs = self.abs
+        let xabs = x.abs
+        if selfabs < xabs {
+            u = xabs
+            v = selfabs
+        } else {
+            u = selfabs
+            v = xabs
+        }
+        while v >= BInt.B62 {
+            let size = u.bitWidth - 62
+            var x = (u >> size).asInt()!
+            var y = (v >> size).asInt()!
+            var A = 1
+            var B = 0
+            var C = 0
+            var D = 1
+            while true {
+                let yC = y + C
+                let yD = y + D
+                if yC == 0 || yD == 0 {
+                    break
+                }
+                let q = (x + A) / yC
+                if q != (x + B) / yD {
+                    break
+                }
+                (A, B, x, C, D, y) = (C, D, y, A - q * C, B - q * D, x - q * y)
+            }
+            if B == 0 {
+                (u, v) = (v, u.mod(v))
+            } else {
+                (u, v) = (A * u + B * v, C * u + D * v)
+            }
+        }
+        return BInt(u.magnitude.gcd(v.magnitude))
+     }
+
     /*
      * [CRANDALL] - algorithm 2.3.5
      */

@@ -43,5 +43,33 @@ class PrimeTest: XCTestCase {
         doMersenne(127)
         doMersenne(521)
     }
+    
+    func test3() {
+        XCTAssertEqual(BInt(-14).nextPrime(), BInt.TWO)
+        var x = BInt.ZERO
+        for _ in 0 ..< 1000 {
+            let p = x.nextPrime()
+            XCTAssertTrue(p.isProbablyPrime())
+            var z = x + 1
+            while z < p {
+                XCTAssertFalse(z.isProbablyPrime())
+                z += 1
+            }
+            x = p
+        }
+    }
+
+    func test4() {
+        for _ in 0 ..< 10 {
+            let x = BInt(bitWidth: 100)
+            let p = x.nextPrime()
+            XCTAssertTrue(p.isProbablyPrime())
+            var z = x + 1
+            while z < p {
+                XCTAssertFalse(z.isProbablyPrime())
+                z += 1
+            }
+        }
+    }
 
 }

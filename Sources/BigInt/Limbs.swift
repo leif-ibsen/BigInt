@@ -567,21 +567,26 @@ extension Array where Element == Limb {
         return (q1, r)
     }
 
+    // Limbs / Limb => (quotient: Limbs, remainder: Limb)
     // [KNUTH] - chapter 4.3.1, exercise 16
-    func divMod1(_ v: Limb) -> (quotient: Limbs, remainder: Limb) {
+    func divMod(_ v: Limb) -> (quotient: Limbs, remainder: Limb) {
         precondition(v > 0, "Division by zero")
         if self.equalTo(0) {
             return ([0], 0)
         }
-        var w = Limbs(repeating: 0, count: self.count)
+        let n = v.leadingZeroBitCount
+        let d = v << n
+        let dRecip = d.dividingFullWidth((0xffffffffffffffff - d, 0xffffffffffffffff)).quotient
+        var w = self.shiftedLeft(n)
         var r = Limb(0)
-        for j in (0 ..< self.count).reversed() {
-            (w[j], r) = v.dividingFullWidth((r, self[j]))
+        for j in (0 ..< w.count).reversed() {
+            (w[j], r) = Limbs.div128(r, w[j], d, dRecip)
         }
         w.normalize()
-        return (w, r)
+        return (w, r >> n)
     }
 
+    // Limbs / Limbs => (quotient: Limbs, remainder: Limbs)
     func divMod(_ v: Limbs) -> (quotient: Limbs, remainder: Limbs) {
         var quotient = Limbs()
         var remainder = Limbs()
@@ -595,7 +600,7 @@ extension Array where Element == Limb {
             quotient = [0]
             remainder = self
         } else if v.count == 1 {
-            let (q, r) = self.divMod1(v[0])
+            let (q, r) = self.divMod(v[0])
             quotient = q
             remainder = [r]
         } else {

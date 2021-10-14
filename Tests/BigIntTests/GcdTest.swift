@@ -17,45 +17,51 @@ class GcdTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func test1() {
-        XCTAssertEqual(BInt.ZERO.gcd(BInt.ZERO), BInt.ZERO)
-        XCTAssertEqual(BInt.ONE.gcd(BInt.ZERO), BInt.ONE)
-        XCTAssertEqual(BInt.ZERO.gcd(BInt.ONE), BInt.ONE)
-        let x = BInt(bitWidth: 100)
+    func doTest(_ x: BInt, _ y: BInt) {
+        let g = x.gcd(y)
+        XCTAssertFalse(g.isNegative)
+        XCTAssertEqual(g, y.gcd(x))
+        XCTAssertEqual(x.gcd(BInt.ZERO), x.abs)
         XCTAssertEqual(x.gcd(BInt.ONE), BInt.ONE)
-        XCTAssertEqual(x.gcd(BInt.ZERO), x)
-        XCTAssertEqual(x.gcd(x), x)
-        XCTAssertEqual(BInt(4).gcd(BInt(272)), BInt(4))
-    }
-
-    func test2() {
-        var i = 1
-        for _ in 0 ..< 3 {
-            i *= 10
-            let x = BInt(bitWidth: i)
-            let y = BInt(bitWidth: 2 * i)
-            let gcd = x.gcd(y)
-            let (qx, rx) = x.quotientAndRemainder(dividingBy: gcd)
-            let (qy, ry) = y.quotientAndRemainder(dividingBy: gcd)
+        XCTAssertEqual(x.gcd(x), x.abs)
+        if g > 0 {
+            let (qx, rx) = x.quotientAndRemainder(dividingBy: g)
+            let (qy, ry) = y.quotientAndRemainder(dividingBy: g)
             XCTAssertEqual(rx, BInt.ZERO)
             XCTAssertEqual(ry, BInt.ZERO)
             XCTAssertEqual(qx.gcd(qy), BInt.ONE)
             XCTAssertEqual(qy.gcd(qx), BInt.ONE)
         }
+        XCTAssertEqual(x.gcd(x + 1), BInt.ONE)
     }
 
-    func test3() {
-        for _ in 0 ..< 1000 {
-            let x1 = BInt(bitWidth: 10)
-            XCTAssertEqual(x1.gcd(x1), x1)
-            XCTAssertEqual(x1.gcd(x1 + 1), BInt.ONE)
-            let x2 = BInt(bitWidth: 60)
-            XCTAssertEqual(x2.gcd(x2), x2)
-            XCTAssertEqual(x2.gcd(x2 + 1), BInt.ONE)
-            let x3 = BInt(bitWidth: 1000)
-            XCTAssertEqual(x3.gcd(x3), x3)
-            XCTAssertEqual(x3.gcd(x3 + 1), BInt.ONE)
+    func doTest1(_ x: BInt, _ y: BInt) {
+        doTest(x, y)
+        doTest(-x, y)
+        doTest(x, -y)
+        doTest(-x, -y)
+    }
+
+    func test1() {
+        var i = 1
+        for _ in 0 ..< 4 {
+            i *= 10
+            for _ in 0 ..< 100 {
+                let x = BInt(bitWidth: i)
+                let y = BInt(bitWidth: 2 * i)
+                doTest1(x, y)
+                doTest1(x, BInt(Int.max))
+                doTest1(x, BInt(Int.min))
+                doTest1(x, BInt(Int.max) + 1)
+                doTest1(x, BInt(Int.min) - 1)
+            }
         }
+    }
+
+    func test2() {
+        doTest1(BInt.ZERO, BInt.ZERO)
+        doTest1(BInt.ZERO, BInt.ONE)
+        doTest1(BInt.ONE, BInt.ONE)
     }
 
 }
