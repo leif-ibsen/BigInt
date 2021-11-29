@@ -1075,15 +1075,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public func mod(_ x: Int) -> Int {
         precondition(x != 0, "Division by zero")
         if x == Int.min {
-            let m = Int(self.magnitude[0] & 0x7fffffffffffffff)
-            return self.isNegative && m > 0 ? -(Int.min + m) : m
+            let r = Int(self.magnitude[0] & 0x7fffffffffffffff)
+            return self.isNegative && r > 0 ? -(Int.min + r) : r
         }
-        var r = 0
-        let absx = Swift.abs(x)
-        for m in self.magnitude.reversed() {
-            (_, r) = absx.dividingFullWidth((r, UInt(m)))
-        }
-        return self.isNegative && r > 0 ? absx - r : r
+        let absx = Limb(Swift.abs(x))
+        let (_, r) = self.magnitude.divMod(absx)
+        return Int(self.isNegative && r > 0 ? absx - r : r)
     }
 
     /*

@@ -54,7 +54,7 @@ class ToomCookTest: XCTestCase {
         XCTAssertEqual(r2, BInt.ZERO)
     }
 
-    // ToomCook and Karatsuba give same result
+    // ToomCook and Karatsuba must give same result
     func test4() {
         for _ in 0 ..< 10 {
             let a = BInt(bitWidth: (Limbs.TC_THR + 1) * 64)

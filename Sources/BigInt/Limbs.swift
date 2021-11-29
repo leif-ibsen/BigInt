@@ -28,15 +28,16 @@ extension Array where Element == Limb {
 
     // Ensure no leading 0 Limbs - except if self = [0]
     mutating func normalize() {
-        let sc = self.count
-        if sc == 0 {
-            self.append(0)
-        } else if sc > 1 {
-            var i = sc - 1
-            while self[i] == 0 && i > 0 {
+        if self.count == 0 {
+            self = [0]
+        } else {
+            var n = 0
+            var i = self.count - 1
+            while i > 0 && self[i] == 0 {
+                n += 1
                 i -= 1
             }
-            self.removeSubrange(i + 1 ..< sc)
+            self.removeLast(n)
         }
     }
 
@@ -188,6 +189,9 @@ extension Array where Element == Limb {
 
     // self = self << shifts
     mutating func shiftLeft(_ shifts: Int) {
+        if self.equalTo(0) {
+            return
+        }
         let limbShifts = shifts >> 6
         let bitShifts = shifts & 0x3f
         var b = self[0] >> (64 - bitShifts)
@@ -203,7 +207,9 @@ extension Array where Element == Limb {
         if b != 0 {
             self.append(b)
         }
-        for _ in 0 ..< limbShifts {
+        if limbShifts > 1 {
+            self.insert(contentsOf: Limbs(repeating: 0, count: limbShifts), at: 0)
+        } else if limbShifts == 1 {
             self.insert(0, at: 0)
         }
     }
@@ -402,19 +408,17 @@ extension Array where Element == Limb {
     // Limb threshold for Karatsuba multiplication
     static let KA_THR = 150
     // Limb threshold for ToomCook multiplication
-    static let TC_THR = 250
+    static let TC_THR = 200
+    // Limb threshold for FFT multiplication
+    static let FFT_THR = 8000
 
     // self = self * x
     // [KNUTH] - chapter 4.3.1, algorithm M
     mutating func multiply(_ x: Limbs) {
         let m = self.count
         let n = x.count
-        var w: Limbs
-        if m > Limbs.TC_THR && n > Limbs.TC_THR {
-            w = self.toomCookTimes(x)
-        } else if m > Limbs.KA_THR && n > Limbs.KA_THR {
-            w = self.karatsubaTimes(x)
-        } else {
+        var w : Limbs
+        if m < Limbs.KA_THR || n < Limbs.KA_THR {
             w = Limbs(repeating: 0, count: m + n)
             var carry: Limb
             var ovfl1, ovfl2: Bool
@@ -434,6 +438,12 @@ extension Array where Element == Limb {
                 }
                 w[i + n] = carry
             }
+        } else if m < Limbs.TC_THR || n < Limbs.TC_THR {
+            w = self.karatsubaTimes(x)
+        } else if m < Limbs.FFT_THR || n < Limbs.FFT_THR {
+            w = self.toomCookTimes(x)
+        } else {
+            w = self.fftTimes(x)
         }
         w.normalize()
         self = w
@@ -472,11 +482,7 @@ extension Array where Element == Limb {
     mutating func square() {
         let n = self.count
         var w: Limbs
-        if n > Limbs.TC_THR {
-            w = self.toomCookSquare()
-        } else if n > Limbs.KA_THR {
-            w = self.karatsubaSquare()
-        } else {
+        if n < Limbs.KA_THR {
             w = Limbs(repeating: 0, count: n * 2)
             var carry: Limb
             var ovfl1, ovfl2, ovfl3: Bool
@@ -527,6 +533,12 @@ extension Array where Element == Limb {
                 }
                 assert(carry < 2)
             }
+        } else if n < Limbs.TC_THR {
+            w = self.karatsubaSquare()
+        } else if n < Limbs.FFT_THR {
+            w = self.toomCookSquare()
+        } else {
+            w = self.fftSquare()
         }
         w.normalize()
         self = w

@@ -49,10 +49,10 @@ class PrimeTest: XCTestCase {
         var x = BInt.ZERO
         for _ in 0 ..< 1000 {
             let p = x.nextPrime()
-            XCTAssertTrue(p.isProbablyPrime())
+            XCTAssertTrue(p.isProbablyPrime(100))
             var z = x + 1
             while z < p {
-                XCTAssertFalse(z.isProbablyPrime())
+                XCTAssertFalse(z.isProbablyPrime(100))
                 z += 1
             }
             x = p
@@ -63,10 +63,10 @@ class PrimeTest: XCTestCase {
         for _ in 0 ..< 10 {
             let x = BInt(bitWidth: 100)
             let p = x.nextPrime()
-            XCTAssertTrue(p.isProbablyPrime())
+            XCTAssertTrue(p.isProbablyPrime(100))
             var z = x + 1
             while z < p {
-                XCTAssertFalse(z.isProbablyPrime())
+                XCTAssertFalse(z.isProbablyPrime(100))
                 z += 1
             }
         }

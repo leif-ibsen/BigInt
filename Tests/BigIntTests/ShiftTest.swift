@@ -29,5 +29,15 @@ class ShiftTest: XCTestCase {
         XCTAssertEqual(x3, BInt("2469135780")!)
     }
 
+    func test2() {
+        let x: Limbs = [0]
+        XCTAssertEqual(x.shiftedLeft(0), [0])
+        XCTAssertEqual(x.shiftedLeft(1), [0])
+        XCTAssertEqual(x.shiftedLeft(64), [0])
+        XCTAssertEqual(x.shiftedLeft(65), [0])
+        XCTAssertEqual(x.shiftedLeft(128), [0])
+        XCTAssertEqual(x.shiftedLeft(129), [0])
+    }
+
 
 }

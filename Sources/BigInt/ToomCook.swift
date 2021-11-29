@@ -81,7 +81,7 @@ extension Array where Element == Limb {
         result.add(r0.magnitude, 0)
         return result
     }
-    
+
     func toomCookSquare() -> Limbs {
         let k = (self.count + 2) / 3
         let a0 = self.toomCookSlice0(k)
@@ -114,5 +114,5 @@ extension Array where Element == Limb {
         result.add(v0.magnitude, 0)
         return result
     }
-    
+
 }
