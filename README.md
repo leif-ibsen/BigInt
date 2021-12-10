@@ -19,7 +19,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.9"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.10"),
 	  ]
 
 <h2><b>Examples</b></h2>
@@ -118,19 +118,44 @@ p1000 (probably a prime) = 76628413044383842965682200773558720038414755765933857
 
 <h2><b>References</b></h2>
 
-Algorithms from the following books have been used in the implementation.
+Algorithms from the following books and papers have been used in the implementation.
 There are references in the source code where appropriate.
 
 <ul>
 <li>[BRENT] - Brent and Zimmermann: Modern Computer Arithmetic, 2010</li>
+<li>[BURNIKEL] - Burnikel and Ziegler: Fast Recursive Division, October 1998</li>
 <li>[CRANDALL] - Crandall and Pomerance: Prime Numbers - A Computational Perspective. Second Edition, Springer 2005</li>
 <li>[GRANLUND] - Moller and Granlund: Improved Division by Invariant Integers, 2011</li>
 <li>[HANDBOOK] - Menezes, Oorschot, Vanstone: Handbook of Applied Cryptography. CRC Press 1996</li>
 <li>[KNUTH] - Donald E. Knuth: Seminumerical Algorithms. Addison-Wesley 1971</li>
 </ul>
 
-
-<h2><b>Acknowledgement</b></h2>
-
-The BitSieve class used in the implementation is a translation to Swift of the corresponding class from Java BigInteger.
-The Karatsuba and ToomCook multiplication algorithms are modelled after the corresponding algorithms in Java BigInteger.
+<h2><b>Algorithms</b></h2>
+Some of the algorithms used in BigInt are described below.
+<h3><b>Multiplication</b></h3>
+<ul>
+<li>Schonhage-Strassen FFT based algorithm for numbers above 384000 bits</li>
+<li>ToomCook-3 algorithm for numbers above 12800 bits</li>
+<li>Karatsuba algorithm for numbers above 6400 bits</li>
+<li>Basecase - Knuth algorithm M</li>
+</ul>
+<h3><b>Division and Remainder</b></h3>
+<ul>
+<li>Burnikel-Ziegler algorithm for divisors above 3840 bits provided the dividend has at least 3840 bits more than the divisor</li>
+<li>Basecase - Knuth algorithm D</li>
+</ul>
+<h3><b>Greatest Common Divisor</b></h3>
+Lehmer's algorithm [KNUTH] chapter 4.5.2, with binary GCD basecase.
+<h3><b>Modular Exponentiation</b></h3>
+Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction for exponents with fewer than 2048 bits
+and Montgomery reduction for larger exponents.
+<h3><b>Inverse Modulus</b></h3>
+Extended Euclid algorithm 2.1.4 from [CRANDALL].
+<h3><b>Square Root</b></h3>
+Algorithm 1.12 (SqrtRem) from [BRENT] with algorithm 9.2.11 from [CRANDALL] as basecase.
+<h3><b>Square Root Modulo a Prime Number</b></h3>
+Algorithm 2.3.8 from [CRANDALL].
+<h3><b>Prime Number Test</b></h3>
+Miller-Rabin test.
+<h3><b>Prime Number Generation</b></h3>
+The algorithm from Java BigInteger translated to Swift.

@@ -102,4 +102,33 @@ class ExpModTest: XCTestCase {
         
         XCTAssertEqual(r1, r2)
     }
+    
+    // Barrett reduction must give same result as Montgomery reduction
+    func test5() {
+        doTest5(a1, x1, mp1)
+        doTest5(a2, x2, mp2)
+        doTest5(a3, x3, mp3)
+    }
+
+    func doTest5(_ a: BInt, _ x: BInt, _ m: BInt) {
+        XCTAssert(m.isOdd) // Else Montgomery reduction doesn't work
+        let result = basicExpMod(a, x, m)
+        XCTAssertEqual(result, BInt.MontgomeryModulus(a, m).expMod(x))
+        XCTAssertEqual(result, BInt.BarrettModulus(a, m).expMod(x))
+    }
+    
+    // Straight forward (slow) expMod
+    func basicExpMod(_ a: BInt, _ x: BInt, _ m: BInt) -> BInt {
+        var result = BInt.ONE
+        var base = a % m
+        var exp = x
+        while exp.isPositive {
+            if exp.isOdd {
+                result = (result * base) % m
+            }
+            exp >>= 1
+            base = (base ** 2) % m
+        }
+        return result
+    }
 }

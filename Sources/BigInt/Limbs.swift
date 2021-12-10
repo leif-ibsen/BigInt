@@ -406,11 +406,11 @@ extension Array where Element == Limb {
      */
 
     // Limb threshold for Karatsuba multiplication
-    static let KA_THR = 150
+    static let KA_THR = 100
     // Limb threshold for ToomCook multiplication
     static let TC_THR = 200
     // Limb threshold for FFT multiplication
-    static let FFT_THR = 8000
+    static let FFT_THR = 6000
 
     // self = self * x
     // [KNUTH] - chapter 4.3.1, algorithm M

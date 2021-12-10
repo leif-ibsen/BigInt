@@ -930,7 +930,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         self.quotientAndRemainder(dividingBy: x, &quotient, &remainder)
         return (quotient, remainder)
     }
-    
+
     /// Division
     ///
     /// - Precondition: Divisor is not zero
@@ -939,7 +939,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - quotient: Set to the quotient of *self* / x
     ///   - remainder: Set to the remainder of *self* / x
     public func quotientAndRemainder(dividingBy x: BInt, _ quotient: inout BInt, _ remainder: inout BInt) {
-        self.magnitude.divMod(x.magnitude, &quotient.magnitude, &remainder.magnitude)
+        if x.magnitude.count > Limbs.BZ_DIV_LIMIT && self.magnitude.count > x.magnitude.count + Limbs.BZ_DIV_LIMIT {
+            self.magnitude.bzDivMod(x.magnitude, &quotient.magnitude, &remainder.magnitude)
+        } else {
+            self.magnitude.divMod(x.magnitude, &quotient.magnitude, &remainder.magnitude)
+        }
         quotient.setSign(self.isNegative != x.isNegative)
         remainder.setSign(self.isNegative)
     }

@@ -110,7 +110,9 @@ struct Fermat {
         return rev
     }
 
-    // [BRENT] - algorithm 2.2
+    /*
+     * [BRENT] - algorithm 2.2
+     */
     func forwardFFT(_ a: inout [Limbs], _ w: Int, _ level: Int,  _ start: Int) {
         assert(a.count == self.K)
         let size = self.K >> level
@@ -131,7 +133,9 @@ struct Fermat {
         }
     }
 
-    // [BRENT] - algorithm 2.3
+    /*
+     * [BRENT] - algorithm 2.3
+     */
     func backwardFFT(_ a: inout [Limbs], _ w: Int, _ level: Int, _ start: Int) {
         assert(a.count == self.K)
         let size = self.K >> level
@@ -157,8 +161,10 @@ struct Fermat {
  */
 extension Array where Element == Limb {
 
-    // Multiply self by x
-    // [BRENT] - algorithm 2.4
+    /*
+     * Multiply self by x
+     * [BRENT] - algorithm 2.4
+     */
     func fftTimes(_ x: Limbs) -> Limbs {
         let fmt = Fermat(self.bitWidth + x.bitWidth)
         var a = [Limbs](repeating: [0], count: fmt.K)
@@ -196,7 +202,9 @@ extension Array where Element == Limb {
         return finalize(&a, fmt)
     }
 
-    // Square self
+    /*
+     * Square self
+     */
     func fftSquare() -> Limbs {
         let fmt = Fermat(self.bitWidth * 2)
         var a = [Limbs](repeating: [0], count: fmt.K)
