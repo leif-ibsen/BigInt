@@ -1740,7 +1740,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: A random value < absolute value of *self*
     public func randomLessThan() -> BInt {
         precondition(self.isPositive, "Must be positive")
-        return BInt(bitWidth: self.bitWidth) % self
+        var x: BInt
+        repeat {
+            x = BInt(bitWidth: self.bitWidth)
+        } while x >= self
+        return x
     }
 
     /*

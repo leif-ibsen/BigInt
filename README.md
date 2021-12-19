@@ -19,7 +19,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.10"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.11"),
 	  ]
 
 <h2><b>Examples</b></h2>
@@ -105,7 +105,7 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">55 mSec</td><td align="right">34 mSec</td></tr>
 <tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">780 mSec</td><td align="right">510 mSec</td></tr>
 <tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">37 uSec</td><td align="right">31 uSec</td></tr>
-<tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">0.69 uSec</td><td align="right">0.49 uSec</td></tr>
+<tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">0.50 uSec</td><td align="right">0.49 uSec</td></tr>
 <tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.88 uSec</td><td align="right">0.99 uSec</td></tr>
 <tr><td>Square root</td><td align="right">c2000.sqrt()</td><td align="right">22 uSec</td><td align="right">139 uSec</td></tr>
 <tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">2.3 mSec</td><td align="right">n.a.</td></tr>
