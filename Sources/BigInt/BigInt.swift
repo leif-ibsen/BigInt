@@ -1673,6 +1673,14 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return BInt(u.magnitude.gcd(v.magnitude))
      }
 
+    /// Least common multiple
+    ///
+    /// - Parameter x: Operand
+    /// - Returns: Least common multiple of *self* and *x* - a non-negative number
+    public func lcm(_ x: BInt) -> BInt {
+        return self.isZero || x.isZero ? BInt.ZERO : ((self * x) / self.gcd(x)).abs
+    }
+
     /*
      * [CRANDALL] - algorithm 2.3.5
      */

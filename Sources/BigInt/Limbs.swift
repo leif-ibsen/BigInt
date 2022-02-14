@@ -712,11 +712,11 @@ extension Array where Element == Limb {
             }
             let cmp = u.compare(v)
             if cmp < 0 {
-                v.difference(u)
+                _ = v.difference(u)
                 t = v
                 tSign = true
             } else if cmp > 0 {
-                u.difference(v)
+                _ = u.difference(v)
                 t = u
                 tSign = false
             } else {

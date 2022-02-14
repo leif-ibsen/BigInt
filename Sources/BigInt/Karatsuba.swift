@@ -33,8 +33,8 @@ extension Array where Element == Limb {
         sh.add(sl)
         var p3 = xh
         p3.multiply(sh)
-        p3.subtract(p1, 0)
-        p3.subtract(p2, 0)
+        _ = p3.subtract(p1, 0)
+        _ = p3.subtract(p2, 0)
         var w = Limbs(repeating: 0, count: 4 * k)
         w.add(p1, 2 * k)
         w.add(p3, k)
@@ -51,17 +51,17 @@ extension Array where Element == Limb {
         var p: Limbs
         if xh.compare(xl) > 0 {
             p = xh
-            p.subtract(xl, 0)
+            _ = p.subtract(xl, 0)
         } else {
             p = xl
-            p.subtract(xh, 0)
+            _ = p.subtract(xh, 0)
         }
         p.square()
         var w = Limbs(repeating: 0, count: 4 * k)
         w.add(xhs, 2 * k)
         w.add(xhs, k)
         w.add(xls, k)
-        w.subtract(p, k)
+        _ = w.subtract(p, k)
         w.add(xls, 0)
         return w
     }

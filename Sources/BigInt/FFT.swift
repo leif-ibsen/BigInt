@@ -61,7 +61,7 @@ struct Fermat {
         var x = a
         x.add(b)
         if x.compare(self.N) >= 0 {
-            x.subtract(self.N, 0)
+            _ = x.subtract(self.N, 0)
         }
         x.normalize()
         return x
@@ -75,7 +75,7 @@ struct Fermat {
         if x.compare(b) < 0 {
             x.add(self.N)
         }
-        x.subtract(b, 0)
+        _ = x.subtract(b, 0)
         x.normalize()
         return x
     }
@@ -89,7 +89,7 @@ struct Fermat {
             x.shiftLeft(r)
             reduce(&x)
             if q & 1 == 1 && !x.equalTo(0) {
-                x.difference(self.N)
+                _ = x.difference(self.N)
             }
             x.normalize()
         }
@@ -247,7 +247,7 @@ extension Array where Element == Limb {
             offset += fmt.m
         }
         if anyCorrections {
-            C.subtract(corrections, 0)
+            _ = C.subtract(corrections, 0)
         }
         return C
     }

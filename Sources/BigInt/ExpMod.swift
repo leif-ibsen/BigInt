@@ -161,9 +161,9 @@ extension BInt {
                 bk[self.k1] = 1
                 t.add(bk)
             }
-            t.difference(q)
+            _ = t.difference(q)
             while t.compare(self.modulus) >= 0 {
-                t.difference(self.modulus)
+                _ = t.difference(self.modulus)
             }
         }
 
@@ -233,7 +233,7 @@ extension BInt {
             u.add(t)
             divideR(&u)
             if !u.lessThan(self.modulus) {
-                u.difference(self.modulus)
+                _ = u.difference(self.modulus)
             }
             t = u
         }

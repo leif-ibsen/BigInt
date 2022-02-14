@@ -24,81 +24,81 @@ class PerformanceTest: XCTestCase {
 
     func testAddition() {
         let N = 100000
-        var x = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                x = a1000 + b1000
+                _ = a1000 + b1000
             }
         }
     }
 
     func testSubtraction() {
         let N = 100000
-        var x = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                x = a1000 - b1000
+                _ = a1000 - b1000
             }
         }
     }
 
     func testMultiplication() {
         let N = 1000
-        var x = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                x = a1000 * b1000
+                _ = a1000 * b1000
             }
         }
     }
 
     func testSquaring() {
         let N = 1000
-        var x = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                x = a1000 ** 2
+                _ = a1000 ** 2
             }
         }
     }
 
     func testSqrt() {
         let N = 1000
-        var x = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                x = a1000.sqrt()
+                _ = a1000.sqrt()
             }
         }
     }
 
     func testDivision() {
         let N = 1000
-        var q = BInt.ZERO
-        var r = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                (q, r) = c2000.quotientAndRemainder(dividingBy: a1000)
+                (_, _) = c2000.quotientAndRemainder(dividingBy: a1000)
             }
         }
     }
 
     func testGcd() {
         let N = 10
-        var x = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                x = a1000.gcd(b1000)
+                _ = a1000.gcd(b1000)
+            }
+        }
+    }
+
+    func testLcm() {
+        let N = 10
+        self.measure {
+            for _ in 0 ..< N {
+                _ = a1000.lcm(b1000)
             }
         }
     }
 
     func testExpMod() {
         let N = 10
-        var x = BInt.ZERO
         self.measure {
             for _ in 0 ..< N {
-                x = a1000.expMod(b1000, c2000)
+                _ = a1000.expMod(b1000, c2000)
             }
         }
     }

@@ -128,7 +128,7 @@ extension Array where Element == Limb {
             (Q, R1) = Div2n1n(n, A, B1)
         } else {
             R1 = A1
-            R1.subtract(B1, 0)
+            _ = R1.subtract(B1, 0)
             R1.shiftLeft(n << 6)
             R1.add(B1, 0)
             Q = Limbs(repeating: 0xffffffffffffffff, count: n)
@@ -139,9 +139,9 @@ extension Array where Element == Limb {
         R.add(A3)
         while R.compare(D) < 0 {
             R.add(B)
-            Q.subtract([1], 0)
+            _ = Q.subtract([1], 0)
         }
-        R.subtract(D, 0)
+        _ = R.subtract(D, 0)
         return (Q, R)
     }
 
