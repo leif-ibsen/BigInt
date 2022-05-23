@@ -9,14 +9,6 @@ import XCTest
 
 class RootTest: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func test1() {
         for _ in 0 ..< 100 {
             let x = BInt(bitWidth: 20000)
@@ -24,6 +16,16 @@ class RootTest: XCTestCase {
                 let y = x.root(n)
                 XCTAssert(y ** n <= x)
                 XCTAssert((y + 1) ** n > x)
+                let (root, rem) = x.rootRemainder(n)
+                XCTAssertEqual(root ** n + rem, x)
+            }
+            let x1 = -x
+            for n in stride(from: 1, through: 11, by: 2) {
+                let y = x1.root(n)
+                XCTAssert(y ** n >= x1)
+                XCTAssert((y - 1) ** n < x1)
+                let (root, rem) = x1.rootRemainder(n)
+                XCTAssertEqual(root ** n + rem, x1)
             }
         }
     }
@@ -50,8 +52,57 @@ class RootTest: XCTestCase {
                 let s = x.sqrt()
                 XCTAssert(s ** 2 <= x)
                 XCTAssert((s + 1) ** 2 >  x)
+                let (root, rem) = x.sqrtRemainder()
+                XCTAssertEqual(root ** 2 + rem, x)
             }
             bw *= 2
+        }
+    }
+    
+    func test4() {
+        XCTAssert(BInt.ZERO.isPerfectSquare())
+        XCTAssert(BInt.ONE.isPerfectSquare())
+        XCTAssert(!(-BInt.ONE).isPerfectSquare())
+        for i in 2 ..< 1000 {
+            let x = BInt(i)
+            let x1 = x + 1
+            let x2 = x - 1
+            XCTAssert((x * x).isPerfectSquare())
+            XCTAssert(!(x * x1).isPerfectSquare())
+            XCTAssert(!(x * x2).isPerfectSquare())
+        }
+    }
+
+    func test5() {
+        for i in 0 ..< 1000 {
+            let x = BInt(i)
+            let (root, rem) = x.sqrtRemainder()
+            XCTAssertEqual(root * root + rem, x)
+            XCTAssert(x.isPerfectSquare() || rem.isPositive)
+            XCTAssert(!x.isPerfectSquare() || rem.isZero)
+        }
+    }
+
+    func test6() {
+        XCTAssert(BInt.ZERO.isPerfectRoot())
+        XCTAssert(BInt.ONE.isPerfectRoot())
+        XCTAssert((-BInt.ONE).isPerfectRoot())
+        for i in 0 ..< 1000 {
+            let x = BInt(i)
+            let perfect = x.isPerfectRoot()
+            for n in 2 ... 10 {
+                XCTAssert((x ** n).isPerfectRoot())
+                let (_, rem) = x.rootRemainder(n)
+                XCTAssert(perfect || rem.isPositive)
+            }
+            let x1 = -x
+            for n in stride(from: 1, through: 11, by: 2) {
+                let y = x1.root(n)
+                XCTAssert(y ** n >= x1)
+                XCTAssert((y - 1) ** n < x1)
+                let (root, rem) = x1.rootRemainder(n)
+                XCTAssertEqual(root ** n + rem, x1)
+            }
         }
     }
 

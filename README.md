@@ -19,7 +19,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.2.12"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.3.0"),
 	  ]
 
 <h2><b>Examples</b></h2>
@@ -104,6 +104,8 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">6.2 mSec</td><td align="right">12 mSec</td></tr>
 <tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">55 mSec</td><td align="right">34 mSec</td></tr>
 <tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">780 mSec</td><td align="right">510 mSec</td></tr>
+<tr><td>Factorial</td><td align="right">BInt.factorial(100000)</td><td align="right">70 mSec</td><td align="right">n.a.</td></tr>
+<tr><td>Fibonacci</td><td align="right">BInt.fibonacci(100000)</td><td align="right">0.75 mSec</td><td align="right">n.a.</td></tr>
 <tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">37 uSec</td><td align="right">31 uSec</td></tr>
 <tr><td>Least common multiple</td><td align="right">a1000.lcm(b1000)</td><td align="right">42 uSec</td><td align="right">n.a.</td></tr>
 <tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">0.50 uSec</td><td align="right">0.49 uSec</td></tr>
@@ -160,3 +162,7 @@ Algorithm 2.3.8 from [CRANDALL].
 Miller-Rabin test.
 <h3><b>Prime Number Generation</b></h3>
 The algorithm from Java BigInteger translated to Swift.
+<h3><b>Factorial</b></h3>
+The 'SplitRecursive' algorithm from Peter Luschny: https://www.luschny.de
+<h3><b>Fibonacci</b></h3>
+The 'fastDoubling' algorithm from Project Nayuki: https://www.nayuki.io

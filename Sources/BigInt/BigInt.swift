@@ -1516,47 +1516,6 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return candidate!
     }
 
-    /// The next probable prime greater than *self*
-    ///
-    /// - Parameter p: The returned number is prime with probability > 1-1/2^p, default value is 30
-    /// - Returns: The smallest probable prime greater than *self*, returns 2 if *self* is negative
-    public func nextPrime(_ p: Int = 30) -> BInt {
-        if self < BInt.TWO {
-            return BInt.TWO
-        }
-        var result = self + BInt.ONE
-        if result.bitWidth < 100 {
-            if result.isEven {
-                result += BInt.ONE
-            }
-            while true {
-                if result.bitWidth > 6 {
-                    let r = result % BInt.SPP
-                    if r % 3 == 0 || r % 5 == 0 || r % 7 == 0 || r % 11 == 0 || r % 13 == 0 || r % 17 == 0 ||
-                        r % 19 == 0 || r % 23 == 0 || r % 29 == 0 || r % 31 == 0 || r % 37 == 0 || r % 41 == 0 {
-                        result += BInt.TWO
-                        continue
-                    }
-                }
-                if result.bitWidth < 4 || result.isProbablyPrime(p) {
-                    return result
-                }
-                result += BInt.TWO
-            }
-        }
-        if result.isOdd {
-            result -= BInt.ONE
-        }
-        while true {
-            let sieve = BitSieve(result, p)
-            let candidate = sieve.retrieve()
-            if candidate != nil {
-                return candidate!
-            }
-            result += 2 * sieve.length
-        }
-    }
-
     /// Checks whether *self* is prime using the Miller-Rabin algorithm
     ///
     /// - Parameter p: If *true* is returned, *self* is prime with probability > 1-1/2^p
@@ -1608,18 +1567,323 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return x == s_1
     }
 
+    /// The next probable prime greater than *self*
+    ///
+    /// - Parameter p: The returned number is prime with probability > 1-1/2^p, default value is 30
+    /// - Returns: The smallest probable prime greater than *self*, returns 2 if *self* is negative
+    public func nextPrime(_ p: Int = 30) -> BInt {
+        if self < BInt.TWO {
+            return BInt.TWO
+        }
+        var result = self + BInt.ONE
+        if result.bitWidth < 100 {
+            if result.isEven {
+                result += BInt.ONE
+            }
+            while true {
+                if result.bitWidth > 6 {
+                    let r = result % BInt.SPP
+                    if r % 3 == 0 || r % 5 == 0 || r % 7 == 0 || r % 11 == 0 || r % 13 == 0 || r % 17 == 0 ||
+                        r % 19 == 0 || r % 23 == 0 || r % 29 == 0 || r % 31 == 0 || r % 37 == 0 || r % 41 == 0 {
+                        result += BInt.TWO
+                        continue
+                    }
+                }
+                if result.bitWidth < 4 || result.isProbablyPrime(p) {
+                    return result
+                }
+                result += BInt.TWO
+            }
+        }
+        if result.isOdd {
+            result -= BInt.ONE
+        }
+        while true {
+            let sieve = BitSieve(result, p)
+            let candidate = sieve.retrieve()
+            if candidate != nil {
+                return candidate!
+            }
+            result += 2 * sieve.length
+        }
+    }
+
     /// A probable prime number with a given bitwidth
     ///
+    /// - Precondition: bitWidth > 1
     /// - Parameters:
-    ///   - bitWidth: The bitWidth
+    ///   - bitWidth: The bitWidth - must be > 1
     ///   - p: The returned number is prime with probability > 1-1/2^p, default value is 30
     /// - Returns: A prime number with the specified bitwidth and probability
     public static func probablePrime(_ bitWidth: Int, _ p: Int = 30) -> BInt {
+        precondition(bitWidth > 1, "Bitwidth must be > 1")
         return bitWidth < 100 ? smallPrime(bitWidth) : largePrime(bitWidth, p)
     }
 
 
+    // MARK: Root extraction functions
+
+    /*
+     * [CRANDALL] - exercise 4.11
+     */
+    /// n'th root
+    ///
+    /// - Precondition:
+    ///   - *self* is non-negative or *n* is odd
+    ///   - n is positive
+    /// - Parameter n: The root
+    /// - Returns: The integer part of the n'th root of *self*
+    public func root(_ n: Int) -> BInt {
+        precondition(!self.isNegative || n & 1 == 1, "\(n)'th root of negative number")
+        precondition(n > 0, "non-positive root")
+        if self.isZero {
+            return BInt.ZERO
+        }
+        let abs = self.abs
+        let bn = BInt(n)
+        let bn1 = bn - 1
+        var x = BInt.ONE << (abs.bitWidth / n + 1)
+        while true {
+            let xx = x ** (n - 1)
+            let y = (abs / xx + x * bn1) / bn
+            if y >= x {
+                return self.isNegative ? -x : x
+            }
+            x = y
+        }
+    }
+
+    /// n'th root and remainder
+    ///
+    /// - Precondition:
+    ///   - *self* is non-negative or *n* is odd
+    ///   - n is positive
+    /// - Parameter n: The root
+    /// - Returns: root = the integer part of the n'th root of *self*, rem = *self* - root^n
+    public func rootRemainder(_ n: Int) -> (root: BInt, rem: BInt) {
+        let x = self.root(n)
+        return (root: x, rem: self - x ** n)
+    }
+
+    /// Check whether *self* is a perfect root, that is, for some integer x and n > 1 *self* = x^n
+    ///
+    /// - Returns: *true* iff *self* is a perfect root
+    public func isPerfectRoot() -> Bool {
+        let abs = self.abs
+        if abs < BInt.TWO {
+            return true
+        }
+        for n in 2 ... abs.bitWidth {
+            if abs.rootRemainder(n).rem.isZero {
+                if self.isPositive || n & 1 == 1 {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    /*
+     * [CRANDALL] - algorithm 9.2.11
+     */
+    func basicSqrt() -> BInt {
+        if self.isZero {
+            return BInt.ZERO
+        }
+        var x = BInt.ONE << (self.bitWidth / 2 + 1)
+        while true {
+            let y = (self / x + x) >> 1
+            if y >= x {
+                return x
+            }
+            x = y
+        }
+    }
+
+    /// Square root of a non-negative number
+    ///
+    /// - Precondition: *self* is non-negative
+    /// - Returns: The integer part of the square root of *self*
+    public func sqrt() -> BInt {
+        return self.sqrtRemainder().root
+    }
+
+    /*
+     * [BRENT] - algorithm 1.12
+     */
+    /// Square root and remainder of a non-negative number
+    ///
+    /// - Precondition: *self* is non-negative
+    /// - Returns: root = the integer part of the square root of *self*, rem = *self* - root^2
+    public func sqrtRemainder() -> (root: BInt, rem: BInt) {
+        precondition(!self.isNegative, "Square root of negative number")
+        let l = (self.magnitude.count - 1) >> 2
+        if l == 0 {
+            let sq = self.basicSqrt()
+            return (sq, self - sq ** 2)
+        }
+        let shifts = l * 64
+        let a0 = BInt(Limbs(self.magnitude[0 ..< l]))
+        let a1 = BInt(Limbs(self.magnitude[l ..< 2 * l]))
+        let a2 = BInt(Limbs(self.magnitude[2 * l ..< 3 * l]))
+        let a3 = BInt(Limbs(self.magnitude[3 * l ..< self.magnitude.count]))
+        let (s1, r1) = (a3 << shifts + a2).sqrtRemainder()
+        let (q, u) = (r1 << shifts + a1).quotientAndRemainder(dividingBy: s1 << 1)
+        var s = s1 << shifts + q
+        var r = u << shifts + a0 - q ** 2
+        if r.isNegative {
+            r += 2 * s - 1
+            s -= 1
+        }
+        return (s, r)
+    }
+
+    static let maybeSquare: [Bool] = [
+        true, true, false, false, true, false, false, false, false, true, false, false, false, false, false, false,
+        true, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, true, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false,
+        true, true, false, false, true, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, true, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, true, false, false, false, false, true, false, false, false, false, false, false,
+        true, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, true, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, true, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, true, false, false, false, false, true, false, false, false, false, false, false,
+        false, true, false, false, false, false, false, false, false, true, false, false, false, false, false, false]
+    
+    /// Check whether *self* is a perfect square, that is, for some integer x *self* = x^2
+    ///
+    /// - Returns: *true* iff *self* is a perfect square
+    public func isPerfectSquare() -> Bool {
+        if self.isNegative {
+            return false
+        } else {
+            return BInt.maybeSquare[Int(self.magnitude[0] & 0xff)] ? self.sqrtRemainder().rem.isZero : false
+        }
+    }
+
+    /*
+     * [CRANDALL] - algorithm 2.3.8
+     */
+    /// Square root modulo a prime number
+    ///
+    /// - Parameter p: An odd prime number
+    /// - Returns: x, such that x^2 mod p = *self*, or *nil* if no such x exists
+    public func sqrtMod(_ p: BInt) -> BInt? {
+        if self.jacobiSymbol(p) != 1 {
+            return nil
+        }
+        let A = self % p
+        switch (p % 8).asInt() {
+        case 3, 7:
+            return A.expMod((p + 1) >> 2, p)
+        
+        case 5:
+            var x = A.expMod((p + 3) >> 3, p)
+            if (x * x) % p != A % p {
+                x = x * BInt.TWO.expMod((p - 1) >> 2, p) % p
+            }
+            return x
+
+        case 1:
+            let p_1 = p - 1
+            var d = BInt.ZERO
+            let p_3 = p - 3
+            while true {
+                d = p_3.randomLessThan() + 2
+                if d.jacobiSymbol(p) == -1 {
+                    break
+                }
+            }
+            var s = 0
+            var t = p_1
+            while t.isEven {
+                s += 1
+                t >>= 1
+            }
+            let A1 = A.expMod(t, p)
+            let D = d.expMod(t, p)
+            var m = BInt.ZERO
+            var exp = BInt.ONE << (s - 1)
+            for i in 0 ..< s {
+                if ((D.expMod(m * exp, p) * A1.expMod(exp, p))).mod(p) == p_1 {
+                    m.setBit(i)
+                }
+                exp >>= 1
+            }
+            return (A.expMod((t + 1) >> 1, p) * D.expMod(m >> 1, p)) % p
+
+        default:
+            return nil
+        }
+    }
+
+
     // MARK: Miscellaneous functions
+    
+    /// Factorial function
+    ///
+    /// - Precondition: n > 0
+    /// - Parameter n: Number to compute factorial for
+    /// - Returns: n!
+    public static func factorial(_ n: Int) -> BInt {
+        precondition(n > 0)
+        return BInt(Factorial(n).result)
+    }
+
+    /// n'th Fibonacci number
+    ///
+    /// - Precondition: n >= 0
+    /// - Parameter n: The fibonacci index
+    /// - Returns: The n'th fibonacci number
+    public static func fibonacci(_ n: Int) -> BInt {
+        return fibonacci2(n).0
+    }
+
+    /*
+     * Algorithm from Project Nayuki - https://www.nayuki.io/page/fast-fibonacci-algorithms
+     * F(2n) = F(n) * (2 * F(n + 1) - F(n))
+     * F(2n + 1) = F(n + 1)^2 + F(n)^2
+     */
+    /// Fibonacci pair, n'th and n'th + 1 Fibonacci number
+    ///
+    /// Precondition: n >= 0
+    /// - Parameter n: The fibonacci index
+    /// - Returns: The n'th and n'th + 1 fibonacci number
+    public static func fibonacci2(_ n: Int) -> (BInt, BInt) {
+        precondition(n >= 0)
+        var a: Limbs = [0]
+        var b: Limbs = [1]
+        var bit = 1 << (63 - n.leadingZeroBitCount)
+        var m = 0
+        while bit > 0 {
+            var d: Limbs = b.shifted1Left()
+            _ = d.subtract(a, 0)
+            d.multiply(a)
+            var e: Limbs = a
+            e.multiply(a)
+            var b2 = b
+            b2.multiply(b)
+            e.add(b2)
+            a = d
+            b = e
+            m <<= 1
+            if n & bit != 0 {
+                var c: Limbs = a
+                c.add(b)
+                a = b
+                b = c
+                m += 1
+            }
+            bit >>= 1
+        }
+        return (BInt(a), BInt(b))
+    }
 
     /*
      * Lehmer's gcd algorithm
@@ -1672,14 +1936,6 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         return BInt(u.magnitude.gcd(v.magnitude))
      }
-
-    /// Least common multiple
-    ///
-    /// - Parameter x: Operand
-    /// - Returns: Least common multiple of *self* and *x* - a non-negative number
-    public func lcm(_ x: BInt) -> BInt {
-        return self.isZero || x.isZero ? BInt.ZERO : ((self * x) / self.gcd(x)).abs
-    }
 
     /*
      * [CRANDALL] - algorithm 2.3.5
@@ -1742,6 +1998,34 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return m1 == 1 ? t : 0
     }
 
+    /// Least common multiple
+    ///
+    /// - Parameter x: Operand
+    /// - Returns: Least common multiple of *self* and *x* - a non-negative number
+    public func lcm(_ x: BInt) -> BInt {
+        return self.isZero || x.isZero ? BInt.ZERO : ((self * x) / self.gcd(x)).abs
+    }
+
+    /// n'th Lucas number
+    ///
+    /// - Precondition: n >= 0
+    /// - Parameter n: The lucas index
+    /// - Returns: The n'th lucas number
+    public static func lucas(_ n: Int) -> BInt {
+        let f2 = fibonacci2(n)
+        return 2 * f2.1 - f2.0
+    }
+
+    /// Lucas pair, n'th and n'th + 1 Lucas number
+    ///
+    /// Precondition: n >= 0
+    /// - Parameter n: The lucas index
+    /// - Returns: The n'th and n'th + 1 lucas number
+    public static func lucas2(_ n: Int) -> (BInt, BInt) {
+        let f2 = fibonacci2(n)
+        return (2 * f2.1 - f2.0, f2.1 + 2 * f2.0)
+    }
+
     /// Random value
     ///
     /// - Precondition: *self* is positive
@@ -1753,142 +2037,6 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             x = BInt(bitWidth: self.bitWidth)
         } while x >= self
         return x
-    }
-
-    /*
-     * [CRANDALL] - exercise 4.11
-     */
-    /// n'th root of a non-negative number
-    ///
-    /// - Precondition:
-    ///   - *self* is non-negative
-    ///   - n is positive
-    /// - Parameter n: The root
-    /// - Returns: Largest x such that x^n <= *self*
-    public func root(_ n: Int) -> BInt {
-        precondition(!self.isNegative, "\(n)'th root of negative number")
-        precondition(n > 0, "non-positive root")
-        if self.isZero {
-            return BInt.ZERO
-        }
-        let bn = BInt(n)
-        let bn1 = bn - 1
-        var x = BInt.ONE << (self.bitWidth / n + 1)
-        while true {
-            let xx = x ** (n - 1)
-            let y = (self / xx + x * bn1) / bn
-            if y >= x {
-                return x
-            }
-            x = y
-        }
-    }
-
-    /*
-     * [CRANDALL] - algorithm 9.2.11
-     */
-    func basicSqrt() -> BInt {
-        if self.isZero {
-            return BInt.ZERO
-        }
-        var x = BInt.ONE << (self.bitWidth / 2 + 1)
-        while true {
-            let y = (self / x + x) >> 1
-            if y >= x {
-                return x
-            }
-            x = y
-        }
-    }
-
-    /*
-     * [BRENT] - algorithm 1.12
-     */
-    func sqrtRem() -> (s: BInt, r: BInt) {
-        let l = (self.magnitude.count - 1) >> 2
-        if l == 0 {
-            let sq = self.basicSqrt()
-            return (sq, self - sq ** 2)
-        }
-        let shifts = l * 64
-        let a0 = BInt(Limbs(self.magnitude[0 ..< l]))
-        let a1 = BInt(Limbs(self.magnitude[l ..< 2 * l]))
-        let a2 = BInt(Limbs(self.magnitude[2 * l ..< 3 * l]))
-        let a3 = BInt(Limbs(self.magnitude[3 * l ..< self.magnitude.count]))
-        let (s1, r1) = (a3 << shifts + a2).sqrtRem()
-        let (q, u) = (r1 << shifts + a1).quotientAndRemainder(dividingBy: s1 << 1)
-        var s = s1 << shifts + q
-        var r = u << shifts + a0 - q ** 2
-        if r.isNegative {
-            r += 2 * s - 1
-            s -= 1
-        }
-        return (s, r)
-    }
-
-    /// Square root of a non-negative number
-    ///
-    /// - Precondition: *self* is non-negative
-    /// - Returns: Largest x such that x^2 <= *self*
-    public func sqrt() -> BInt {
-        precondition(!self.isNegative, "Square root of negative number")
-        return self.sqrtRem().s
-    }
-
-    /*
-     * [CRANDALL] - algorithm 2.3.8
-     */
-    /// Square root modulo a prime number
-    ///
-    /// - Parameter p: An odd prime number
-    /// - Returns: x, such that x^2 mod p = *self*, or *nil* if no such x exists
-    public func sqrtMod(_ p: BInt) -> BInt? {
-        if self.jacobiSymbol(p) != 1 {
-            return nil
-        }
-        let A = self % p
-        switch (p % 8).asInt() {
-        case 3, 7:
-            return A.expMod((p + 1) >> 2, p)
-        
-        case 5:
-            var x = A.expMod((p + 3) >> 3, p)
-            if (x * x) % p != A % p {
-                x = x * BInt.TWO.expMod((p - 1) >> 2, p) % p
-            }
-            return x
-
-        case 1:
-            let p_1 = p - 1
-            var d = BInt.ZERO
-            let p_3 = p - 3
-            while true {
-                d = p_3.randomLessThan() + 2
-                if d.jacobiSymbol(p) == -1 {
-                    break
-                }
-            }
-            var s = 0
-            var t = p_1
-            while t.isEven {
-                s += 1
-                t >>= 1
-            }
-            let A1 = A.expMod(t, p)
-            let D = d.expMod(t, p)
-            var m = BInt.ZERO
-            var exp = BInt.ONE << (s - 1)
-            for i in 0 ..< s {
-                if ((D.expMod(m * exp, p) * A1.expMod(exp, p))).mod(p) == p_1 {
-                    m.setBit(i)
-                }
-                exp >>= 1
-            }
-            return (A.expMod((t + 1) >> 1, p) * D.expMod(m >> 1, p)) % p
-
-        default:
-            return nil
-        }
     }
 
 }
