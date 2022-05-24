@@ -1828,11 +1828,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     /// Factorial function
     ///
-    /// - Precondition: n > 0
+    /// - Precondition: n >= 0
     /// - Parameter n: Number to compute factorial for
     /// - Returns: n!
     public static func factorial(_ n: Int) -> BInt {
-        precondition(n > 0)
+        precondition(n >= 0)
         return BInt(Factorial(n).result)
     }
 

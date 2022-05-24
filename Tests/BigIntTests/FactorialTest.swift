@@ -19,6 +19,7 @@ class FactorialTest: XCTestCase {
     }
 
     func test() {
+        XCTAssertEqual(BInt.factorial(0), BInt.ONE)
         for i in 1 ... 1000 {
             XCTAssertEqual(BInt.factorial(i), simpleFac(i))
         }
