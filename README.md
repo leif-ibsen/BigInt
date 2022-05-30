@@ -10,7 +10,7 @@ Its functionality is comparable to that of the Java BigInteger class. It falls i
 <li>Modulo: normal modulus, inverse modulus, and modular exponentiation</li>
 <li>Conversion: to double, to integer, to string, to magnitude byte array, and to 2's complement byte array</li>
 <li>Primes: prime number testing and probable prime number generation</li>
-<li>Miscellaneous: random number generation, greatest common divisor, n-th root, square root modulo an odd prime, and Jacobi symbol</li>
+<li>Miscellaneous: random number generation, greatest common divisor, n-th root, square root modulo an odd prime, Jacobi symbol, Factorial function, Binomial function, Fibonacci- and Lucas numbers</li>
 </ul>
 
 BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bit types.
@@ -115,7 +115,7 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.88 uSec</td><td align="right">0.99 uSec</td></tr>
 <tr><td>Square root</td><td align="right">c2000.sqrt()</td><td align="right">22 uSec</td><td align="right">139 uSec</td></tr>
 <tr><td>Square root and remainder</td><td align="right">c2000.sqrtRemainder()</td><td align="right">18 uSec</td><td align="right">n.a.</td></tr>
-<tr><td>Is perfect square</td><td align="right">c2000.isPerfectSquare()</td><td align="right">0.007 uSec</td><td align="right">n.a.</td></tr>
+<tr><td>Is perfect square</td><td align="right">(c2000 * c2000).isPerfectSquare()</td><td align="right">22 uSec</td><td align="right">n.a.</td></tr>
 <tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">2.3 mSec</td><td align="right">n.a.</td></tr>
 <tr><td>Power</td><td align="right">c2000 ** 111</td><td align="right">2.3 mSec</td><td align="right">n.a.</td></tr>
 <tr><td>Root</td><td align="right">c2000.root(111)</td><td align="right">21 uSec</td><td align="right">n.a.</td></tr>
