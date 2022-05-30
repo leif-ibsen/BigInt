@@ -19,7 +19,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.3.1"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.4.0"),
 	  ]
 
 <h2><b>Examples</b></h2>
@@ -104,14 +104,23 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">6.2 mSec</td><td align="right">12 mSec</td></tr>
 <tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">55 mSec</td><td align="right">34 mSec</td></tr>
 <tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">780 mSec</td><td align="right">510 mSec</td></tr>
+<tr><td>Primorial</td><td align="right">BInt.primorial(100000)</td><td align="right">16 mSec</td><td align="right">n.a.</td></tr>
+<tr><td>Binomial</td><td align="right">BInt.binomial(100000, 10000)</td><td align="right">26 mSec</td><td align="right">n.a.</td></tr>
 <tr><td>Factorial</td><td align="right">BInt.factorial(100000)</td><td align="right">70 mSec</td><td align="right">n.a.</td></tr>
 <tr><td>Fibonacci</td><td align="right">BInt.fibonacci(100000)</td><td align="right">0.75 mSec</td><td align="right">n.a.</td></tr>
 <tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">37 uSec</td><td align="right">31 uSec</td></tr>
+<tr><td>Extended gcd</td><td align="right">a1000.gcdExtended(b1000)</td><td align="right">0.82 mSec</td><td align="right">n.a.</td></tr>
 <tr><td>Least common multiple</td><td align="right">a1000.lcm(b1000)</td><td align="right">42 uSec</td><td align="right">n.a.</td></tr>
 <tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">0.50 uSec</td><td align="right">0.49 uSec</td></tr>
 <tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.88 uSec</td><td align="right">0.99 uSec</td></tr>
 <tr><td>Square root</td><td align="right">c2000.sqrt()</td><td align="right">22 uSec</td><td align="right">139 uSec</td></tr>
+<tr><td>Square root and remainder</td><td align="right">c2000.sqrtRemainder()</td><td align="right">18 uSec</td><td align="right">n.a.</td></tr>
+<tr><td>Is perfect square</td><td align="right">c2000.isPerfectSquare()</td><td align="right">0.007 uSec</td><td align="right">n.a.</td></tr>
 <tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">2.3 mSec</td><td align="right">n.a.</td></tr>
+<tr><td>Power</td><td align="right">c2000 ** 111</td><td align="right">2.3 mSec</td><td align="right">n.a.</td></tr>
+<tr><td>Root</td><td align="right">c2000.root(111)</td><td align="right">21 uSec</td><td align="right">n.a.</td></tr>
+<tr><td>Root and remainder</td><td align="right">c2000.rootRemainder(111)</td><td align="right">22 uSec</td><td align="right">n.a.</td></tr>
+<tr><td>Is perfect root</td><td align="right">c2000.isPerfectRoot()</td><td align="right">17 mSec</td><td align="right">n.a.</td></tr>
 </table>
 
 a1000 = 3187705437890850041662973758105262878153514794996698172406519277876060364087986868049465132757493318066301987043192958841748826350731448419937544810921786918975580180410200630645469411588934094075222404396990984350815153163569041641732160380739556436955287671287935796642478260435292021117614349253825</br>

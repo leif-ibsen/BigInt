@@ -71,5 +71,20 @@ class PrimeTest: XCTestCase {
             }
         }
     }
+    
+    func test5() {
+        XCTAssertEqual(BInt.primorial(0), BInt(1))
+        XCTAssertEqual(BInt.primorial(1), BInt(1))
+        XCTAssertEqual(BInt.primorial(2), BInt(2))
+        XCTAssertEqual(BInt.primorial(3), BInt(6))
+        XCTAssertEqual(BInt.primorial(4), BInt(6))
+        XCTAssertEqual(BInt.primorial(5), BInt(30))
+        XCTAssertEqual(BInt.primorial(6), BInt(30))
+        XCTAssertEqual(BInt.primorial(7), BInt(210))
+        XCTAssertEqual(BInt.primorial(8), BInt(210))
+        XCTAssertEqual(BInt.primorial(9), BInt(210))
+        XCTAssertEqual(BInt.primorial(10), BInt(210))
+        XCTAssertEqual(BInt.primorial(11), BInt(2310))
+    }
 
 }

@@ -1620,6 +1620,37 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return bitWidth < 100 ? smallPrime(bitWidth) : largePrime(bitWidth, p)
     }
 
+    /// Product of primes up to n
+    ///
+    /// - Precondition: n >= 0
+    /// - Parameters:
+    ///   - n: number to compute primorial for
+    /// - Returns: The product of primes less than or equal to n
+    public static func primorial(_ n: Int) -> BInt {
+        precondition(n >= 0, "negative primorial")
+        var p = BInt.ONE
+        if n > 0 {
+            var sieve = [Bool](repeating: true, count: n + 1)
+            sieve[0] = false
+            sieve[1] = false
+            var ndx = 2
+            while ndx < sieve.count {
+                if sieve[ndx] {
+                    for i in stride(from: ndx + ndx, to: sieve.count, by: ndx) {
+                        sieve[i] = false
+                    }
+                }
+                ndx += 1
+            }
+            for i in 0 ... n {
+                if sieve[i] {
+                    p *= i
+                }
+            }
+        }
+        return p
+    }
+
 
     // MARK: Root extraction functions
 
@@ -1669,16 +1700,37 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///
     /// - Returns: *true* iff *self* is a perfect root
     public func isPerfectRoot() -> Bool {
-        let abs = self.abs
-        if abs < BInt.TWO {
+        if self.abs < BInt.TWO {
             return true
         }
-        for n in 2 ... abs.bitWidth {
-            if abs.rootRemainder(n).rem.isZero {
-                if self.isPositive || n & 1 == 1 {
-                    return true
-                }
+
+        // A number divisible by a prime but not by its square is not a perfect root
+
+        let smallPrimes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+        for i in 0 ..< smallPrimes.count {
+            let p = smallPrimes[i]
+            if self.mod(p) == 0 && self.mod(p * p) > 0 {
+                return false
             }
+        }
+        if self.isPerfectSquare() {
+            return true
+        }
+        if self.rootRemainder(3).rem.isZero {
+            return true
+        }
+        if self.rootRemainder(5).rem.isZero {
+            return true
+        }
+        let wheel = [ 4, 2, 4, 2, 4, 6, 2, 6 ]
+        var wheelIndex = 0
+        var n = 7
+        while n < self.bitWidth {
+            if self.rootRemainder(n).rem.isZero {
+                return true
+            }
+            n += wheel[wheelIndex]
+            wheelIndex = (wheelIndex + 1) % wheel.count
         }
         return false
     }
@@ -1826,6 +1878,28 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
 
     // MARK: Miscellaneous functions
     
+    /// Compute binomial coefficient *n* over *k*
+    ///
+    /// - Precondition: n >= k and k >= 0
+    /// - Parameters:
+    ///   - n: First binomial parameter
+    ///   - k: Second binomial parameter
+    /// - Returns: Binomial coefficient *n* over *k*
+    public static func binomial(_ n: Int, _ k: Int) -> BInt {
+        precondition(n >= k && k >= 0)
+        if k == 0 || k == n {
+            return BInt.ONE
+        }
+        let k1 = min(k, n - k)
+        let n_k1 = Limb(n - k1)
+        var c: Limbs = [1]
+        for i in 1 ... k1 {
+            c.multiply(n_k1 + Limb(i))
+            c = c.divMod(Limb(i)).quotient
+        }
+        return BInt(c)
+    }
+
     /// Factorial function
     ///
     /// - Precondition: n >= 0
@@ -1936,6 +2010,27 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         return BInt(u.magnitude.gcd(v.magnitude))
      }
+
+    /*
+     * [CRANDALL] - algorithm 2.1.4
+     */
+    /// Extended greatest common divisor
+    ///
+    /// - Parameter x: Operand
+    /// - Returns: Greatest common divisor *g* of *self* and *x*, and *a* and *b* such that *a* * *self* + *b* * *x* = *g*
+    public func gcdExtended(_ x: BInt) -> (g: BInt, a: BInt, b: BInt) {
+        var a = BInt.ONE
+        var b = BInt.ZERO
+        var g = self
+        var u = BInt.ZERO
+        var v = BInt.ONE
+        var w = x
+        while w.isPositive {
+            let q = g / w
+            (a, b, g, u, v, w) = (u, v, w, a - q * u, b - q * v, g - q * w)
+        }
+        return (g, a, b)
+    }
 
     /*
      * [CRANDALL] - algorithm 2.3.5
