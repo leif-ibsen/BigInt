@@ -2035,28 +2035,29 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /*
      * [CRANDALL] - algorithm 2.3.5
      */
-    /// Jacobi symbol - BInt parameter
+    /// Jacobi symbol - BInt parameter. If m is an odd prime, this is also the Legendre symbol
     ///
+    /// - Precondition: m is positive and odd
     /// - Parameters:
-    ///   - m: An integer value
+    ///   - m: A positive, odd integer
     /// - Returns: The Jacobi symbol of *self* and m: -1, 0, or 1
     public func jacobiSymbol(_ m: BInt) -> Int {
+        precondition(m.isPositive && m.isOdd)
         var m1 = m
         var a = self.mod(m1)
         var t = 1
         while a.isNotZero {
-            var x: BInt
             while a.isEven {
                 a >>= 1
-                x = m1 & BInt.SEVEN
-                if x == BInt.THREE || x == BInt.FIVE {
+                let x = m1.magnitude[0] & 7
+                if x == 3 || x == 5 {
                     t = -t
                 }
             }
-            x = a
+            let x = a
             a = m1
             m1 = x
-            if a & BInt.THREE == BInt.THREE && m1 & BInt.THREE == BInt.THREE {
+            if a.magnitude[0] & 3 == 3 && m1.magnitude[0] & 3 == 3 {
                 t = -t
             }
             a = a.mod(m1)
@@ -2064,25 +2065,26 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return m1.isOne ? t : 0
     }
 
-    /// Jacobi symbol - Int parameter
+    /// Jacobi symbol - Int parameter. If m is an odd prime, this is also the Legendre symbol
     ///
+    /// - Precondition: m is positive and odd
     /// - Parameters:
-    ///   - m: An integer value
+    ///   - m: A positive, odd integer
     /// - Returns: The Jacobi symbol of *self* and m: -1, 0, or 1
     public func jacobiSymbol(_ m: Int) -> Int {
+        precondition(m > 0 && m & 1 == 1)
         var m1 = m
         var a = self.mod(m1)
         var t = 1
         while a != 0 {
-            var x: Int
             while a & 1 == 0 {
                 a >>= 1
-                x = m1 & 7
+                let x = m1 & 7
                 if x == 3 || x == 5 {
                     t = -t
                 }
             }
-            x = a
+            let x = a
             a = m1
             m1 = x
             if a & 3 == 3 && m1 & 3 == 3 {
@@ -2091,6 +2093,54 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             a %= m1
         }
         return m1 == 1 ? t : 0
+    }
+
+    /// Kronecker symbol - BInt parameter. If m is positive and odd, this is also the Jacobi symbol
+    ///
+    /// - Parameters:
+    ///   - m: An integer value
+    /// - Returns: The Kronecker symbol of *self* and m: -1, 0, or 1
+    public func kroneckerSymbol(_ m: BInt) -> Int {
+        if m.isPositive {
+            if m.isOdd {
+                return self.jacobiSymbol(m)
+            } else {
+                if self.isEven {
+                    return 0
+                } else {
+                    let r = self.magnitude[0] & 7
+                    return r == 1 || r == 7 ? self.kroneckerSymbol(m >> 1) : -self.kroneckerSymbol(m >> 1)
+                }
+            }
+        } else if m.isNegative {
+            return self.isNegative ? -self.kroneckerSymbol(-m) : self.kroneckerSymbol(-m)
+        } else {
+            return self.abs.isOne ? 1 : 0
+        }
+    }
+
+    /// Kronecker symbol - Int parameter. If m is positive and odd, this is also the Jacobi symbol
+    ///
+    /// - Parameters:
+    ///   - m: An integer value
+    /// - Returns: The Kronecker symbol of *self* and m: -1, 0, or 1
+    public func kroneckerSymbol(_ m: Int) -> Int {
+        if m > 0 {
+            if m & 1 == 1 {
+                return self.jacobiSymbol(m)
+            } else {
+                if self.isEven {
+                    return 0
+                } else {
+                    let r = self.magnitude[0] & 7
+                    return r == 1 || r == 7 ? self.kroneckerSymbol(m >> 1) : -self.kroneckerSymbol(m >> 1)
+                }
+            }
+        } else if m < 0 {
+            return self.isNegative ? -self.kroneckerSymbol(-m) : self.kroneckerSymbol(-m)
+        } else {
+            return self.abs.isOne ? 1 : 0
+        }
     }
 
     /// Least common multiple

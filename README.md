@@ -9,8 +9,9 @@ Its functionality is comparable to that of the Java BigInteger class. It falls i
 <li>Logical: bitwise and, or, xor, and not</li>
 <li>Modulo: normal modulus, inverse modulus, and modular exponentiation</li>
 <li>Conversion: to double, to integer, to string, to magnitude byte array, and to 2's complement byte array</li>
-<li>Primes: prime number testing and probable prime number generation</li>
-<li>Miscellaneous: random number generation, greatest common divisor, n-th root, square root modulo an odd prime, Jacobi symbol, Factorial function, Binomial function, Fibonacci- and Lucas numbers</li>
+<li>Primes: prime number testing, probable prime number generation and primorial</li>
+<li>Miscellaneous: random number generation, greatest common divisor, least common multiple, n-th root, square root modulo an odd prime,
+Jacobi symbol, Kronecker symbol, Factorial function, Binomial function, Fibonacci- and Lucas numbers</li>
 </ul>
 
 BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bit types.
@@ -19,7 +20,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.4.0"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.4.1"),
 	  ]
 
 <h2><b>Examples</b></h2>
@@ -121,6 +122,8 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Root</td><td align="right">c2000.root(111)</td><td align="right">21 uSec</td><td align="right">n.a.</td></tr>
 <tr><td>Root and remainder</td><td align="right">c2000.rootRemainder(111)</td><td align="right">22 uSec</td><td align="right">n.a.</td></tr>
 <tr><td>Is perfect root</td><td align="right">c2000.isPerfectRoot()</td><td align="right">17 mSec</td><td align="right">n.a.</td></tr>
+<tr><td>Jacobi symbol</td><td align="right">c2000.jacobiSymbol(p1000)</td><td align="right">0.36 mSec</td><td align="right">n.a.</td></tr>
+<tr><td>Kronecker symbol</td><td align="right">c2000.kroneckerSymbol(p1000)</td><td align="right">0.35 mSec</td><td align="right">n.a.</td></tr>
 </table>
 
 a1000 = 3187705437890850041662973758105262878153514794996698172406519277876060364087986868049465132757493318066301987043192958841748826350731448419937544810921786918975580180410200630645469411588934094075222404396990984350815153163569041641732160380739556436955287671287935796642478260435292021117614349253825</br>
@@ -175,3 +178,5 @@ The algorithm from Java BigInteger translated to Swift.
 The 'SplitRecursive' algorithm from Peter Luschny: https://www.luschny.de
 <h3><b>Fibonacci</b></h3>
 The 'fastDoubling' algorithm from Project Nayuki: https://www.nayuki.io
+<h3><b>Jacobi and Kronecker symbols</b></h3>
+Algorithm 2.3.5 from [CRANDALL].
