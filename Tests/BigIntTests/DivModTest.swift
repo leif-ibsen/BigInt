@@ -27,6 +27,7 @@ class DivModTest: XCTestCase {
         let r1 = x1 % x2
         let q1 = x1 / x2
         XCTAssertEqual(x1, x2 * q1 + r1)
+        XCTAssertTrue(r1.abs < x2.abs)
         let (q2, r2) = x1.quotientAndRemainder(dividingBy: x2)
         XCTAssertEqual(q1, q2)
         XCTAssertEqual(r1, r2)
@@ -36,6 +37,16 @@ class DivModTest: XCTestCase {
         XCTAssertEqual(q1, q3)
         XCTAssertEqual(r1, r3)
         XCTAssertEqual(x1.mod(Int.min), x1.mod(BInt(Int.min)).asInt()!)
+    }
+
+    func doTest5(_ x1: BInt, _ x2: Int) {
+        let (q1, r1) = x1.quotientAndRemainder(dividingBy: x2)
+        let (q2, r2) = x1.quotientAndRemainder(dividingBy: BInt(x2))
+        XCTAssertEqual(q1, q2)
+        XCTAssertEqual(r1, r2.asInt()!)
+        XCTAssertEqual(x1 / x2, x1 / BInt(x2))
+        XCTAssertEqual(x1 % x2, x1 % BInt(x2))
+        XCTAssertEqual(x1.mod(x2), x1.mod(BInt(x2)).asInt()!)
     }
 
     func test1() {
@@ -100,6 +111,18 @@ class DivModTest: XCTestCase {
             XCTAssertEqual(x.mod(m), x.mod(BInt(m)).asInt()!)
             XCTAssertEqual(x.mod(-m), x.mod(-BInt(m)).asInt()!)
         }
+    }
+    
+    func test5() {
+        let x = BInt(bitWidth: 1000)
+        doTest5(x, 1)
+        doTest5(x, -1)
+        doTest5(x, 10)
+        doTest5(x, -10)
+        doTest5(x, Int.max)
+        doTest5(x, Int.max - 1)
+        doTest5(x, Int.min)
+        doTest5(x, Int.min + 1)
     }
     
 }

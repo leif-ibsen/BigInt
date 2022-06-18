@@ -758,7 +758,28 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - x: Left hand addend
     ///   - y: Right hand addend
     public static func +=(x: inout BInt, y: Int) {
-        x += BInt(y)
+        
+        // Much better performance than simply
+        // x += BInt(y)
+        
+        if y > 0 {
+            if x.isNegative {
+                if x.magnitude.difference(Limb(y)) <= 0 {
+                    x.setSign(false)
+                }
+            } else {
+                x.magnitude.add(Limb(y))
+            }
+        } else if y < 0 {
+            let yy = y == Int.min ? 0x8000000000000000 : Limb(-y)
+            if x.isNegative {
+                x.magnitude.add(yy)
+            } else {
+                if x.magnitude.difference(yy) < 0 {
+                    x.setSign(true)
+                }
+            }
+        }
     }
 
     
@@ -844,7 +865,28 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - x: Left hand minuend
     ///   - y: Right hand subtrahend
     public static func -=(x: inout BInt, y: Int) {
-        x -= BInt(y)
+        
+        // Much better performance than simply
+        // x -= BInt(y)
+        
+        if y > 0 {
+            if x.isNegative {
+                x.magnitude.add(Limb(y))
+            } else {
+                if x.magnitude.difference(Limb(y)) < 0 {
+                    x.setSign(true)
+                }
+            }
+        } else if y < 0 {
+            let yy = y == Int.min ? 0x8000000000000000 : Limb(-y)
+            if x.isPositive {
+                x.magnitude.add(yy)
+            } else {
+                if x.magnitude.difference(yy) <= 0 {
+                    x.setSign(false)
+                }
+            }
+        }
     }
 
 
@@ -922,12 +964,18 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// Division
     ///
     /// - Precondition: Divisor is not zero
-    /// - Parameter x: Divisor
+    /// - Parameter x: Divisor - a BInt value
     /// - Returns: Quotient and remainder of *self* / x
     public func quotientAndRemainder(dividingBy x: BInt) -> (quotient: BInt, remainder: BInt) {
         var quotient = BInt.ZERO
         var remainder = BInt.ZERO
-        self.quotientAndRemainder(dividingBy: x, &quotient, &remainder)
+        if x.magnitude.count > Limbs.BZ_DIV_LIMIT && self.magnitude.count > x.magnitude.count + Limbs.BZ_DIV_LIMIT {
+            (quotient.magnitude, remainder.magnitude) = self.magnitude.bzDivMod(x.magnitude)
+        } else {
+            (quotient.magnitude, remainder.magnitude) = self.magnitude.divMod(x.magnitude)
+        }
+        quotient.setSign(self.isNegative != x.isNegative)
+        remainder.setSign(self.isNegative)
         return (quotient, remainder)
     }
 
@@ -935,19 +983,44 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///
     /// - Precondition: Divisor is not zero
     /// - Parameters:
-    ///   - x: Divisor
+    ///   - x: Divisor - a BInt value
     ///   - quotient: Set to the quotient of *self* / x
     ///   - remainder: Set to the remainder of *self* / x
     public func quotientAndRemainder(dividingBy x: BInt, _ quotient: inout BInt, _ remainder: inout BInt) {
-        if x.magnitude.count > Limbs.BZ_DIV_LIMIT && self.magnitude.count > x.magnitude.count + Limbs.BZ_DIV_LIMIT {
-            self.magnitude.bzDivMod(x.magnitude, &quotient.magnitude, &remainder.magnitude)
-        } else {
-            self.magnitude.divMod(x.magnitude, &quotient.magnitude, &remainder.magnitude)
-        }
-        quotient.setSign(self.isNegative != x.isNegative)
-        remainder.setSign(self.isNegative)
+        (quotient, remainder) = self.quotientAndRemainder(dividingBy: x)
     }
     
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameter x: Divisor - an Int value
+    /// - Returns: Quotient and remainder of *self* / x
+    public func quotientAndRemainder(dividingBy x: Int) -> (quotient: BInt, remainder: Int) {
+        var divisor: Limb
+        if x < 0 {
+            divisor = x == Int.min ? 0x8000000000000000 : Limb(-x)
+        } else {
+            divisor = Limb(x)
+        }
+        var quotient = BInt.ZERO
+        var r: Limb
+        (quotient.magnitude, r) = self.magnitude.divMod(divisor)
+        quotient.setSign(self.isNegative && x > 0 || self.isPositive && x < 0)
+        let remainder = self.isNegative ? -Int(r) : Int(r)
+        return (quotient, remainder)
+    }
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameters:
+    ///   - x: Divisor - an Int value
+    ///   - quotient: Set to the quotient of *self* / x
+    ///   - remainder: Set to the remainder of *self* / x
+    public func quotientAndRemainder(dividingBy x: Int, _ quotient: inout BInt, _ remainder: inout Int) {
+        (quotient, remainder) = self.quotientAndRemainder(dividingBy: x)
+    }
+
     /// Division
     ///
     /// - Precondition: Divisor is not zero
@@ -978,7 +1051,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Divisor
     /// - Returns: x / y
     public static func /(x: BInt, y: Int) -> BInt {
-        return x / BInt(y)
+        return x.quotientAndRemainder(dividingBy: y).quotient
     }
     
     /// x = x / y
@@ -1077,7 +1150,6 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameter x: Divisor
     /// - Returns: *self* *mod* x, a non-negative value
     public func mod(_ x: Int) -> Int {
-        precondition(x != 0, "Division by zero")
         if x == Int.min {
             let r = Int(self.magnitude[0] & 0x7fffffffffffffff)
             return self.isNegative && r > 0 ? -(Int.min + r) : r
@@ -1831,7 +1903,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return nil
         }
         let A = self % p
-        switch (p % 8).asInt() {
+        switch p.mod(8) {
         case 3, 7:
             return A.expMod((p + 1) >> 2, p)
         

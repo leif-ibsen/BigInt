@@ -36,6 +36,9 @@ class AdditionTest: XCTestCase {
         XCTAssertEqual((-7) + BInt(-4), BInt(-11))
         XCTAssertEqual((-7) + BInt(0), BInt(-7))
         XCTAssertEqual(7 + BInt(0), BInt(7))
+        XCTAssertEqual(0 + BInt(7), BInt(7))
+        XCTAssertEqual(0 + BInt(-7), BInt(-7))
+        XCTAssertEqual(0 + BInt(0), BInt(0))
     }
     
     func test2() {
@@ -77,4 +80,33 @@ class AdditionTest: XCTestCase {
         }
     }
     
+    func doTest1(_ x: BInt, _ y: Int) {
+        XCTAssertEqual(x + y, x + BInt(y))
+        XCTAssertEqual((-x) + y, (-x) + BInt(y))
+        if y != Int.min {
+            XCTAssertEqual(x + (-y), x + BInt(-y))
+            XCTAssertEqual((-x) + (-y), (-x) + BInt(-y))
+        }
+    }
+
+    func doTest2(_ x: BInt) {
+        doTest1(x, 0)
+        doTest1(x, 1)
+        doTest1(x, -1)
+        doTest1(x, Int.max)
+        doTest1(x, Int.min)
+        doTest1(x, Int.max - 1)
+        doTest1(x, Int.min + 1)
+    }
+
+    func test5() {
+        doTest2(BInt(bitWidth: 1000))
+        doTest2(BInt(0))
+        doTest2(BInt(1))
+        doTest2(BInt(-1))
+        doTest2(BInt(Int.max))
+        doTest2(-BInt(Int.max))
+        doTest2(BInt(Int.min))
+        doTest2(-BInt(Int.min))
+    }
 }

@@ -14,7 +14,9 @@ extension Array where Element == Limb {
     /*
      * [BURNIKEL] - algorithm 3
      */
-    func bzDivMod(_ v: Limbs, _ quotient: inout Limbs, _ remainder: inout Limbs) {
+    func bzDivMod(_ v: Limbs) -> (quotient: Limbs, remainder: Limbs) {
+        var quotient: Limbs = [0]
+        var remainder: Limbs = []
         var A = self
         var B = v
         let s = B.count
@@ -26,7 +28,6 @@ extension Array where Element == Limb {
         A.shiftLeft(sigma)
         B.shiftLeft(sigma)
         let t = Swift.max(2, (A.bitWidth + n64) / n64)
-        quotient = [0]
         var Z = Limbs(repeating: 0, count: 2 * n)
         var from = (t - 1) * n
         var zi = n
@@ -62,6 +63,7 @@ extension Array where Element == Limb {
                 remainder.shiftRight(sigma)
             }
         }
+        return (quotient, remainder)
     }
 
     /*

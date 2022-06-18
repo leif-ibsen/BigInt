@@ -3134,7 +3134,7 @@ although this is not actually the case</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>Divisor</p>
+                                  <p>Divisor - a BInt value</p>
                                 </div>
                               </td>
                             </tr>
@@ -3189,7 +3189,137 @@ although this is not actually the case</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>Divisor</p>
+                                  <p>Divisor - a BInt value</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>quotient</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Set to the quotient of <em>self</em> / x</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>remainder</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Set to the remainder of <em>self</em> / x</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6BigInt4BIntV20quotientAndRemainder10dividingByAC0D0_Si9remaindertSi_tF"></a>
+                    <a name="//apple_ref/swift/Method/quotientAndRemainder(dividingBy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6BigInt4BIntV20quotientAndRemainder10dividingByAC0D0_Si9remaindertSi_tF">quotientAndRemainder(dividingBy:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Division</p>
+<div class="aside aside-precondition">
+    <p class="aside-title">Precondition</p>
+    Divisor is not zero
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">quotientAndRemainder</span><span class="p">(</span><span class="n">dividingBy</span> <span class="nv">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nv">quotient</span><span class="p">:</span> <span class="kt">BInt</span><span class="p">,</span> <span class="nv">remainder</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>x</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Divisor - an Int value</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Quotient and remainder of <em>self</em> / x</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6BigInt4BIntV20quotientAndRemainder10dividingBy__ySi_ACzSiztF"></a>
+                    <a name="//apple_ref/swift/Method/quotientAndRemainder(dividingBy:_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6BigInt4BIntV20quotientAndRemainder10dividingBy__ySi_ACzSiztF">quotientAndRemainder(dividingBy:<wbr>_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Division</p>
+<div class="aside aside-precondition">
+    <p class="aside-title">Precondition</p>
+    Divisor is not zero
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">quotientAndRemainder</span><span class="p">(</span><span class="n">dividingBy</span> <span class="nv">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="n">_</span> <span class="nv">quotient</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">BInt</span><span class="p">,</span> <span class="n">_</span> <span class="nv">remainder</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>x</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Divisor - an Int value</p>
                                 </div>
                               </td>
                             </tr>
@@ -6945,7 +7075,7 @@ although this is not actually the case</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2022 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2022-06-09)</p>
+          <p>&copy; 2022 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2022-06-17)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

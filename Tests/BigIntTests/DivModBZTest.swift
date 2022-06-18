@@ -26,8 +26,8 @@ class DivModBZTest: XCTestCase {
         var r1: Limbs = []
         var q2: Limbs = []
         var r2: Limbs = []
-        dividend.magnitude.divMod(divisor.magnitude, &q1, &r1)
-        dividend.magnitude.bzDivMod(divisor.magnitude, &q2, &r2)
+        (q1, r1) = dividend.magnitude.divMod(divisor.magnitude)
+        (q2, r2) = dividend.magnitude.bzDivMod(divisor.magnitude)
         XCTAssertEqual(q1, q2)
         XCTAssertEqual(r1, r2)
     }

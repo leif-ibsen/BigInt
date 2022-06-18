@@ -599,24 +599,15 @@ extension Array where Element == Limb {
     }
 
     // Limbs / Limbs => (quotient: Limbs, remainder: Limbs)
-    func divMod(_ v: Limbs) -> (quotient: Limbs, remainder: Limbs) {
-        var quotient = Limbs()
-        var remainder = Limbs()
-        self.divMod(v, &quotient, &remainder)
-        return (quotient, remainder)
-    }
-
     // [KNUTH] - chapter 4.3.1, algorithm D
-    func divMod(_ v: Limbs, _ quotient: inout Limbs, _ remainder: inout Limbs) {
+    func divMod(_ v: Limbs) -> (quotient: Limbs, remainder: Limbs) {
         if self.lessThan(v) {
-            quotient = [0]
-            remainder = self
+            return ([0], self)
         } else if v.count == 1 {
             let (q, r) = self.divMod(v[0])
-            quotient = q
-            remainder = [r]
+            return (q, [r])
         } else {
-            remainder = self
+            var remainder = self
             var v = v
             let n = v.count
             let m = remainder.count
@@ -629,7 +620,7 @@ extension Array where Element == Limb {
             var k = m - n
             let vn1 = v[n - 1]
             let vReciprocal = vn1.dividingFullWidth((0xffffffffffffffff - vn1, 0xffffffffffffffff)).quotient
-            quotient = Limbs(repeating: 0, count: k + 1)
+            var quotient = Limbs(repeating: 0, count: k + 1)
             var ovfl: Bool
             repeat {
                 if vn1 == remainder[k + n] {
@@ -659,6 +650,7 @@ extension Array where Element == Limb {
             } while k >= 0
             remainder.shiftRight(d)
             quotient.normalize()
+            return (quotient, remainder)
         }
     }
 
