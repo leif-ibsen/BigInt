@@ -2097,11 +2097,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         var u = BInt.ZERO
         var v = BInt.ONE
         var w = x
-        while w.isPositive {
+        while w.isNotZero {
             let q = g / w
             (a, b, g, u, v, w) = (u, v, w, a - q * u, b - q * v, g - q * w)
         }
-        return (g, a, b)
+        return g.isNegative ? (-g, -a, -b) : (g, a, b)
     }
 
     /*
