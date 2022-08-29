@@ -1333,14 +1333,40 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Second operand
     /// - Returns: *true* if x < y, *false* otherwise
     public static func <(x: BInt, y: BInt) -> Bool {
-        if x.isNegative && y.isNegative {
-            return y.magnitude.lessThan(x.magnitude)
-        } else if !x.isNegative && y.isNegative {
-            return false
-        } else if x.isNegative && !y.isNegative {
-            return true
+        if x.isNegative {
+            if y.isNegative {
+                return y.magnitude.compare(x.magnitude) < 0
+            } else {
+                return true
+            }
         } else {
-            return x.magnitude.lessThan(y.magnitude)
+            if y.isNegative {
+                return false
+            } else {
+                return x.magnitude.compare(y.magnitude) < 0
+            }
+        }
+    }
+
+    /// Less than
+    ///
+    /// - Parameters:
+    ///   - x: First operand
+    ///   - y: Second operand
+    /// - Returns: *true* if x < y, *false* otherwise
+    public static func <(x: BInt, y: Int) -> Bool {
+        if x.isNegative {
+            if y < 0 {
+                return y == Int.min ? x < BInt(y) : x.magnitude.compare(Limb(-y)) > 0
+            } else {
+                return true
+            }
+        } else {
+            if y < 0 {
+                return false
+            } else {
+                return x.magnitude.compare(Limb(y)) < 0
+            }
         }
     }
     
@@ -1350,18 +1376,20 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - x: First operand
     ///   - y: Second operand
     /// - Returns: *true* if x < y, *false* otherwise
-    public static func <(x: BInt, y: Int) -> Bool {
-        return x < BInt(y)
-    }
-    
-    /// Less than
-    ///
-    /// - Parameters:
-    ///   - x: First operand
-    ///   - y: Second operand
-    /// - Returns: *true* if x < y, *false* otherwise
     public static func <(x: Int, y: BInt) -> Bool {
-        return BInt(x) < y
+        if y.isNegative {
+            if x < 0 {
+                return x == Int.min ? BInt(x) < y : y.magnitude.compare(Limb(-x)) <= 0
+            } else {
+                return false
+            }
+        } else {
+            if x < 0 {
+                return true
+            } else {
+                return y.magnitude.compare(Limb(x)) > 0
+            }
+        }
     }
     
     /// Greater than
@@ -1468,7 +1496,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - x if n = 0
     public static func <<(x: BInt, n: Int) -> BInt {
         if n < 0 {
-            return x >> -n
+            return n == Int.min ? (x >> Int.max) >> 1 : x >> -n
         }
         return BInt(n == 1 ? x.magnitude.shifted1Left() : x.magnitude.shiftedLeft(n), x.isNegative)
     }
@@ -1480,7 +1508,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - n: Shift count
     public static func <<=(x: inout BInt, n: Int) {
         if n < 0 {
-            x.magnitude.shiftRight(-n)
+            if n == Int.min {
+                x.magnitude.shiftRight(Int.max)
+                x.magnitude.shift1Right()
+            } else {
+                x.magnitude.shiftRight(-n)
+            }
         } else if n == 1 {
             x.magnitude.shift1Left()
         } else {
@@ -1499,7 +1532,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - x if n = 0
     public static func >>(x: BInt, n: Int) -> BInt {
         if n < 0 {
-            return x << -n
+            return n == Int.min ? (x << Int.max) << 1 : x << -n
         }
         return BInt(n == 1 ? x.magnitude.shifted1Right() : x.magnitude.shiftedRight(n), x.isNegative)
     }
@@ -1511,7 +1544,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - n: Shift count
     public static func >>=(x: inout BInt, n: Int) {
         if n < 0 {
-            x.magnitude.shiftLeft(-n)
+            if n == Int.min {
+                x.magnitude.shiftLeft(Int.max)
+                x.magnitude.shift1Left()
+            } else {
+                x.magnitude.shiftLeft(-n)
+            }
         } else if n == 1 {
             x.magnitude.shift1Right()
         } else {
@@ -1979,7 +2017,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: n!
     public static func factorial(_ n: Int) -> BInt {
         precondition(n >= 0)
-        return BInt(Factorial(n).result)
+        return Factorial(n).result
     }
 
     /// n'th Fibonacci number

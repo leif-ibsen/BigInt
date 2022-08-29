@@ -9,22 +9,19 @@
 
 class Factorial {
     
-    static let smallFacs: [Limb] = [
-        1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200,
-        1307674368000, 20922789888000, 355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000]
+    static let smallFacs: [Int] = [
+        1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800,
+        479001600, 6227020800, 87178291200, 1307674368000, 20922789888000,
+        355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000]
 
     var N: Limbs = [1]
-    var result: Limbs = []
+    var result = BInt.ZERO
     
     init(_ n: Int) {
-        if n < Factorial.smallFacs.count {
-            self.result = [Factorial.smallFacs[n]]
-        } else {
-            compute(n)
-        }
+        self.result = n < Factorial.smallFacs.count ? BInt(Factorial.smallFacs[n]) : compute(n)
     }
     
-    func compute(_ n: Int) {
+    func compute(_ n: Int) -> BInt {
         var p: Limbs = [1]
         var r: Limbs = [1]
         var h = 0
@@ -43,7 +40,7 @@ class Factorial {
                 r.multiply(p)
             }
         }
-        self.result = r.shiftedLeft(pow2)
+        return BInt(r.shiftedLeft(pow2))
     }
     
     func product(_ n: Int) -> Limbs {
@@ -64,3 +61,4 @@ class Factorial {
         }
     }
 }
+

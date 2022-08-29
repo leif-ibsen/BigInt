@@ -24,9 +24,9 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     // MARK: - Constants
 
-    /// BFraction(0)
+    /// BFraction(0, 1)
     public static let ZERO = BFraction(BInt.ZERO, BInt.ONE)
-    /// BFraction(1)
+    /// BFraction(1, 1)
     public static let ONE = BFraction(BInt.ONE, BInt.ONE)
 
     

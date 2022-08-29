@@ -22,6 +22,9 @@ class ShiftTest: XCTestCase {
         XCTAssertEqual(x1, (x1 << 3) >> 3)
         XCTAssertEqual(x1 << -3, x1 >> 3)
         XCTAssertEqual(x1 << 3, x1 >> -3)
+        XCTAssertEqual(x1, (x1 << 300) >> 300)
+        XCTAssertEqual(x1 << -300, x1 >> 300)
+        XCTAssertEqual(x1 << 300, x1 >> -300)
         let x2 = BInt("1234567890")!
         XCTAssertEqual(x2, (x2 << 200) / (BInt.ONE << 200))
         var x3 = x2
@@ -38,6 +41,14 @@ class ShiftTest: XCTestCase {
         XCTAssertEqual(x.shiftedLeft(128), [0])
         XCTAssertEqual(x.shiftedLeft(129), [0])
     }
-
+    
+    func test3() {
+        XCTAssertEqual(BInt.ZERO << Int.max, BInt.ZERO)
+        XCTAssertEqual(BInt.ZERO >> Int.max, BInt.ZERO)
+        XCTAssertEqual(BInt.ONE >> Int.max, BInt.ZERO)
+        XCTAssertEqual(BInt.ZERO << Int.min, BInt.ZERO)
+        XCTAssertEqual(BInt.ZERO >> Int.min, BInt.ZERO)
+        XCTAssertEqual(BInt.ONE << Int.min, BInt.ZERO)
+    }
 
 }

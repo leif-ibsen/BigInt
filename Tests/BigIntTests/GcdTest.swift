@@ -25,6 +25,7 @@ class GcdTest: XCTestCase {
         XCTAssertEqual(x.gcd(BInt.ONE), BInt.ONE)
         XCTAssertEqual(x.gcd(x), x.abs)
         if g > 0 {
+            precondition(g != 0)
             let (qx, rx) = x.quotientAndRemainder(dividingBy: g)
             let (qy, ry) = y.quotientAndRemainder(dividingBy: g)
             XCTAssertEqual(rx, BInt.ZERO)

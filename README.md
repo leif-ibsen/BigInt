@@ -29,7 +29,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.5.0"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.5.1"),
 	  ]
 
 <h2 id="ex"><b>Examples</b></h2>
