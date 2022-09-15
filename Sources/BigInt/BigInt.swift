@@ -96,11 +96,31 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
     }
     
+    /// Constructs a BInt from a decimal value
+    ///
+    /// - Parameters:
+    ///   - d: The decimal value
+    /// - Returns: The BInt corresponding to *d* truncated to an integer value, *nil* if *d* is infinite or NaN
+    public init?(_ d: Double) {
+        if d.isNaN || d.isInfinite {
+            return nil
+        }
+        let bits = d.bitPattern
+        let exponent = Int(bits >> 52) & 0x7ff - 1075
+        let significand = exponent == -1075 ? bits & 0xfffffffffffff << 1 : bits & 0xfffffffffffff | (1 << 52)
+        if exponent < 0 {
+            self.init([significand].shiftedRight(-exponent), d < 0.0)
+        } else {
+            self.init([significand].shiftedLeft(exponent), d < 0.0)
+        }
+    }
+
     /// Constructs a BInt from a String value and radix
     ///
     /// - Parameters:
     ///   - x: String value to be converted
     ///   - radix: Radix of x, from 2 to 36 inclusive, default is 10
+    ///   Returns: The BInt corresponding to *x*, *nil* if *x* does not designate an integer in the given radix
     ///
     /// Examples:
     ///    * BInt("90abcdef", radix = 16)
@@ -273,7 +293,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     // MARK: Computed properties
     
-    /// The number of bits in the magnitude of *self*. 0 if *self* = 0
+    /// The absolute value of *self*
+    public var abs: BInt {
+        return BInt(self.magnitude)
+    }
+
+    /// The number of bits in the binary representation of the magnitude of *self*. 0 if *self* = 0
     public var bitWidth: Int {
         return self.magnitude.bitWidth
     }
@@ -312,17 +337,21 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public var isZero: Bool {
         return self.magnitude.count == 1 && self.magnitude[0] == 0
     }
-    
-    /// The absolute value of *self*
-    public var abs: BInt {
-        return BInt(self.magnitude)
-    }
 
     /// The number of leading zero bits in the magnitude of *self*. 0 if *self* = 0
     public var leadingZeroBitCount: Int {
         return self.isZero ? 0 : self.magnitude.last!.leadingZeroBitCount
     }
     
+    /// The number of 1 bits in the magnitude of *self*
+    public var population: Int {
+        var p = 0
+        for m in self.magnitude {
+            p += BInt.population(m)
+        }
+        return p
+    }
+
     /// Is 0 if *self* = 0, 1 if *self* > 0, and -1 if *self* < 0
     public var signum: Int {
         return self.isZero ? 0 : (self.isNegative ? -1 : 1)
@@ -331,6 +360,20 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// The number of trailing zero bits in the magnitude of *self*. 0 if *self* = 0
     public var trailingZeroBitCount: Int {
         return self.magnitude.trailingZeroBitCount()
+    }
+
+    /*
+     * [HACKER] - chapter 5-1
+     */
+    static func population(_ m: Limb) -> Int {
+        var x = m
+        x = x & 0x5555555555555555 + (x >>  1) & 0x5555555555555555
+        x = x & 0x3333333333333333 + (x >>  2) & 0x3333333333333333
+        x = x & 0x0f0f0f0f0f0f0f0f + (x >>  4) & 0x0f0f0f0f0f0f0f0f
+        x += x >>  8
+        x += x >> 16
+        x += x >> 32
+        return Int(x & 0x7f)
     }
 
     mutating func setSign(_ sign: Bool) {
@@ -759,7 +802,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Right hand addend
     public static func +=(x: inout BInt, y: Int) {
         
-        // Much better performance than simply
+        // Better performance than simply
         // x += BInt(y)
         
         if y > 0 {
@@ -866,7 +909,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Right hand subtrahend
     public static func -=(x: inout BInt, y: Int) {
         
-        // Much better performance than simply
+        // Better performance than simply
         // x -= BInt(y)
         
         if y > 0 {
@@ -1019,6 +1062,15 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - remainder: Set to the remainder of *self* / x
     public func quotientAndRemainder(dividingBy x: Int, _ quotient: inout BInt, _ remainder: inout Int) {
         (quotient, remainder) = self.quotientAndRemainder(dividingBy: x)
+    }
+    
+    /// Exact division - that is, the remainder of the division is known to be 0
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameter x: Divisor - a BInt value
+    /// - Returns: Quotient of *self* / x - undefined if the remainder is in fact not 0
+    public func quotientExact(dividingBy x: BInt) -> BInt {
+        return BInt(self.magnitude.divExact(x.magnitude), self.isNegative != x.isNegative)
     }
 
     /// Division
@@ -1326,7 +1378,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return BInt(x) != y
     }
     
-    /// Less then
+    /// Less than
     ///
     /// - Parameters:
     ///   - x: First operand
@@ -2258,7 +2310,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameter x: Operand
     /// - Returns: Least common multiple of *self* and *x* - a non-negative number
     public func lcm(_ x: BInt) -> BInt {
-        return self.isZero || x.isZero ? BInt.ZERO : ((self * x) / self.gcd(x)).abs
+        return self.isZero || x.isZero ? BInt.ZERO : (self * x).abs.quotientExact(dividingBy: self.gcd(x))
     }
 
     /// n'th Lucas number
