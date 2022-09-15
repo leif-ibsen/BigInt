@@ -136,6 +136,7 @@ class ConstructorTest: XCTestCase {
         XCTAssertNil(BInt("- 1"))
     }
     
+    // BInt to Double
     func test7() {
         XCTAssertEqual(BInt.ZERO.asDouble(), 0.0)
         XCTAssertEqual((-BInt.ZERO).asDouble(), 0.0)
@@ -145,5 +146,27 @@ class ConstructorTest: XCTestCase {
         XCTAssertEqual(-(BInt.ONE << 1024).asDouble(), -Double.infinity)
         XCTAssert((BInt.ONE << 1023).asDouble().isFinite)
         XCTAssert((-(BInt.ONE << 1023)).asDouble().isFinite)
+    }
+    
+    // BInt from a Double value
+    func test8() {
+        XCTAssertEqual(BInt(0.0), BInt.ZERO)
+        XCTAssertEqual(BInt(1.0), BInt.ONE)
+        XCTAssertEqual(BInt(-1.0), -BInt.ONE)
+        XCTAssertNil(BInt(0.0 / 0.0))
+        XCTAssertNil(BInt(1.0 / 0.0))
+        XCTAssertNil(BInt(-1.0 / 0.0))
+        for i in 0 ..< 10 {
+            XCTAssertEqual(BInt(10), BInt(10.0 + Double(i) / 10.0))
+            XCTAssertEqual(BInt(9), BInt(10.0 - Double(i + 1) / 10.0))
+            XCTAssertEqual(BInt(-9), BInt(-10.0 + Double(i + 1) / 10.0))
+            XCTAssertEqual(BInt(-10), BInt(-10.0 - Double(i) / 10.0))
+        }
+        for _ in 0 ..< 100 {
+            let x = BInt(bitWidth: 1000)
+            let d = x.asDouble()
+            let x1 = BInt(d)!
+            XCTAssertTrue((x - x1).abs.asDouble() / d <= 1.0e-15)
+        }
     }
 }
