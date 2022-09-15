@@ -132,6 +132,31 @@ class BitTest: XCTestCase {
         XCTAssertEqual(y, BInt.ONE << 200)
         y.flipBit(200)
         XCTAssertEqual(y, BInt.ZERO)
- }
+    }
+    
+    func popCount(_ a: BInt) -> Int {
+        var n = 0
+        var x = a
+        while x.isNotZero {
+            if x.isOdd {
+                n += 1
+            }
+            x >>= 1
+        }
+        return n
+    }
+
+    func test8() {
+        XCTAssertEqual(BInt.ZERO.population, 0)
+        let x = BInt("ffffffffffffffff", radix: 16)!
+        for i in 0 ..< 100 {
+            XCTAssertEqual((BInt.ONE << i).population, 1)
+            XCTAssertEqual((x << i).population, 64)
+        }
+        for _ in 0 ..< 100 {
+            let x = BInt(bitWidth: 200)
+            XCTAssertEqual(x.population, popCount(x))
+        }
+    }
 
 }
