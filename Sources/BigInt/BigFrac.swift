@@ -13,8 +13,10 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     mutating func normalize() {
         let g = self.numerator.gcd(self.denominator)
-        self.numerator /= g
-        self.denominator /= g
+        if g.magnitude.compare(1) > 0 {
+            self.numerator = self.numerator.quotientExact(dividingBy: g)
+            self.denominator = self.denominator.quotientExact(dividingBy: g)
+        }
         if self.denominator.isNegative {
             self.denominator = -self.denominator
             self.numerator = -self.numerator
@@ -106,24 +108,14 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     // MARK: Computed properties
 
+    /// The absolute value of *self*
+    public var abs: BFraction {
+        return BFraction(self.numerator.abs, self.denominator)
+    }
+
     /// String value of *self*
     public var description: String {
         return self.asString()
-    }
-
-    /// Is *true* if *self* > 0, *false* otherwise
-    public var isPositive: Bool {
-        return self.numerator.isPositive
-    }
-
-    /// Is *true* if *self* < 0, *false* otherwise
-    public var isNegative: Bool {
-        return self.numerator.isNegative
-    }
-
-    /// Is *true* if *self* = 0, *false* otherwise
-    public var isZero: Bool {
-        return self.numerator.isZero
     }
 
     /// Is *true* if *self* is an integer, that is, the denominator is 1
@@ -131,9 +123,19 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return self.denominator.isOne
     }
 
-    /// The absolute value of *self*
-    public var abs: BFraction {
-        return BFraction(self.numerator.abs, self.denominator)
+    /// Is *true* if *self* < 0, *false* otherwise
+    public var isNegative: Bool {
+        return self.numerator.isNegative
+    }
+
+    /// Is *true* if *self* > 0, *false* otherwise
+    public var isPositive: Bool {
+        return self.numerator.isPositive
+    }
+
+    /// Is *true* if *self* = 0, *false* otherwise
+    public var isZero: Bool {
+        return self.numerator.isZero
     }
 
     /// Is 0 if *self* = 0, 1 if *self* > 0, and -1 if *self* < 0
@@ -718,7 +720,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return BFraction(x, BInt.ONE) != y
     }
 
-    /// Less then
+    /// Less than
     ///
     /// - Parameters:
     ///   - x: First operand
@@ -728,7 +730,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return x.numerator * y.denominator < y.numerator * x.denominator
     }
 
-    /// Less then
+    /// Less than
     ///
     /// - Parameters:
     ///   - x: First operand
@@ -738,7 +740,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return x < BFraction(y, BInt.ONE)
     }
 
-    /// Less then
+    /// Less than
     ///
     /// - Parameters:
     ///   - x: First operand
@@ -748,7 +750,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return BFraction(x, BInt.ONE) < y
     }
 
-    /// Less then
+    /// Less than
     ///
     /// - Parameters:
     ///   - x: First operand
@@ -758,7 +760,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return x < BFraction(y, BInt.ONE)
     }
 
-    /// Less then
+    /// Less than
     ///
     /// - Parameters:
     ///   - x: First operand
