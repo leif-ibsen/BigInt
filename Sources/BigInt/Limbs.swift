@@ -654,6 +654,52 @@ extension Array where Element == Limb {
         }
     }
 
+    // Returns 1/d mod 2^64
+    // [HACKER] - algorithm 10-6
+    static func inverseMod64(_ d: Limb) -> Limb {
+        var x = d
+        while true {
+            let t = d &* x
+            if t == 1 {
+                return x
+            }
+            x = x &* (2 &- t)
+        }
+    }
+    
+    // [JEBELEAN] - EDIV algorithm, exact division
+    func divExact(_ v: Limbs) -> Limbs {
+        precondition(!v.equalTo(0), "Division by zero")
+        if self.equalTo(0) {
+            return [0]
+        }
+        var cm = self
+        var am = v
+        let t = am.trailingZeroBitCount()
+        cm.shiftRight(t)
+        am.shiftRight(t)
+        let a1 = Limbs.inverseMod64(am[0])
+        let K = cm.count - am.count + 1
+        var bm = Limbs(repeating: 0, count: K)
+        for k in 0 ..< K {
+            let bk = a1 &* cm[k]
+            bm[k] = bk
+            let n = Swift.min(am.count, K - k)
+            var w = Limbs(repeating: 0, count: n + 1)
+            var ovfl: Bool
+            for i in 0 ..< n {
+                let (hi, lo) = am[i].multipliedFullWidth(by: bk)
+                (w[i], ovfl) = w[i].addingReportingOverflow(lo)
+                w[i + 1] = hi
+                if ovfl {
+                    w[i + 1] &+= 1
+                }
+            }
+            _ = cm.subtract(w, k)
+        }
+        return bm
+    }
+
     /*
      * gcd algorithms modelled after the gcd algorithms in Java BigInteger
      */
