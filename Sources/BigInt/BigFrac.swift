@@ -388,7 +388,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x * y
+    /// - Returns: x \* y
     public static func *(x: BFraction, y: BFraction) -> BFraction {
         return BFraction(x.numerator * y.numerator, x.denominator * y.denominator)
     }
@@ -398,7 +398,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x * y
+    /// - Returns: x \* y
     public static func *(x: BFraction, y: BInt) -> BFraction {
         return BFraction(x.numerator * y, x.denominator)
     }
@@ -408,7 +408,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x * y
+    /// - Returns: x \* y
     public static func *(x: BInt, y: BFraction) -> BFraction {
         return BFraction(x * y.numerator, y.denominator)
     }
@@ -418,7 +418,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x * y
+    /// - Returns: x \* y
     public static func *(x: BFraction, y: Int) -> BFraction {
         return BFraction(x.numerator * y, x.denominator)
     }
@@ -428,12 +428,12 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x * y
+    /// - Returns: x \* y
     public static func *(x: Int, y: BFraction) -> BFraction {
         return BFraction(x * y.numerator, y.denominator)
     }
 
-    /// x = x * y
+    /// x = x \* y
     ///
     /// - Parameters:
     ///   - x: Left hand multiplier
@@ -442,7 +442,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         x = x * y
     }
 
-    /// x = x * y
+    /// x = x \* y
     ///
     /// - Parameters:
     ///   - x: Left hand multiplier
@@ -451,7 +451,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         x = x * y
     }
 
-    /// x = x * y
+    /// x = x \* y
     ///
     /// - Parameters:
     ///   - x: Left hand multiplier

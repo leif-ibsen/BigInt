@@ -131,4 +131,33 @@ class ExpModTest: XCTestCase {
         }
         return result
     }
+    
+    // expMod with Int modulus must give same result as expMod with BInt modulus
+    func test6() {
+        doTest6(a1, x1, 1)
+        doTest6(a1, x1, 2)
+        doTest6(a1, x1, Int.max)
+        for _ in 0 ..< 1000 {
+            let m = Int.random(in: 1 ..< Int.max)
+            doTest6(a1, x1, m)
+        }
+    }
+
+    func doTest6(_ a: BInt, _ x: BInt, _ m: Int) {
+        let x1 = a.expMod(x, m)
+        let x2 = a.expMod(x, BInt(m))
+        XCTAssertEqual(BInt(x1), x2)
+        let x3 = (-a).expMod(x, m)
+        let x4 = (-a).expMod(x, BInt(m))
+        XCTAssertEqual(BInt(x3), x4)
+        if x2.gcd(BInt(m)) == 1 {
+            let x5 = a.expMod(-x, m)
+            let x6 = a.expMod(-x, BInt(m))
+            XCTAssertEqual(BInt(x5), x6)
+            let x7 = (-a).expMod(-x, m)
+            let x8 = (-a).expMod(-x, BInt(m))
+            XCTAssertEqual(BInt(x7), x8)
+        }
+    }
+
 }

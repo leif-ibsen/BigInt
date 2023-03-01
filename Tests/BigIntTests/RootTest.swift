@@ -32,13 +32,26 @@ class RootTest: XCTestCase {
 
     func test2() {
         for _ in 0 ..< 100 {
-            let p = BInt.probablePrime(100)
+            let p100 = BInt.probablePrime(100)
             for _ in 0 ..< 100 {
                 let x = BInt(bitWidth: 300)
-                let s = x.sqrtMod(p)
-                let j = x.jacobiSymbol(p)
+                let s = x.sqrtMod(p100)
+                let j = x.jacobiSymbol(p100)
                 XCTAssert(j == 1 || s == nil)
-                XCTAssert(j != 1 || (s! ** 2).mod(p) == x.mod(p))
+                XCTAssert(j != 1 || (s! ** 2).mod(p100) == x.mod(p100))
+            }
+            let p60 = BInt.probablePrime(60)
+            let p = p60.asInt()!
+            for _ in 0 ..< 100 {
+                let x = BInt(bitWidth: 300)
+                let s60 = x.sqrtMod(p60)
+                let s = x.sqrtMod(p)
+                if s == nil {
+                    XCTAssertNil(s60)
+                } else {
+                    XCTAssertNotNil(s60)
+                    XCTAssertTrue(s60! == BInt(s!) || s60! == p60 - BInt(s!))
+                }
             }
         }
     }

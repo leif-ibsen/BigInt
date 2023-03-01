@@ -940,7 +940,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x * y
+    /// - Returns: x \* y
     public static func *(x: BInt, y: BInt) -> BInt {
         var prod = x
         prod *= y
@@ -952,7 +952,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x * y
+    /// - Returns: x \* y
     public static func *(x: Int, y: BInt) -> BInt {
         var prod = y
         prod *= x
@@ -964,14 +964,14 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x * y
+    /// - Returns: x \* y
     public static func *(x: BInt, y: Int) -> BInt {
         var prod = x
         prod *= y
         return prod
     }
 
-    /// x = x * y
+    /// x = x \* y
     ///
     /// - Parameters:
     ///   - x: Left hand multiplier
@@ -981,7 +981,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         x.setSign(x.isNegative != y.isNegative)
     }
 
-    /// x = x * y
+    /// x = x \* y
     ///
     /// - Parameters:
     ///   - x: Left hand multiplier
@@ -1274,7 +1274,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
      *
      * Use Barrett reduction algorithm for x.bitWidth < 2048, else use Montgomery reduction algorithm
      */
-    /// Modular exponentiation
+    /// Modular exponentiation - BInt modulus
     ///
     /// - Precondition: Modulus is positive
     /// - Parameters:
@@ -1313,6 +1313,55 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         } else {
             return result
         }
+    }
+
+    /// Modular exponentiation - Int modulus
+    ///
+    /// - Precondition: Modulus is positive
+    /// - Parameters:
+    ///   - x: The exponent
+    ///   - m: The modulus, a positive integer
+    /// - Returns: (*self*^x) mod m for positive x, ((*self*^-x) mod m) modInverse m for negative x
+    public func expMod(_ x: BInt, _ m: Int) -> Int {
+        precondition(m > 0, "Modulus must be positive")
+        if m == 1 {
+            return 0
+        }
+        var exponent = x.isNegative ? -x : x
+        var result = 1
+        var base = self.abs.mod(m)
+        while exponent.isPositive {
+            if exponent.isOdd {
+                // result = (result * base) % m
+                result = m.dividingFullWidth(result.multipliedFullWidth(by: base)).remainder
+            }
+            exponent >>= 1
+            // base = (base * base) % m
+            base = m.dividingFullWidth(base.multipliedFullWidth(by: base)).remainder
+        }
+        if x.isNegative {
+            // result = result.modInverse(m)
+            result = BInt.modInverse(result, m)
+        }
+        if self.isNegative {
+            return x.isEven || result == 0 ? result : m - result
+        } else {
+            return result
+        }
+    }
+
+    // expMod helper function
+    static func modInverse(_ x: Int, _ m: Int) -> Int {
+        var a = 1
+        var g = x % m
+        var u = 0
+        var w = m
+        while w > 0 {
+            let (q, r) = g.quotientAndRemainder(dividingBy: w)
+            (a, g, u, w) = (u, w, a - q * u, r)
+        }
+        precondition(g == 1, "Modulus and self are not coprime")
+        return a < 0 ? a + m : a
     }
 
 
@@ -1680,10 +1729,15 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
 
     /// Checks whether *self* is prime using the Miller-Rabin algorithm
     ///
+    /// - Precondition: Probability parameter is positive
     /// - Parameter p: If *true* is returned, *self* is prime with probability > 1-1/2^p
     /// - Returns: *true* if *self* is probably prime, *false* if *self* is definitely not prime
     public func isProbablyPrime(_ p: Int = 30) -> Bool {
-        if self < 2 {
+        precondition(p > 0, "Probability must be positive")
+        if self == BInt.TWO {
+            return true
+        }
+        if self.isEven || self < 2 {
             return false
         }
         var rounds: Int
@@ -1984,10 +2038,10 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /*
      * [CRANDALL] - algorithm 2.3.8
      */
-    /// Square root modulo a prime number
+    /// Square root modulo a prime number - BInt prime
     ///
     /// - Parameter p: An odd prime number
-    /// - Returns: x, such that x^2 mod p = *self*, or *nil* if no such x exists
+    /// - Returns: x, such that x^2 = *self* (mod p), or *nil* if no such x exists
     public func sqrtMod(_ p: BInt) -> BInt? {
         if self.jacobiSymbol(p) != 1 {
             return nil
@@ -2037,6 +2091,89 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
     }
 
+    /// Square root modulo a prime number - Int prime
+    ///
+    /// - Parameter p: An odd prime number
+    /// - Returns: x, such that x^2 = *self* (mod p), or *nil* if no such x exists
+    public func sqrtMod(_ p: Int) -> Int? {
+        if self.jacobiSymbol(p) != 1 {
+            return nil
+        }
+        let A = (self % p).asInt()!
+        switch p % 8 {
+        case 3, 7:
+            return BInt.basicExpMod(A, (p + 1) >> 2, p)
+        
+        case 5:
+            var x = BInt.basicExpMod(A, (p + 3) >> 3, p)
+            if BInt.mulMod(x, x, p) != A % p {
+                x = BInt.mulMod(x, BInt.basicExpMod(2, (p - 1) >> 2, p), p)
+            }
+            return x
+
+        case 1:
+            let p_1 = p - 1
+            var d = 0
+            while true {
+                d = Int.random(in: 2 ... p - 3)
+                if BInt(d).jacobiSymbol(p) == -1 {
+                    break
+                }
+            }
+            var s = 0
+            var t = p_1
+            while t & 1 == 0 {
+                s += 1
+                t >>= 1
+            }
+            let A1 = BInt.basicExpMod(A, t, p)
+            let D = BInt.basicExpMod(d, t, p)
+            var m = 0
+            var exp = 1 << (s - 1)
+            var mask = 1
+            for _ in 0 ..< s {
+                let Dx = BInt.basicExpMod(D, m * exp, p)
+                let Ax = BInt.basicExpMod(A1, exp, p)
+                if BInt.mulMod(Dx, Ax, p) == p_1 {
+                    m |= mask
+                }
+                mask <<= 1
+                exp >>= 1
+            }
+            return BInt.mulMod(BInt.basicExpMod(A, (t + 1) >> 1, p), BInt.basicExpMod(D, m >> 1, p), p)
+
+        default:
+            return nil
+        }
+    }
+
+    // return (x * y) mod m
+    static func mulMod(_ x: Int, _ y: Int, _ m: Int) -> Int {
+        return m.dividingFullWidth(x.multipliedFullWidth(by: y)).remainder
+    }
+
+    // sqrtMod helper function
+    static func basicExpMod(_ a: Int, _ x: Int, _ m: Int) -> Int {
+        assert(m > 0)
+        assert(x >= 0)
+        if m == 1 {
+            return 0
+        }
+        var exponent = x
+        var result = 1
+        var base = Swift.abs(a) % m
+        while exponent > 0 {
+            if exponent & 1 == 1 {
+                // result = (result * base) % m
+                result = m.dividingFullWidth(result.multipliedFullWidth(by: base)).remainder
+            }
+            exponent >>= 1
+            // base = (base * base) % m
+            base = m.dividingFullWidth(base.multipliedFullWidth(by: base)).remainder
+        }
+        return result
+    }
+
 
     // MARK: Miscellaneous functions
     
@@ -2052,7 +2189,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if k == 0 || k == n {
             return BInt.ONE
         }
-        let k1 = min(k, n - k)
+        let k1 = Swift.min(k, n - k)
         let n_k1 = Limb(n - k1)
         var c: Limbs = [1]
         for i in 1 ... k1 {

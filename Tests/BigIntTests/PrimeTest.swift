@@ -21,9 +21,10 @@ class PrimeTest: XCTestCase {
         XCTAssertTrue((BInt(1) << x - 1).isProbablyPrime())
         XCTAssertTrue(!(BInt(1) << x + 1).isProbablyPrime())
     }
+
     func test1() {
-        XCTAssertTrue(BInt(100).isProbablyPrime(0))
-        XCTAssertTrue(!BInt(100).isProbablyPrime())
+        XCTAssertFalse(BInt(100).isProbablyPrime())
+        XCTAssertFalse(BInt(100).isProbablyPrime(1))
         for i in 1 ... 5 {
             XCTAssertTrue(BInt.probablePrime(100 * i).isProbablyPrime())
         }
