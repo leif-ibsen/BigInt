@@ -281,18 +281,18 @@ extension Array where Element == Limb {
         self.ensureSize(x.count + offset)
         var carry = false
         self.withUnsafeMutableBufferPointer { unsafeSelf in
-            for i in 0 ..< x.count {
+            for (i, xVal) in x.enumerated() {
                 let io = i + offset
                 if carry {
                     unsafeSelf[io] = unsafeSelf[io] &+ 1
                     if unsafeSelf[io] == 0 {
-                        unsafeSelf[io] = x[i]
+                        unsafeSelf[io] = xVal
                         // carry still lives
                     } else {
-                        (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(x[i])
+                        (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(xVal)
                     }
                 } else {
-                    (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(x[i])
+                    (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(xVal)
                 }
             }
             var i = x.count + offset
