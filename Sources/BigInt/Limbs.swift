@@ -42,7 +42,6 @@ extension Array where Element == Limb {
     }
 
     mutating func ensureSize(_ size: Int) {
-        self.reserveCapacity(size)
         while self.count < size {
             self.append(0)
         }
@@ -281,20 +280,18 @@ extension Array where Element == Limb {
         self.ensureSize(x.count + offset)
         var carry = false
         self.withUnsafeMutableBufferPointer { unsafeSelf in
-            x.withUnsafeBufferPointer { unsafeX in
-                for i in 0 ..< unsafeX.count {
-                    let io = i + offset
-                    if carry {
-                        unsafeSelf[io] = unsafeSelf[io] &+ 1
-                        if unsafeSelf[io] == 0 {
-                            unsafeSelf[io] = unsafeX[i]
-                            // carry still lives
-                        } else {
-                            (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(unsafeX[i])
-                        }
+            for i in 0 ..< x.count {
+                let io = i + offset
+                if carry {
+                    unsafeSelf[io] = unsafeSelf[io] &+ 1
+                    if unsafeSelf[io] == 0 {
+                        unsafeSelf[io] = x[i]
+                        // carry still lives
                     } else {
-                        (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(unsafeX[i])
+                        (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(x[i])
                     }
+                } else {
+                    (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(x[i])
                 }
             }
             var i = x.count + offset
