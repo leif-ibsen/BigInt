@@ -280,25 +280,27 @@ extension Array where Element == Limb {
         }
         self.ensureSize(x.count + offset)
         var carry = false
-        for i in 0 ..< x.count {
-            let io = i + offset
-            if carry {
-                self[io] = self[io] &+ 1
-                if self[io] == 0 {
-                    self[io] = x[i]
-                    // carry still lives
+        self.withUnsafeMutableBufferPointer { unsafeSelf in
+            for i in 0 ..< x.count {
+                let io = i + offset
+                if carry {
+                    unsafeSelf[io] = unsafeSelf[io] &+ 1
+                    if unsafeSelf[io] == 0 {
+                        unsafeSelf[io] = x[i]
+                        // carry still lives
+                    } else {
+                        (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(x[i])
+                    }
                 } else {
-                    (self[io], carry) = self[io].addingReportingOverflow(x[i])
+                    (unsafeSelf[io], carry) = unsafeSelf[io].addingReportingOverflow(x[i])
                 }
-            } else {
-                (self[io], carry) = self[io].addingReportingOverflow(x[i])
             }
-        }
-        var i = x.count + offset
-        while carry && i < self.count {
-            self[i] = self[i] &+ 1
-            carry = self[i] == 0
-            i += 1
+            var i = x.count + offset
+            while carry && i < unsafeSelf.count {
+                unsafeSelf[i] = unsafeSelf[i] &+ 1
+                carry = unsafeSelf[i] == 0
+                i += 1
+            }
         }
         if carry && uselastcarry {
             self.append(1)
