@@ -42,7 +42,7 @@ extension Array where Element == Limb {
     }
 
     mutating func ensureSize(_ size: Int) {
-        self.reserveCapacity(size + 4)
+        self.reserveCapacity(size)
         while self.count < size {
             self.append(0)
         }
