@@ -34,12 +34,6 @@ infix operator ** : ExponentiationPrecedence
 /// The representation is minimal, there is no leading zero Limbs.
 /// The exception is that the value 0 is represented as a single 64 bit zero Limb and sign *false*
 public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
-
-    static let digits: [Character] = [
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-
     
     // MARK: - Constants
 
@@ -141,7 +135,6 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if number.isEmpty {
             return nil
         }
-        var magnitude = [Limb(0)]
         
         // Find the number of digits that fits in a single Limb for the given radix
         // Process that number of digits at a time
@@ -158,26 +151,26 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if g == 0 {
             g = digits
         }
+        var magnitude = [Limb(0)]
         var i = 0
-        var l = Limb(0)
-        for c in number {
-            if let digit = BInt.digits.firstIndex(of: c) {
-                let d = digit < 36 ? digit : digit - 26
-                if d >= radix {
-                    return nil
-                }
-                l *= Limb(radix)
-                l += Limb(d)
-            } else {
-                return nil
-            }
+        var from = number.startIndex
+        var to = from
+        while from != number.endIndex {
+            to = number.index(after: to)
             i += 1
             if i == g {
-                magnitude.multiply(pow)
+                guard let l = Limb(number[from ..< to], radix: radix) else {
+                    return nil
+                }
+                if radix == 16 {
+                    magnitude.shiftLeft(60)
+                } else {
+                    magnitude.multiply(pow)
+                }
                 magnitude.add(l)
                 g = digits
-                l = 0
                 i = 0
+                from = to
             }
         }
         self.init(magnitude, sign)
@@ -1212,9 +1205,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     }
 
     /*
-     * [CRANDALL] - algorithm 2.1.4
-     *
-     * Return self modinverse m
+     * Return self modinverse m - using the extended gcd
      */
     /// Inverse modulus - BInt parameter
     ///
@@ -1223,16 +1214,9 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: If *self* and m are coprime, x such that (*self* * x) mod m = 1
     public func modInverse(_ m: BInt) -> BInt {
         precondition(m.isPositive, "Modulus must be positive")
-        var a = BInt.ONE
-        var g = self.mod(m)
-        var u = BInt.ZERO
-        var w = m
-        while w.isPositive {
-            let (q, r) = g.quotientAndRemainder(dividingBy: w)
-            (a, g, u, w) = (u, w, a - q * u, r)
-        }
+        let (g, a, _) = self.gcdExtended(m)
         precondition(g.isOne, "Modulus and self are not coprime")
-        return a.isNegative ? a + m : a
+        return a.mod(m)
     }
 
     /// Inverse modulus - Int parameter
@@ -2311,24 +2295,91 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
      }
 
     /*
-     * [CRANDALL] - algorithm 2.1.4
+     * Lehmer's gcd algorithm
+     * [KNUTH] - chapter 4.5.2, algorithm L - exercise 18
      */
     /// Extended greatest common divisor
     ///
     /// - Parameter x: Operand
     /// - Returns: Greatest common divisor *g* of *self* and *x*, and *a* and *b* such that *a* * *self* + *b* * *x* = *g*
     public func gcdExtended(_ x: BInt) -> (g: BInt, a: BInt, b: BInt) {
-        var a = BInt.ONE
-        var b = BInt.ZERO
-        var g = self
-        var u = BInt.ZERO
-        var v = BInt.ONE
-        var w = x
-        while w.isNotZero {
-            let q = g / w
-            (a, b, g, u, v, w) = (u, v, w, a - q * u, b - q * v, g - q * w)
+        let selfabs = self.abs
+        let xabs = x.abs
+        if self.isZero {
+            return (xabs, BInt.ZERO, x.isNegative ? -BInt.ONE : BInt.ONE)
         }
-        return g.isNegative ? (-g, -a, -b) : (g, a, b)
+        if x.isZero {
+            return (selfabs, self.isNegative ? -BInt.ONE : BInt.ONE, BInt.ZERO)
+        }
+        var u: BInt
+        var v: BInt
+        var u2 = BInt.ZERO
+        var v2 = BInt.ONE
+        if selfabs < xabs {
+            u = xabs
+            v = selfabs
+        } else {
+            u = selfabs
+            v = xabs
+        }
+        var u3 = u
+        var v3 = v
+        while v >= BInt.B62 {
+            let size = u.bitWidth - 62
+            var x = (u >> size).asInt()!
+            var y = (v >> size).asInt()!
+            var A = 1
+            var B = 0
+            var C = 0
+            var D = 1
+            while true {
+                let yC = y + C
+                let yD = y + D
+                if yC == 0 || yD == 0 {
+                    break
+                }
+                let q = (x + A) / yC
+                if q != (x + B) / yD {
+                    break
+                }
+                (A, B, x, C, D, y) = (C, D, y, A - q * C, B - q * D, x - q * y)
+            }
+            if B == 0 {
+                (u, v) = (v, u.mod(v))
+                let q = u3 / v3
+                (u2, v2) = (v2, u2 - q * v2)
+                (u3, v3) = (v3, u3 - q * v3)
+            } else {
+                (u, v) = (A * u + B * v, C * u + D * v)
+                (u2, v2) = (A * u2 + B * v2, C * u2 + D * v2)
+                (u3, v3) = (A * u3 + B * v3, C * u3 + D * v3)
+            }
+        }
+        while v3.isNotZero {
+            let q = u3 / v3
+            (u2, v2) = (v2, u2 - v2 * q)
+            (u3, v3) = (v3, u3 - v3 * q)
+        }
+        
+        var u1: BInt
+        if selfabs < xabs {
+            // u3 = u2 * selfabs + u1 * xabs
+            u1 = (u3 - u2 * selfabs) / xabs
+            (u1, u2) = (u2, u1)
+        } else {
+            // u3 = u1 * selfabs + u2 * xabs
+            u1 = (u3 - u2 * xabs) / selfabs
+        }
+        
+        // Fix the signs
+
+        if x.isNegative {
+            u2 = -u2
+        }
+        if self.isNegative {
+            u1 = -u1
+        }
+        return (u3, u1, u2)
     }
 
     /*

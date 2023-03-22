@@ -43,6 +43,7 @@ class GcdExtendedTest: XCTestCase {
         doTest(BInt.ONE, BInt.ONE)
         for _ in 0 ..< 100 {
             let a = BInt(bitWidth: 100)
+            doTest(a, BInt.ZERO)
             doTest(a, BInt.ONE)
             doTest(a, BInt.TWO)
             for _ in 0 ..< 100 {

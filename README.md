@@ -29,7 +29,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.7.0"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.8.0"),
 	  ]
 
 <h2 id="ex"><b>Examples</b></h2>
@@ -90,49 +90,49 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 
 <table width="90%">
 <tr><th width="40%" align="left">Operation</th><th width="35%" align="right">Swift code</th><th width="25%" align="right">Time</th></tr>
-<tr><td>As string</td><td align="right">c2000.asString()</td><td align="right">15 uSec</td></tr>
-<tr><td>As signed bytes</td><td align="right">c2000.asSignedBytes()</td><td align="right">0.27 uSec</td></tr>
-<tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.080 uSec</td></tr>
-<tr><td>Bitwise or</td><td align="right">a1000 | b1000</td><td align="right">0.080 uSec</td></tr>
-<tr><td>Bitwise xor</td><td align="right">a1000 ^ b1000</td><td align="right">0.080 uSec</td></tr>
-<tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.084 uSec</td></tr>
-<tr><td>Test bit</td><td align="right">c2000.testBit(701)</td><td align="right">0.0045 uSec</td></tr>
-<tr><td>Flip bit</td><td align="right">c2000.flipBit(701)</td><td align="right">0.0072 uSec</td></tr>
-<tr><td>Set bit</td><td align="right">c2000.setBit(701)</td><td align="right">0.0066 uSec</td></tr>
-<tr><td>Clear bit</td><td align="right">c2000.clearBit(701)</td><td align="right">0.0063 uSec</td></tr>
+<tr><td>As string</td><td align="right">c2000.asString()</td><td align="right">13 uSec</td></tr>
+<tr><td>As signed bytes</td><td align="right">c2000.asSignedBytes()</td><td align="right">0.31 uSec</td></tr>
+<tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.087 uSec</td></tr>
+<tr><td>Bitwise or</td><td align="right">a1000 | b1000</td><td align="right">0.086 uSec</td></tr>
+<tr><td>Bitwise xor</td><td align="right">a1000 ^ b1000</td><td align="right">0.087 uSec</td></tr>
+<tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.098 uSec</td></tr>
+<tr><td>Test bit</td><td align="right">c2000.testBit(701)</td><td align="right">0.018 uSec</td></tr>
+<tr><td>Flip bit</td><td align="right">c2000.flipBit(701)</td><td align="right">0.019 uSec</td></tr>
+<tr><td>Set bit</td><td align="right">c2000.setBit(701)</td><td align="right">0.019 uSec</td></tr>
+<tr><td>Clear bit</td><td align="right">c2000.clearBit(701)</td><td align="right">0.019 uSec</td></tr>
 <tr><td>Addition</td><td align="right">a1000 + b1000</td><td align="right">0.10 uSec</td></tr>
 <tr><td>Subtraction</td><td align="right">a1000 - b1000</td><td align="right">0.11 uSec</td></tr>
 <tr><td>Multiplication</td><td align="right">a1000 * b1000</td><td align="right">0.32 uSec</td></tr>
 <tr><td>Division</td><td align="right">c2000 / a1000</td><td align="right">2.5 uSec</td></tr>
 <tr><td>Modulus</td><td align="right">c2000.mod(a1000)</td><td align="right">2.5 uSec</td></tr>
-<tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">0.39 mSec</td></tr>
-<tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">3.8 mSec</td></tr>
-<tr><td>Equal</td><td align="right">c2000 + 1 == c2000</td><td align="right">0.0016 uSec</td></tr>
-<tr><td>Less than</td><td align="right">b1000 + 1 < b1000</td><td align="right">0.010 uSec</td></tr>
-<tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.15 uSec</td></tr>
-<tr><td>Shift 1 right</td><td align="right">c2000 >>= 1</td><td align="right">0.11 uSec</td></tr>
-<tr><td>Shift 100 left</td><td align="right">c2000 <<= 100</td><td align="right">0.19 uSec</td></tr>
-<tr><td>Shift 100 right</td><td align="right">c2000 >>= 100</td><td align="right">0.15 uSec</td></tr>
-<tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">6.2 mSec</td></tr>
-<tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">63 mSec</td></tr>
-<tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">790 mSec</td></tr>
+<tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">110 uSec</td></tr>
+<tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">3.7 mSec</td></tr>
+<tr><td>Equal</td><td align="right">c2000 + 1 == c2000</td><td align="right">0.017 uSec</td></tr>
+<tr><td>Less than</td><td align="right">b1000 + 1 < b1000</td><td align="right">0.021 uSec</td></tr>
+<tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.10 uSec</td></tr>
+<tr><td>Shift 1 right</td><td align="right">c2000 >>= 1</td><td align="right">0.07 uSec</td></tr>
+<tr><td>Shift 100 left</td><td align="right">c2000 <<= 100</td><td align="right">0.15 uSec</td></tr>
+<tr><td>Shift 100 right</td><td align="right">c2000 >>= 100</td><td align="right">0.13 uSec</td></tr>
+<tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">6.1 mSec</td></tr>
+<tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">60 mSec</td></tr>
+<tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">770 mSec</td></tr>
 <tr><td>Primorial</td><td align="right">BInt.primorial(100000)</td><td align="right">16 mSec</td></tr>
 <tr><td>Binomial</td><td align="right">BInt.binomial(100000, 10000)</td><td align="right">26 mSec</td></tr>
-<tr><td>Factorial</td><td align="right">BInt.factorial(100000)</td><td align="right">69 mSec</td></tr>
+<tr><td>Factorial</td><td align="right">BInt.factorial(100000)</td><td align="right">68 mSec</td></tr>
 <tr><td>Fibonacci</td><td align="right">BInt.fibonacci(100000)</td><td align="right">0.74 mSec</td></tr>
-<tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">31 uSec</td></tr>
-<tr><td>Extended gcd</td><td align="right">a1000.gcdExtended(b1000)</td><td align="right">0.59 mSec</td></tr>
-<tr><td>Least common multiple</td><td align="right">a1000.lcm(b1000)</td><td align="right">31 uSec</td></tr>
-<tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">1.3 uSec</td></tr>
-<tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.80 uSec</td></tr>
+<tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">32 uSec</td></tr>
+<tr><td>Extended gcd</td><td align="right">a1000.gcdExtended(b1000)</td><td align="right">90 uSec</td></tr>
+<tr><td>Least common multiple</td><td align="right">a1000.lcm(b1000)</td><td align="right">35 uSec</td></tr>
+<tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">1.2 uSec</td></tr>
+<tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.83 uSec</td></tr>
 <tr><td>Square root</td><td align="right">c2000.sqrt()</td><td align="right">14 uSec</td></tr>
 <tr><td>Square root and remainder</td><td align="right">c2000.sqrtRemainder()</td><td align="right">14 uSec</td></tr>
 <tr><td>Is perfect square</td><td align="right">(c2000 * c2000).isPerfectSquare()</td><td align="right">18 uSec</td></tr>
 <tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">1.7 mSec</td></tr>
 <tr><td>Power</td><td align="right">c2000 ** 111</td><td align="right">2.3 mSec</td></tr>
-<tr><td>Root</td><td align="right">c2000.root(111)</td><td align="right">17 uSec</td></tr>
+<tr><td>Root</td><td align="right">c2000.root(111)</td><td align="right">16 uSec</td></tr>
 <tr><td>Root and remainder</td><td align="right">c2000.rootRemainder(111)</td><td align="right">18 uSec</td></tr>
-<tr><td>Is perfect root</td><td align="right">c2000.isPerfectRoot()</td><td align="right">17 mSec</td></tr>
+<tr><td>Is perfect root</td><td align="right">c2000.isPerfectRoot()</td><td align="right">14 mSec</td></tr>
 <tr><td>Jacobi symbol</td><td align="right">c2000.jacobiSymbol(p1000)</td><td align="right">0.15 mSec</td></tr>
 <tr><td>Kronecker symbol</td><td align="right">c2000.kroneckerSymbol(p1000)</td><td align="right">0.15 mSec</td></tr>
 </table>
@@ -155,9 +155,9 @@ Fractions are created by
 <li>Specifying the numerator and denominator explicitly f.ex. BFraction(17, 4)</li>
 <li>Specifying the decimal value explictly f.ex. BFraction(4.25)</li>
 </ul>
-Defining a fraction by giving its decimal value (like 4.25) migth lead to surprises,
+Defining a fraction by giving its decimal value (like 4.25) might lead to surprises,
 because not all decimal values can be represented exactly as a floating point number.
-For example, one migth think that BFraction(0.1) would equal 1/10,
+For example, one might think that BFraction(0.1) would equal 1/10,
 but in fact it equals 3602879701896397 / 36028797018963968 = 0.1000000000000000055511151231257827021181583404541015625</br>
 <h3><b>Operations</b></h3>
 The operations available to fractions are:
@@ -194,7 +194,7 @@ There are references in the source code where appropriate.
 <li>[HACKER] - Henry S. Warren, Jr.: Hacker's Delight. Second Edition, Addison-Wesley</li>
 <li>[HANDBOOK] - Menezes, Oorschot, Vanstone: Handbook of Applied Cryptography. CRC Press 1996</li>
 <li>[JEBELEAN] - Tudor Jebelean: An Algorithm for Exact Division. Journal of Symbolic Computation, volume 15, 1993</li>
-<li>[KNUTH] - Donald E. Knuth: Seminumerical Algorithms. Addison-Wesley 1971</li>
+<li>[KNUTH] - Donald E. Knuth: Seminumerical Algorithms, Third Edition</li>
 </ul>
 
 <h2 id="alg"><b>Algorithms</b></h2>
@@ -212,13 +212,13 @@ Some of the algorithms used in BigInt are described below.
 <li>Basecase - Knuth algorithm D</li>
 <li>Exact Division - Jebelean's exact division algorithm</li>
 </ul>
-<h3><b>Greatest Common Divisor</b></h3>
+<h3><b>Greatest Common Divisor and Extended Greatest Common Divisor</b></h3>
 Lehmer's algorithm [KNUTH] chapter 4.5.2, with binary GCD basecase.
 <h3><b>Modular Exponentiation</b></h3>
 Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction for exponents with fewer than 2048 bits
 and Montgomery reduction for larger exponents.
 <h3><b>Inverse Modulus</b></h3>
-Extended Euclid algorithm 2.1.4 from [CRANDALL].
+Computed via extended GCD algorithm.
 <h3><b>Square Root</b></h3>
 Algorithm 1.12 (SqrtRem) from [BRENT] with algorithm 9.2.11 from [CRANDALL] as basecase.
 <h3><b>Square Root Modulo a Prime Number</b></h3>

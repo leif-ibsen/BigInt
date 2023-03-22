@@ -169,4 +169,65 @@ class ConstructorTest: XCTestCase {
             XCTAssertTrue((x - x1).abs.asDouble() / d <= 1.0e-15)
         }
     }
+    
+    let strings = ["0",
+                   "10",
+                   "120",
+                   "1230",
+                   "12340",
+                   "123450",
+                   "1234560",
+                   "12345670",
+                   "123456780",
+                   "1234567890",
+                   "123456789a0",
+                   "123456789ab0",
+                   "123456789abc0",
+                   "123456789abcd0",
+                   "123456789abcde0",
+                   "123456789abcdef0",
+                   "123456789abcdefg0",
+                   "123456789abcdefgh0",
+                   "123456789abcdefghi0",
+                   "123456789abcdefghij0",
+                   "123456789abcdefghijk0",
+                   "123456789abcdefghijkl0",
+                   "123456789abcdefghijklm0",
+                   "123456789abcdefghijklmn0",
+                   "123456789abcdefghijklmno0",
+                   "123456789abcdefghijklmnop0",
+                   "123456789abcdefghijklmnopq0",
+                   "123456789abcdefghijklmnopqr0",
+                   "123456789abcdefghijklmnopqrs0",
+                   "123456789abcdefghijklmnopqrst0",
+                   "123456789abcdefghijklmnopqrstu0",
+                   "123456789abcdefghijklmnopqrstuv0",
+                   "123456789abcdefghijklmnopqrstuvw0",
+                   "123456789abcdefghijklmnopqrstuvwx0",
+                   "123456789abcdefghijklmnopqrstuvwxy0",
+                   "123456789abcdefghijklmnopqrstuvwxyz0",
+    ]
+
+    // Radix test
+    func test9() {
+        for r in 2 ... 36 {
+            for i in 0 ..< strings.count {
+                let x = BInt(strings[i], radix: r)
+                let X = BInt(strings[i].uppercased(), radix: r)
+                if i < r {
+                    XCTAssertNotNil(x)
+                    let z = x?.asString(radix: r, uppercase: false)
+                    XCTAssertEqual(z, strings[i])
+                    XCTAssertNotNil(X)
+                    let Z = X?.asString(radix: r, uppercase: true)
+                    XCTAssertEqual(Z, strings[i].uppercased())
+                    XCTAssertEqual(BInt(z!, radix: r), BInt(Z!, radix: r))
+                } else {
+                    XCTAssertNil(x)
+                    XCTAssertNil(X)
+                }
+            }
+        }
+    }
+
 }
