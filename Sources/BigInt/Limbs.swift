@@ -173,14 +173,16 @@ extension Array where Element == Limb {
     // self = self << 1
     mutating func shift1Left() {
         var b = self[0] & 0x8000000000000000 != 0
-        self[0] <<= 1
-        for i in 1 ..< self.count {
-            let b1 = self[i] & 0x8000000000000000 != 0
-            self[i] <<= 1
-            if b {
-                self[i] |= 1
+        self.withUnsafeMutableBufferPointer {unsafeself in
+            unsafeself[0] <<= 1
+            for i in 1 ..< unsafeself.count {
+                let b1 = unsafeself[i] & 0x8000000000000000 != 0
+                unsafeself[i] <<= 1
+                if b {
+                    unsafeself[i] |= 1
+                }
+                b = b1
             }
-            b = b1
         }
         if b {
             self.append(1)
@@ -196,12 +198,14 @@ extension Array where Element == Limb {
         let bitShifts = shifts & 0x3f
         var b = self[0] >> (64 - bitShifts)
         if bitShifts > 0 {
-            self[0] <<= bitShifts
-            for i in 1 ..< self.count {
-                let b1 = self[i] >> (64 - bitShifts)
-                self[i] <<= bitShifts
-                self[i] |= b
-                b = b1
+            self.withUnsafeMutableBufferPointer { unsafeself in
+                unsafeself[0] <<= bitShifts
+                for i in 1 ..< unsafeself.count {
+                    let b1 = unsafeself[i] >> (64 - bitShifts)
+                    unsafeself[i] <<= bitShifts
+                    unsafeself[i] |= b
+                    b = b1
+                }
             }
         }
         if b != 0 {
@@ -213,7 +217,7 @@ extension Array where Element == Limb {
             self.insert(0, at: 0)
         }
     }
-    
+
     // return self << 1
     func shifted1Left() -> Limbs {
         var res = self
@@ -230,11 +234,13 @@ extension Array where Element == Limb {
     
     // self = self >> 1
     mutating func shift1Right() {
-        for i in 0 ..< self.count {
-            if i > 0 && self[i] & 1 == 1 {
-                self[i - 1] |= 0x8000000000000000
+        self.withUnsafeMutableBufferPointer { unsafeself in
+            for i in 0 ..< unsafeself.count {
+                if i > 0 && unsafeself[i] & 1 == 1 {
+                    unsafeself[i - 1] |= 0x8000000000000000
+                }
+                unsafeself[i] >>= 1
             }
-            self[i] >>= 1
         }
         self.normalize()
     }
@@ -245,16 +251,18 @@ extension Array where Element == Limb {
         self.removeFirst(limbShifts)
         let bitShifts = shifts & 0x3f
         if bitShifts > 0 {
-            for i in 0 ..< self.count {
-                if i > 0 {
-                    self[i - 1] |= self[i] << (64 - bitShifts)
+            self.withUnsafeMutableBufferPointer { unsafeself in
+                for i in 0 ..< unsafeself.count {
+                    if i > 0 {
+                        unsafeself[i - 1] |= unsafeself[i] << (64 - bitShifts)
+                    }
+                    unsafeself[i] >>= bitShifts
                 }
-                self[i] >>= bitShifts
             }
         }
         self.normalize()
     }
-    
+
     // return self >> 1
     func shifted1Right() -> Limbs {
         var res = self
@@ -280,25 +288,27 @@ extension Array where Element == Limb {
         }
         self.ensureSize(x.count + offset)
         var carry = false
-        for i in 0 ..< x.count {
-            let io = i + offset
-            if carry {
-                self[io] = self[io] &+ 1
-                if self[io] == 0 {
-                    self[io] = x[i]
-                    // carry still lives
+        self.withUnsafeMutableBufferPointer { unsafeself in
+            for i in 0 ..< x.count {
+                let io = i + offset
+                if carry {
+                    unsafeself[io] &+= 1
+                    if unsafeself[io] == 0 {
+                        unsafeself[io] = x[i]
+                        // carry still lives
+                    } else {
+                        (unsafeself[io], carry) = unsafeself[io].addingReportingOverflow(x[i])
+                    }
                 } else {
-                    (self[io], carry) = self[io].addingReportingOverflow(x[i])
+                    (unsafeself[io], carry) = unsafeself[io].addingReportingOverflow(x[i])
                 }
-            } else {
-                (self[io], carry) = self[io].addingReportingOverflow(x[i])
             }
-        }
-        var i = x.count + offset
-        while carry && i < self.count {
-            self[i] = self[i] &+ 1
-            carry = self[i] == 0
-            i += 1
+            var i = x.count + offset
+            while carry && i < unsafeself.count {
+                unsafeself[i] &+= 1
+                carry = unsafeself[i] == 0
+                i += 1
+            }
         }
         if carry && uselastcarry {
             self.append(1)
@@ -311,7 +321,7 @@ extension Array where Element == Limb {
         (self[0], carry) = self[0].addingReportingOverflow(x)
         var i = 1
         while carry && i < self.count {
-            self[i] = self[i] &+ 1
+            self[i] &+= 1
             carry = self[i] == 0
             i += 1
         }
@@ -325,28 +335,31 @@ extension Array where Element == Limb {
      */
 
     // self[offset ..< self.count] = self[offset ..< self.count] - x, return borrow
+    // self is not necessarily normalized
     mutating func subtract(_ x: Limbs, _ offset: Int) -> Bool {
         self.ensureSize(x.count + offset)
         var borrow = false
-        for i in 0 ..< x.count {
-            let io = i + offset
-            if borrow {
-                if self[io] == 0 {
-                    self[io] = 0xffffffffffffffff - x[i]
-                    // borrow still lives
+        self.withUnsafeMutableBufferPointer {unsafeself in
+            for i in 0 ..< x.count {
+                let io = i + offset
+                if borrow {
+                    if unsafeself[io] == 0 {
+                        unsafeself[io] = 0xffffffffffffffff - x[i]
+                        // borrow still lives
+                    } else {
+                        unsafeself[io] &-= 1
+                        (unsafeself[io], borrow) = unsafeself[io].subtractingReportingOverflow(x[i])
+                    }
                 } else {
-                    self[io] -= 1
-                    (self[io], borrow) = self[io].subtractingReportingOverflow(x[i])
+                    (unsafeself[io], borrow) = unsafeself[io].subtractingReportingOverflow(x[i])
                 }
-            } else {
-                (self[io], borrow) = self[io].subtractingReportingOverflow(x[i])
             }
-        }
-        var i = x.count + offset
-        while borrow && i < self.count {
-            self[i] = self[i] &- 1
-            borrow = self[i] == 0xffffffffffffffff
-            i += 1
+            var i = x.count + offset
+            while borrow && i < unsafeself.count {
+                unsafeself[i] &-= 1
+                borrow = unsafeself[i] == 0xffffffffffffffff
+                i += 1
+            }
         }
         return borrow
     }
@@ -359,24 +372,26 @@ extension Array where Element == Limb {
             swap(&self, &xx)
         }
         var borrow = false
-        for i in 0 ..< xx.count {
-            if borrow {
-                if self[i] == 0 {
-                    self[i] = 0xffffffffffffffff - xx[i]
-                    // borrow still lives
+        self.withUnsafeMutableBufferPointer { unsafeself in
+            for i in 0 ..< xx.count {
+                if borrow {
+                    if unsafeself[i] == 0 {
+                        unsafeself[i] = 0xffffffffffffffff - xx[i]
+                        // borrow still lives
+                    } else {
+                        unsafeself[i] &-= 1
+                        (unsafeself[i], borrow) = unsafeself[i].subtractingReportingOverflow(xx[i])
+                    }
                 } else {
-                    self[i] -= 1
-                    (self[i], borrow) = self[i].subtractingReportingOverflow(xx[i])
+                    (unsafeself[i], borrow) = unsafeself[i].subtractingReportingOverflow(xx[i])
                 }
-            } else {
-                (self[i], borrow) = self[i].subtractingReportingOverflow(xx[i])
             }
-        }
-        var i = xx.count
-        while borrow && i < self.count {
-            self[i] = self[i] &- 1
-            borrow = self[i] == 0xffffffffffffffff
-            i += 1
+            var i = xx.count
+            while borrow && i < unsafeself.count {
+                unsafeself[i] &-= 1
+                borrow = unsafeself[i] == 0xffffffffffffffff
+                i += 1
+            }
         }
         self.normalize()
         return cmp
@@ -393,7 +408,7 @@ extension Array where Element == Limb {
         (self[0], borrow) = self[0].subtractingReportingOverflow(xx[0])
         var i = 1
         while borrow && i < self.count {
-            self[i] = self[i] &- 1
+            self[i] &-= 1
             borrow = self[i] == 0xffffffffffffffff
             i += 1
         }
@@ -420,23 +435,27 @@ extension Array where Element == Limb {
         var w : Limbs
         if m < Limbs.KA_THR || n < Limbs.KA_THR {
             w = Limbs(repeating: 0, count: m + n)
-            var carry: Limb
-            var ovfl1, ovfl2: Bool
-            for i in 0 ..< m {
-                carry = 0
-                for j in 0 ..< n {
-                    let (hi, lo) = self[i].multipliedFullWidth(by: x[j])
-                    (w[i + j], ovfl1) = w[i + j].addingReportingOverflow(lo)
-                    (w[i + j], ovfl2) = w[i + j].addingReportingOverflow(carry)
-                    carry = hi
-                    if ovfl1 {
-                        carry = carry &+ 1
+            var carry = Limb(0)
+            var ovfl1 = false
+            var ovfl2 = false
+            w.withUnsafeMutableBufferPointer { unsafew in
+                for i in 0 ..< m {
+                    carry = 0
+                    for j in 0 ..< n {
+                        let ipj = i + j
+                        let (hi, lo) = self[i].multipliedFullWidth(by: x[j])
+                        (unsafew[ipj], ovfl1) = unsafew[ipj].addingReportingOverflow(lo)
+                        (unsafew[ipj], ovfl2) = unsafew[ipj].addingReportingOverflow(carry)
+                        carry = hi
+                        if ovfl1 {
+                            carry &+= 1
+                        }
+                        if ovfl2 {
+                            carry &+= 1
+                        }
                     }
-                    if ovfl2 {
-                        carry = carry &+ 1
-                    }
+                    unsafew[i + n] = carry
                 }
-                w[i + n] = carry
             }
         } else if m < Limbs.TC_THR || n < Limbs.TC_THR {
             w = self.karatsubaTimes(x)
@@ -459,7 +478,7 @@ extension Array where Element == Limb {
             (w[i], ovfl) = w[i].addingReportingOverflow(lo)
             w[i + 1] = hi
             if ovfl {
-                w[i + 1] = w[i + 1] &+ 1
+                w[i + 1] &+= 1
             }
         }
         w.normalize()
@@ -484,54 +503,60 @@ extension Array where Element == Limb {
         var w: Limbs
         if n < Limbs.KA_THR {
             w = Limbs(repeating: 0, count: n * 2)
-            var carry: Limb
-            var ovfl1, ovfl2, ovfl3: Bool
-            
-            // Compute off-diagonal elements
-            for i in 0 ..< n {
+            var carry = Limb(0)
+            var ovfl1 = false
+            var ovfl2 = false
+            var ovfl3 = false
+            w.withUnsafeMutableBufferPointer { unsafew in
+                // Compute off-diagonal elements
+                for i in 0 ..< n {
+                    carry = 0
+                    for j in i + 1 ..< n {
+                        let ipj = i + j
+                        let (hi, lo) = self[i].multipliedFullWidth(by: self[j])
+                        (unsafew[ipj], ovfl1) = unsafew[ipj].addingReportingOverflow(lo)
+                        (unsafew[ipj], ovfl2) = unsafew[ipj].addingReportingOverflow(carry)
+                        carry = hi
+                        if ovfl1 {
+                            carry &+= 1
+                        }
+                        if ovfl2 {
+                            carry &+= 1
+                        }
+                    }
+                    unsafew[i + n] = carry
+                }
+            }
+            // Multiply by 2
+            w.shift1Left()
+            w.withUnsafeMutableBufferPointer { unsafew in
+                // Add diagonal elements
                 carry = 0
-                for j in i + 1 ..< n {
-                    let (hi, lo) = self[i].multipliedFullWidth(by: self[j])
-                    (w[i + j], ovfl1) = w[i + j].addingReportingOverflow(lo)
-                    (w[i + j], ovfl2) = w[i + j].addingReportingOverflow(carry)
-                    carry = hi
+                for i in 0 ..< n {
+                    let i2 = i << 1
+                    let i2p1 = i2 + 1
+                    let (hi, lo) = self[i].multipliedFullWidth(by: self[i])
+                    (unsafew[i2], ovfl1) = unsafew[i2].addingReportingOverflow(lo)
+                    (unsafew[i2], ovfl2) = unsafew[i2].addingReportingOverflow(carry)
+                    (unsafew[i2p1], ovfl3) = unsafew[i2p1].addingReportingOverflow(hi)
+                    if ovfl1 {
+                        (unsafew[i2p1], ovfl1) = unsafew[i2p1].addingReportingOverflow(1)
+                    }
+                    if ovfl2 {
+                        (unsafew[i2p1], ovfl2) = unsafew[i2p1].addingReportingOverflow(1)
+                    }
+                    carry = 0
                     if ovfl1 {
                         carry &+= 1
                     }
                     if ovfl2 {
                         carry &+= 1
                     }
+                    if ovfl3 {
+                        carry &+= 1
+                    }
+                    assert(carry < 2)
                 }
-                w[i + n] = carry
-            }
-
-            // Multiply by 2
-            w.shift1Left()
-
-            // Add diagonal elements
-            carry = 0
-            for i in 0 ..< n {
-                let (hi, lo) = self[i].multipliedFullWidth(by: self[i])
-                (w[2 * i], ovfl1) = w[2 * i].addingReportingOverflow(lo)
-                (w[2 * i], ovfl2) = w[2 * i].addingReportingOverflow(carry)
-                (w[2 * i + 1], ovfl3) = w[2 * i + 1].addingReportingOverflow(hi)
-                if ovfl1 {
-                    (w[2 * i + 1], ovfl1) = w[2 * i + 1].addingReportingOverflow(1)
-                }
-                if ovfl2 {
-                    (w[2 * i + 1], ovfl2) = w[2 * i + 1].addingReportingOverflow(1)
-                }
-                carry = 0
-                if ovfl1 {
-                    carry &+= 1
-                }
-                if ovfl2 {
-                    carry &+= 1
-                }
-                if ovfl3 {
-                    carry &+= 1
-                }
-                assert(carry < 2)
             }
         } else if n < Limbs.TC_THR {
             w = self.karatsubaSquare()
@@ -543,7 +568,7 @@ extension Array where Element == Limb {
         w.normalize()
         self = w
     }
-    
+
     func squared() -> Limbs {
         var w = self
         w.square()

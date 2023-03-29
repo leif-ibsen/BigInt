@@ -103,7 +103,7 @@ Jacobi symbol, Kronecker symbol, Factorial function, Binomial function, Fibonacc
 
 <p>In your projects Package.swift file add a dependency like<br/></p>
 <pre class="highlight plaintext"><code>  dependencies: [
-  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.8.0"),
+  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.9.0"),
   ]
 </code></pre>
 
@@ -165,48 +165,48 @@ The results are in the table below. It shows the operation being measured and th
 <table width="90%">
 <tr><th width="40%" align="left">Operation</th><th width="35%" align="right">Swift code</th><th width="25%" align="right">Time</th></tr>
 <tr><td>As string</td><td align="right">c2000.asString()</td><td align="right">13 uSec</td></tr>
-<tr><td>As signed bytes</td><td align="right">c2000.asSignedBytes()</td><td align="right">0.31 uSec</td></tr>
+<tr><td>As signed bytes</td><td align="right">c2000.asSignedBytes()</td><td align="right">0.30 uSec</td></tr>
 <tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.087 uSec</td></tr>
 <tr><td>Bitwise or</td><td align="right">a1000 | b1000</td><td align="right">0.086 uSec</td></tr>
 <tr><td>Bitwise xor</td><td align="right">a1000 ^ b1000</td><td align="right">0.087 uSec</td></tr>
-<tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.098 uSec</td></tr>
+<tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.093 uSec</td></tr>
 <tr><td>Test bit</td><td align="right">c2000.testBit(701)</td><td align="right">0.018 uSec</td></tr>
 <tr><td>Flip bit</td><td align="right">c2000.flipBit(701)</td><td align="right">0.019 uSec</td></tr>
 <tr><td>Set bit</td><td align="right">c2000.setBit(701)</td><td align="right">0.019 uSec</td></tr>
 <tr><td>Clear bit</td><td align="right">c2000.clearBit(701)</td><td align="right">0.019 uSec</td></tr>
-<tr><td>Addition</td><td align="right">a1000 + b1000</td><td align="right">0.10 uSec</td></tr>
-<tr><td>Subtraction</td><td align="right">a1000 - b1000</td><td align="right">0.11 uSec</td></tr>
+<tr><td>Addition</td><td align="right">a1000 + b1000</td><td align="right">0.07 uSec</td></tr>
+<tr><td>Subtraction</td><td align="right">a1000 - b1000</td><td align="right">0.08 uSec</td></tr>
 <tr><td>Multiplication</td><td align="right">a1000 * b1000</td><td align="right">0.32 uSec</td></tr>
-<tr><td>Division</td><td align="right">c2000 / a1000</td><td align="right">2.5 uSec</td></tr>
-<tr><td>Modulus</td><td align="right">c2000.mod(a1000)</td><td align="right">2.5 uSec</td></tr>
-<tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">110 uSec</td></tr>
-<tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">3.7 mSec</td></tr>
+<tr><td>Division</td><td align="right">c2000 / a1000</td><td align="right">2.4 uSec</td></tr>
+<tr><td>Modulus</td><td align="right">c2000.mod(a1000)</td><td align="right">2.4 uSec</td></tr>
+<tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">101 uSec</td></tr>
+<tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">3.5 mSec</td></tr>
 <tr><td>Equal</td><td align="right">c2000 + 1 == c2000</td><td align="right">0.017 uSec</td></tr>
 <tr><td>Less than</td><td align="right">b1000 + 1 < b1000</td><td align="right">0.021 uSec</td></tr>
-<tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.10 uSec</td></tr>
+<tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.05 uSec</td></tr>
 <tr><td>Shift 1 right</td><td align="right">c2000 >>= 1</td><td align="right">0.07 uSec</td></tr>
 <tr><td>Shift 100 left</td><td align="right">c2000 <<= 100</td><td align="right">0.15 uSec</td></tr>
-<tr><td>Shift 100 right</td><td align="right">c2000 >>= 100</td><td align="right">0.13 uSec</td></tr>
-<tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">6.1 mSec</td></tr>
+<tr><td>Shift 100 right</td><td align="right">c2000 >>= 100</td><td align="right">0.12 uSec</td></tr>
+<tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">5.8 mSec</td></tr>
 <tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">60 mSec</td></tr>
-<tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">770 mSec</td></tr>
+<tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">730 mSec</td></tr>
 <tr><td>Primorial</td><td align="right">BInt.primorial(100000)</td><td align="right">16 mSec</td></tr>
 <tr><td>Binomial</td><td align="right">BInt.binomial(100000, 10000)</td><td align="right">26 mSec</td></tr>
-<tr><td>Factorial</td><td align="right">BInt.factorial(100000)</td><td align="right">68 mSec</td></tr>
-<tr><td>Fibonacci</td><td align="right">BInt.fibonacci(100000)</td><td align="right">0.74 mSec</td></tr>
-<tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">32 uSec</td></tr>
-<tr><td>Extended gcd</td><td align="right">a1000.gcdExtended(b1000)</td><td align="right">90 uSec</td></tr>
-<tr><td>Least common multiple</td><td align="right">a1000.lcm(b1000)</td><td align="right">35 uSec</td></tr>
+<tr><td>Factorial</td><td align="right">BInt.factorial(100000)</td><td align="right">58 mSec</td></tr>
+<tr><td>Fibonacci</td><td align="right">BInt.fibonacci(100000)</td><td align="right">0.52 mSec</td></tr>
+<tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">31 uSec</td></tr>
+<tr><td>Extended gcd</td><td align="right">a1000.gcdExtended(b1000)</td><td align="right">86 uSec</td></tr>
+<tr><td>Least common multiple</td><td align="right">a1000.lcm(b1000)</td><td align="right">34 uSec</td></tr>
 <tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">1.2 uSec</td></tr>
-<tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.83 uSec</td></tr>
-<tr><td>Square root</td><td align="right">c2000.sqrt()</td><td align="right">14 uSec</td></tr>
-<tr><td>Square root and remainder</td><td align="right">c2000.sqrtRemainder()</td><td align="right">14 uSec</td></tr>
-<tr><td>Is perfect square</td><td align="right">(c2000 * c2000).isPerfectSquare()</td><td align="right">18 uSec</td></tr>
-<tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">1.7 mSec</td></tr>
-<tr><td>Power</td><td align="right">c2000 ** 111</td><td align="right">2.3 mSec</td></tr>
+<tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.61 uSec</td></tr>
+<tr><td>Square root</td><td align="right">c2000.sqrt()</td><td align="right">13 uSec</td></tr>
+<tr><td>Square root and remainder</td><td align="right">c2000.sqrtRemainder()</td><td align="right">13 uSec</td></tr>
+<tr><td>Is perfect square</td><td align="right">(c2000 * c2000).isPerfectSquare()</td><td align="right">17 uSec</td></tr>
+<tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">1.6 mSec</td></tr>
+<tr><td>Power</td><td align="right">c2000 ** 111</td><td align="right">1.8 mSec</td></tr>
 <tr><td>Root</td><td align="right">c2000.root(111)</td><td align="right">16 uSec</td></tr>
-<tr><td>Root and remainder</td><td align="right">c2000.rootRemainder(111)</td><td align="right">18 uSec</td></tr>
-<tr><td>Is perfect root</td><td align="right">c2000.isPerfectRoot()</td><td align="right">14 mSec</td></tr>
+<tr><td>Root and remainder</td><td align="right">c2000.rootRemainder(111)</td><td align="right">17 uSec</td></tr>
+<tr><td>Is perfect root</td><td align="right">c2000.isPerfectRoot()</td><td align="right">13 mSec</td></tr>
 <tr><td>Jacobi symbol</td><td align="right">c2000.jacobiSymbol(p1000)</td><td align="right">0.15 mSec</td></tr>
 <tr><td>Kronecker symbol</td><td align="right">c2000.kroneckerSymbol(p1000)</td><td align="right">0.15 mSec</td></tr>
 </table>
@@ -348,7 +348,7 @@ and Montgomery reduction for larger exponents.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2023 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2023-03-21)</p>
+          <p>&copy; 2023 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2023-03-28)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

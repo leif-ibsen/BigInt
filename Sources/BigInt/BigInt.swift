@@ -1761,7 +1761,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
                 if x == s_1 {
                     return true
                 }
-                x = (x * x) % self
+                x = (x ** 2) % self
             }
         }
         return x == s_1
@@ -2037,7 +2037,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         
         case 5:
             var x = A.expMod((p + 3) >> 3, p)
-            if (x * x) % p != A % p {
+            if (x ** 2) % p != A % p {
                 x = x * BInt.TWO.expMod((p - 1) >> 2, p) % p
             }
             return x
@@ -2217,25 +2217,27 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         var a: Limbs = [0]
         var b: Limbs = [1]
         var bit = 1 << (63 - n.leadingZeroBitCount)
-        var m = 0
         while bit > 0 {
-            var d: Limbs = b.shifted1Left()
+            var d = b.shifted1Left()
             _ = d.subtract(a, 0)
             d.multiply(a)
-            var e: Limbs = a
-            e.multiply(a)
-            var b2 = b
-            b2.multiply(b)
+            
+            // d = (2 * b - a) * a
+            
+            var e = a.squared()
+            let b2 = b.squared()
             e.add(b2)
+            
+            // e = a^2 + b^2
+            
             a = d
             b = e
-            m <<= 1
             if n & bit != 0 {
-                var c: Limbs = a
+                var c = a
                 c.add(b)
                 a = b
                 b = c
-                m += 1
+                // (a, b) = (b, a + b)
             }
             bit >>= 1
         }
