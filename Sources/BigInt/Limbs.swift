@@ -472,13 +472,15 @@ extension Array where Element == Limb {
     mutating func multiply(_ x: Limb) {
         let m = self.count
         var w = Limbs(repeating: 0, count: m + 1)
-        var ovfl: Bool
-        for i in 0 ..< m {
-            let (hi, lo) = self[i].multipliedFullWidth(by: x)
-            (w[i], ovfl) = w[i].addingReportingOverflow(lo)
-            w[i + 1] = hi
-            if ovfl {
-                w[i + 1] &+= 1
+        var ovfl = false
+        w.withUnsafeMutableBufferPointer { unsafew in
+            for i in 0 ..< m {
+                let (hi, lo) = self[i].multipliedFullWidth(by: x)
+                (unsafew[i], ovfl) = unsafew[i].addingReportingOverflow(lo)
+                unsafew[i + 1] = hi
+                if ovfl {
+                    unsafew[i + 1] &+= 1
+                }
             }
         }
         w.normalize()
@@ -711,13 +713,15 @@ extension Array where Element == Limb {
             bm[k] = bk
             let n = Swift.min(am.count, K - k)
             var w = Limbs(repeating: 0, count: n + 1)
-            var ovfl: Bool
-            for i in 0 ..< n {
-                let (hi, lo) = am[i].multipliedFullWidth(by: bk)
-                (w[i], ovfl) = w[i].addingReportingOverflow(lo)
-                w[i + 1] = hi
-                if ovfl {
-                    w[i + 1] &+= 1
+            var ovfl = false
+            w.withUnsafeMutableBufferPointer { unsafew in
+                for i in 0 ..< n {
+                    let (hi, lo) = am[i].multipliedFullWidth(by: bk)
+                    (unsafew[i], ovfl) = unsafew[i].addingReportingOverflow(lo)
+                    unsafew[i + 1] = hi
+                    if ovfl {
+                        unsafew[i + 1] &+= 1
+                    }
                 }
             }
             _ = cm.subtract(w, k)
@@ -725,87 +729,15 @@ extension Array where Element == Limb {
         return bm
     }
 
-    /*
-     * gcd algorithms modelled after the gcd algorithms in Java BigInteger
-     */
-    func gcd(_ x: Limbs) -> Limbs {
-        if self == [0] {
-            return x
-        }
-        var u = self
-        var v = x
-        while v != [0] {
-            if v.count == u.count {
-                return u.binaryGcd(v)
-            }
-            let r = u.divMod(v).remainder
-            u = v
-            v = r
-        }
-        return u
-    }
-
-    func binaryGcd(_ x: Limbs) -> Limbs {
-        if self == [0] {
-            return x
-        }
-        var u = self
-        var v = x
-        let k = Swift.min(u.trailingZeroBitCount(), v.trailingZeroBitCount())
-        u.shiftRight(k)
-        v.shiftRight(k)
-        var t: Limbs
-        var tSign: Bool
-        if u[0] & 1 == 1 {
-            t = v
-            tSign = true
-        } else {
-            t = u
-            tSign = false
-        }
-        while t != [0] {
-            t.shiftRight(t.trailingZeroBitCount())
-            if tSign {
-                v = t
-            } else {
-                u = t
-            }
-            if u.count == 1 && v.count == 1 {
-                return Limbs.binaryGcd(u[0], v[0]).shiftedLeft(k)
-            }
-            let cmp = u.compare(v)
-            if cmp < 0 {
-                _ = v.difference(u)
-                t = v
-                tSign = true
-            } else if cmp > 0 {
-                _ = u.difference(v)
-                t = u
-                tSign = false
-            } else {
-                break
-            }
-        }
-        return u.shiftedLeft(k)
-    }
-    
-    /*
-     * gcd of single Limb values
-     */
-    static func binaryGcd(_ a: Limb, _ b: Limb) -> Limbs {
-        if b == 0 {
-            return [a]
-        }
-        if a == 0 {
-            return [b]
-        }
-        var a = a
-        var b = b
-        let atz = a.trailingZeroBitCount
-        let btz = b.trailingZeroBitCount
-        a >>= atz
-        b >>= btz
-        let t = Swift.min(atz, btz)
+    // Binary gcd algorithm
+    // [HANDBOOK] - algorithm 14.54
+    static func binaryGcd(_ a: Limb, _ b: Limb) -> Limb {
+        assert(a > 0)
+        assert(b > 0)
+        let az = a.trailingZeroBitCount
+        let bz = b.trailingZeroBitCount
+        var a = a >> az
+        var b = b >> bz
         while a != b {
             if a > b {
                 a -= b
@@ -815,9 +747,9 @@ extension Array where Element == Limb {
                 b >>= b.trailingZeroBitCount
             }
         }
-        return [a << t]
+        return a << (az < bz ? az : bz)
     }
-    
+
     /*
      * Exponentiation
      */

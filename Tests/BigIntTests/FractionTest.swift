@@ -8,13 +8,13 @@
 import XCTest
 
 class FractionTest: XCTestCase {
-
+    
     func doTestInit(_ n: Int, _ d: Int) {
         XCTAssertEqual(BFraction(n, d), BFraction(BInt(n), BInt(d)))
         XCTAssertEqual(BFraction(n, d), BFraction(n, BInt(d)))
         XCTAssertEqual(BFraction(n, d), BFraction(BInt(n), d))
     }
-
+    
     func testInit() {
         doTestInit(0, 1)
         doTestInit(1, 1)
@@ -51,7 +51,7 @@ class FractionTest: XCTestCase {
         XCTAssertTrue(BFraction(0.0)!.isZero)
         XCTAssertTrue(BFraction(-0.0)!.isZero)
     }
-
+    
     func testCompare() {
         for _ in 0 ..< 10 {
             let n = BInt(bitWidth: 100)
@@ -194,7 +194,7 @@ class FractionTest: XCTestCase {
         XCTAssertEqual(f >= fx, x <= f)
         XCTAssertEqual(f >= fx, X <= f)
     }
-
+    
     func doTestInt1(_ f: BFraction) {
         doTestInt2(f, 0)
         doTestInt2(f, 1)
@@ -202,7 +202,7 @@ class FractionTest: XCTestCase {
         doTestInt2(f, Int.max)
         doTestInt2(f, Int.min)
     }
-
+    
     func testInt() {
         doTestInt1(BFraction.ZERO)
         doTestInt1(BFraction.ONE)
@@ -219,4 +219,63 @@ class FractionTest: XCTestCase {
         XCTAssertEqual(f2.asDecimalString(digits: 1), "0.1")
         XCTAssertEqual(f2.asDecimalString(digits: 55), "0.1000000000000000055511151231257827021181583404541015625")
     }
+    
+    struct testB {
+        
+        let n: Int
+        let num: BInt
+        let denum: Int
+        
+        init(_ n: Int, _ num: BInt, _ denum: Int) {
+            self.n = n
+            self.num = num
+            self.denum = denum
+        }
+    }
+    
+    let tests: [testB] = [
+        testB(0, BInt("1")!, 1),
+        testB(1, BInt("1")!, 2),
+        testB(2, BInt("1")!, 6),
+        testB(4, BInt("-1")!, 30),
+        testB(6, BInt("1")!, 42),
+        testB(8, BInt("-1")!, 30),
+        testB(10, BInt("5")!, 66),
+        testB(12, BInt("-691")!, 2730),
+        testB(14, BInt("7")!, 6),
+        testB(16, BInt("-3617")!, 510),
+        testB(18, BInt("43867")!, 798),
+        testB(20, BInt("-174611")!, 330),
+        testB(22, BInt("854513")!, 138),
+        testB(24, BInt("-236364091")!, 2730),
+        testB(26, BInt("8553103")!, 6),
+        testB(28, BInt("-23749461029")!, 870),
+        testB(30, BInt("8615841276005")!, 14322),
+        testB(32, BInt("-7709321041217")!, 510),
+        testB(34, BInt("2577687858367")!, 6),
+        testB(36, BInt("-26315271553053477373")!, 1919190),
+        testB(38, BInt("2929993913841559")!, 6),
+        testB(40, BInt("-261082718496449122051")!, 13530),
+        testB(42, BInt("1520097643918070802691")!, 1806),
+        testB(44, BInt("-27833269579301024235023")!, 690),
+        testB(46, BInt("596451111593912163277961")!, 282),
+        testB(48, BInt("-5609403368997817686249127547")!, 46410),
+        testB(50, BInt("495057205241079648212477525")!, 66),
+        testB(52, BInt("-801165718135489957347924991853")!, 1590),
+        testB(54, BInt("29149963634884862421418123812691")!, 798),
+        testB(56, BInt("-2479392929313226753685415739663229")!, 870),
+        testB(58, BInt("84483613348880041862046775994036021")!, 354),
+        testB(60, BInt("-1215233140483755572040304994079820246041491")!, 56786730),
+    ]
+    
+    func testBernoulli() {
+        for t in tests {
+            let b = BFraction.bernoulli(t.n)
+            XCTAssertEqual(b, BFraction(t.num, t.denum))
+        }
+        for i in 1 ..< 100 {
+            XCTAssertEqual(BFraction.bernoulli(2 * i + 1), BFraction.ZERO)
+        }
+    }
+    
 }

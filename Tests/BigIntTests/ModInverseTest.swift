@@ -8,15 +8,15 @@
 import XCTest
 
 class ModInverseTest: XCTestCase {
-
+    
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-
+    
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
+    
     func doTest(_ n: Int, _ m: Int) {
         for _ in 0 ..< 100 {
             let p1 = BInt.probablePrime(m)
@@ -31,10 +31,20 @@ class ModInverseTest: XCTestCase {
                     XCTAssert(x1.modInverse(p1) == x1.modInverse(pp1))
                 }
             }
+            if x1.isEven {
+                x1 += 1
+            }
+            for i in 1 ..< 12 {
+                let m = BInt.ONE << i
+                let q1 = x1.modInverse(m)
+                let q2 = (-x1).modInverse(m)
+                XCTAssertEqual((q1 * x1).mod(m), BInt.ONE)
+                XCTAssertEqual((q2 * (-x1)).mod(m), BInt.ONE)
+            }
         }
     }
-
-    func test() {
+    
+    func test1() {
         doTest(3, 4)
         doTest(30, 40)
         doTest(300, 400)
@@ -42,5 +52,16 @@ class ModInverseTest: XCTestCase {
         doTest(40, 30)
         doTest(400, 300)
     }
-
+    
+    func test2() {
+        XCTAssertEqual(BInt.TWO.modInverse(1), 0)
+        XCTAssertEqual((-BInt.TWO).modInverse(1), 0)
+        XCTAssertEqual(BInt.THREE.modInverse(1), 0)
+        XCTAssertEqual((-BInt.THREE).modInverse(1), 0)
+        XCTAssertEqual(BInt.TWO.modInverse(BInt.ONE), BInt.ZERO)
+        XCTAssertEqual((-BInt.TWO).modInverse(BInt.ONE), BInt.ZERO)
+        XCTAssertEqual(BInt.THREE.modInverse(BInt.ONE), BInt.ZERO)
+        XCTAssertEqual((-BInt.THREE).modInverse(BInt.ONE), BInt.ZERO)
+    }
+    
 }

@@ -1205,17 +1205,42 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     }
 
     /*
-     * Return self modinverse m - using the extended gcd
+     * Return self modinverse m
      */
     /// Inverse modulus - BInt parameter
     ///
     /// - Precondition: *self* and modulus are coprime, modulus is positive
     /// - Parameter m: Modulus
-    /// - Returns: If *self* and m are coprime, x such that (*self* * x) mod m = 1
+    /// - Returns: If *self* and m are coprime, x such that (*self* \* x) mod m = 1
     public func modInverse(_ m: BInt) -> BInt {
         precondition(m.isPositive, "Modulus must be positive")
-        let (g, a, _) = self.gcdExtended(m)
-        precondition(g.isOne, "Modulus and self are not coprime")
+        guard m > BInt.ONE else {
+            return BInt.ZERO
+        }
+        let tb = m.trailingZeroBitCount
+        if tb <= 1024 && tb + m.leadingZeroBitCount == m.magnitude.count << 6 - 1 {
+            
+            precondition(self.isOdd, "No inverse modulus")
+
+            // Fast power of 2 implementation
+            // [KOC] - section 7
+
+            // Reduce mod m
+            let selfr = self & (BInt.ONE << tb - BInt.ONE)
+
+            var x = BInt.ZERO
+            var b = BInt.ONE
+            for i in 0 ..< tb {
+                if b.magnitude[0] & 1 == 1 {
+                    x.setBit(i)
+                    b -= selfr
+                }
+                b >>= 1
+            }
+            return x
+        }
+        let (g, a, _) = self.mod(m).gcdExtended(m)
+        precondition(g.isOne, "No inverse modulus")
         return a.mod(m)
     }
 
@@ -1223,7 +1248,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///
     /// - Precondition: *self* and modulus are coprime, modulus is positive
     /// - Parameter m: Modulus
-    /// - Returns: If *self* and m are coprime, x such that (*self* * x) mod m = 1
+    /// - Returns: If *self* and m are coprime, x such that (*self* \* x) mod m = 1
     public func modInverse(_ m: Int) -> Int {
         precondition(m > 0, "Modulus must be positive")
         var a = 1
@@ -1234,7 +1259,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             let (q, r) = g.quotientAndRemainder(dividingBy: w)
             (a, g, u, w) = (u, w, a - q * u, r)
         }
-        precondition(g == 1, "Modulus and self are not coprime")
+        precondition(g == 1, "No inverse modulus")
         return a < 0 ? a + m : a
     }
 
@@ -2293,7 +2318,21 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
                 (u, v) = (A * u + B * v, C * u + D * v)
             }
         }
-        return BInt(u.magnitude.gcd(v.magnitude))
+        if v.isZero {
+            return u
+        }
+        if u.magnitude.count > 1 {
+            let r = u.quotientAndRemainder(dividingBy: v).remainder
+            u = v
+            v = r
+            if v.isZero {
+                return u
+            }
+        }
+        // u and v are one-limb values
+        assert(u < BInt.ONE << 64)
+        assert(v < BInt.ONE << 64)
+        return BInt([Limbs.binaryGcd(u.magnitude[0], v.magnitude[0])])
      }
 
     /*
@@ -2303,7 +2342,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// Extended greatest common divisor
     ///
     /// - Parameter x: Operand
-    /// - Returns: Greatest common divisor *g* of *self* and *x*, and *a* and *b* such that *a* * *self* + *b* * *x* = *g*
+    /// - Returns: Greatest common divisor *g* of *self* and *x*, and *a* and *b* such that *a* \* *self* + *b* \* *x* = *g*
     public func gcdExtended(_ x: BInt) -> (g: BInt, a: BInt, b: BInt) {
         let selfabs = self.abs
         let xabs = x.abs

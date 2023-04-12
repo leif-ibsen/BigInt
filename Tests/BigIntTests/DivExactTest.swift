@@ -11,6 +11,10 @@ class DivExactTest: XCTestCase {
 
     func doTest(_ x: BInt, _ d: BInt) {
         let q = x.quotientExact(dividingBy: d)
+        if x != q * d {
+            print(x)
+            print(d)
+        }
         XCTAssertEqual(x, q * d)
     }
 

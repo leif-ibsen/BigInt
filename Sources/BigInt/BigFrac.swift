@@ -920,4 +920,34 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return BFraction(x, BInt.ONE) >= y
     }
 
+
+    // MARK: Miscellaneous functions
+
+    /*
+     * Akiyama-Tanigawa algorithm
+     */
+    /// Bernoulli numbers
+    ///
+    /// - Precondition: n >= 0
+    /// - Parameters:
+    ///   - n: The Bernoulli index
+    /// - Returns: The n'th Bernoulli number
+    public static func bernoulli(_ n: Int) -> BFraction {
+        precondition(n >= 0, "Negative Bernoulli index")
+        if n > 1 && n & 1 == 1 {
+            return BFraction.ZERO
+        }
+        var A = [BFraction](repeating: BFraction.ZERO, count: n + 1)
+        A[0] = BFraction.ONE
+        if n > 0 {
+            for m in 1 ... n {
+                A[m] = BFraction(BInt.ONE, m + 1)
+                for j in (1 ... m).reversed() {
+                    A[j - 1] = j * (A[j - 1] - A[j])
+                }
+            }
+        }
+        return A[0]
+    }
+
 }

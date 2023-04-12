@@ -29,7 +29,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.9.0"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.10.0"),
 	  ]
 
 <h2 id="ex"><b>Examples</b></h2>
@@ -92,55 +92,56 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><th width="40%" align="left">Operation</th><th width="35%" align="right">Swift code</th><th width="25%" align="right">Time</th></tr>
 <tr><td>As string</td><td align="right">c2000.asString()</td><td align="right">13 uSec</td></tr>
 <tr><td>As signed bytes</td><td align="right">c2000.asSignedBytes()</td><td align="right">0.30 uSec</td></tr>
-<tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.087 uSec</td></tr>
-<tr><td>Bitwise or</td><td align="right">a1000 | b1000</td><td align="right">0.086 uSec</td></tr>
-<tr><td>Bitwise xor</td><td align="right">a1000 ^ b1000</td><td align="right">0.087 uSec</td></tr>
-<tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.093 uSec</td></tr>
-<tr><td>Test bit</td><td align="right">c2000.testBit(701)</td><td align="right">0.018 uSec</td></tr>
-<tr><td>Flip bit</td><td align="right">c2000.flipBit(701)</td><td align="right">0.019 uSec</td></tr>
-<tr><td>Set bit</td><td align="right">c2000.setBit(701)</td><td align="right">0.019 uSec</td></tr>
-<tr><td>Clear bit</td><td align="right">c2000.clearBit(701)</td><td align="right">0.019 uSec</td></tr>
+<tr><td>Bitwise and</td><td align="right">a1000 & b1000</td><td align="right">0.083 uSec</td></tr>
+<tr><td>Bitwise or</td><td align="right">a1000 | b1000</td><td align="right">0.083 uSec</td></tr>
+<tr><td>Bitwise xor</td><td align="right">a1000 ^ b1000</td><td align="right">0.082 uSec</td></tr>
+<tr><td>Bitwise not</td><td align="right">~c2000</td><td align="right">0.087 uSec</td></tr>
+<tr><td>Test bit</td><td align="right">c2000.testBit(701)</td><td align="right">0.017 uSec</td></tr>
+<tr><td>Flip bit</td><td align="right">c2000.flipBit(701)</td><td align="right">0.018 uSec</td></tr>
+<tr><td>Set bit</td><td align="right">c2000.setBit(701)</td><td align="right">0.018 uSec</td></tr>
+<tr><td>Clear bit</td><td align="right">c2000.clearBit(701)</td><td align="right">0.018 uSec</td></tr>
 <tr><td>Addition</td><td align="right">a1000 + b1000</td><td align="right">0.07 uSec</td></tr>
 <tr><td>Subtraction</td><td align="right">a1000 - b1000</td><td align="right">0.08 uSec</td></tr>
 <tr><td>Multiplication</td><td align="right">a1000 * b1000</td><td align="right">0.32 uSec</td></tr>
-<tr><td>Division</td><td align="right">c2000 / a1000</td><td align="right">2.4 uSec</td></tr>
-<tr><td>Modulus</td><td align="right">c2000.mod(a1000)</td><td align="right">2.4 uSec</td></tr>
-<tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">101 uSec</td></tr>
+<tr><td>Division</td><td align="right">c2000 / a1000</td><td align="right">2.2 uSec</td></tr>
+<tr><td>Modulus</td><td align="right">c2000.mod(a1000)</td><td align="right">2.2 uSec</td></tr>
+<tr><td>Inverse modulus</td><td align="right">c2000.modInverse(p1000)</td><td align="right">83 uSec</td></tr>
 <tr><td>Modular exponentiation</td><td align="right">a1000.expMod(b1000, c2000)</td><td align="right">3.5 mSec</td></tr>
 <tr><td>Equal</td><td align="right">c2000 + 1 == c2000</td><td align="right">0.017 uSec</td></tr>
 <tr><td>Less than</td><td align="right">b1000 + 1 < b1000</td><td align="right">0.021 uSec</td></tr>
 <tr><td>Shift 1 left</td><td align="right">c2000 <<= 1</td><td align="right">0.05 uSec</td></tr>
-<tr><td>Shift 1 right</td><td align="right">c2000 >>= 1</td><td align="right">0.07 uSec</td></tr>
-<tr><td>Shift 100 left</td><td align="right">c2000 <<= 100</td><td align="right">0.15 uSec</td></tr>
-<tr><td>Shift 100 right</td><td align="right">c2000 >>= 100</td><td align="right">0.12 uSec</td></tr>
+<tr><td>Shift 1 right</td><td align="right">c2000 >>= 1</td><td align="right">0.06 uSec</td></tr>
+<tr><td>Shift 100 left</td><td align="right">c2000 <<= 100</td><td align="right">0.14 uSec</td></tr>
+<tr><td>Shift 100 right</td><td align="right">c2000 >>= 100</td><td align="right">0.11 uSec</td></tr>
 <tr><td>Is probably prime</td><td align="right">p1000.isProbablyPrime()</td><td align="right">5.8 mSec</td></tr>
 <tr><td>Make probable 1000 bit prime</td><td align="right">BInt.probablePrime(1000)</td><td align="right">60 mSec</td></tr>
 <tr><td>Next probable prime</td><td align="right">c2000.nextPrime()</td><td align="right">730 mSec</td></tr>
-<tr><td>Primorial</td><td align="right">BInt.primorial(100000)</td><td align="right">16 mSec</td></tr>
-<tr><td>Binomial</td><td align="right">BInt.binomial(100000, 10000)</td><td align="right">26 mSec</td></tr>
-<tr><td>Factorial</td><td align="right">BInt.factorial(100000)</td><td align="right">58 mSec</td></tr>
-<tr><td>Fibonacci</td><td align="right">BInt.fibonacci(100000)</td><td align="right">0.52 mSec</td></tr>
-<tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">31 uSec</td></tr>
-<tr><td>Extended gcd</td><td align="right">a1000.gcdExtended(b1000)</td><td align="right">86 uSec</td></tr>
-<tr><td>Least common multiple</td><td align="right">a1000.lcm(b1000)</td><td align="right">34 uSec</td></tr>
+<tr><td>Primorial</td><td align="right">BInt.primorial(100000)</td><td align="right">8.5 mSec</td></tr>
+<tr><td>Binomial</td><td align="right">BInt.binomial(100000, 10000)</td><td align="right">22 mSec</td></tr>
+<tr><td>Factorial</td><td align="right">BInt.factorial(100000)</td><td align="right">57 mSec</td></tr>
+<tr><td>Fibonacci</td><td align="right">BInt.fibonacci(100000)</td><td align="right">0.22 mSec</td></tr>
+<tr><td>Greatest common divisor</td><td align="right">a1000.gcd(b1000)</td><td align="right">29 uSec</td></tr>
+<tr><td>Extended gcd</td><td align="right">a1000.gcdExtended(b1000)</td><td align="right">81 uSec</td></tr>
+<tr><td>Least common multiple</td><td align="right">a1000.lcm(b1000)</td><td align="right">32 uSec</td></tr>
 <tr><td>Make random number</td><td align="right">c2000.randomLessThan()</td><td align="right">1.2 uSec</td></tr>
-<tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.61 uSec</td></tr>
+<tr><td>Square</td><td align="right">c2000 ** 2</td><td align="right">0.68 uSec</td></tr>
 <tr><td>Square root</td><td align="right">c2000.sqrt()</td><td align="right">13 uSec</td></tr>
 <tr><td>Square root and remainder</td><td align="right">c2000.sqrtRemainder()</td><td align="right">13 uSec</td></tr>
-<tr><td>Is perfect square</td><td align="right">(c2000 * c2000).isPerfectSquare()</td><td align="right">17 uSec</td></tr>
+<tr><td>Is perfect square</td><td align="right">(c2000 * c2000).isPerfectSquare()</td><td align="right">16 uSec</td></tr>
 <tr><td>Square root modulo</td><td align="right">b1000.sqrtMod(p1000)</td><td align="right">1.6 mSec</td></tr>
-<tr><td>Power</td><td align="right">c2000 ** 111</td><td align="right">1.8 mSec</td></tr>
-<tr><td>Root</td><td align="right">c2000.root(111)</td><td align="right">16 uSec</td></tr>
+<tr><td>Power</td><td align="right">c2000 ** 111</td><td align="right">1.9 mSec</td></tr>
+<tr><td>Root</td><td align="right">c2000.root(111)</td><td align="right">15 uSec</td></tr>
 <tr><td>Root and remainder</td><td align="right">c2000.rootRemainder(111)</td><td align="right">17 uSec</td></tr>
 <tr><td>Is perfect root</td><td align="right">c2000.isPerfectRoot()</td><td align="right">13 mSec</td></tr>
 <tr><td>Jacobi symbol</td><td align="right">c2000.jacobiSymbol(p1000)</td><td align="right">0.15 mSec</td></tr>
 <tr><td>Kronecker symbol</td><td align="right">c2000.kroneckerSymbol(p1000)</td><td align="right">0.15 mSec</td></tr>
+<tr><td>Bernoulli number</td><td align="right">BFraction.bernoulli(100)</td><td align="right">20 mSec</td></tr>
 </table>
 
-a1000 = 3187705437890850041662973758105262878153514794996698172406519277876060364087986868049465132757493318066301987043192958841748826350731448419937544810921786918975580180410200630645469411588934094075222404396990984350815153163569041641732160380739556436955287671287935796642478260435292021117614349253825</br>
-b1000 = 9159373012373110951130589007821321098436345855865428979299172149373720601254669552044211236974571462005332583657082428026625366060511329189733296464187785766230514564038057370938741745651937465362625449921195096442684523511715110908407508139315000469851121118117438147266381183636498494901233452870695</br>
-c2000 = 1190583332681083129323588684910845359379915367459759242106618067261956856381281184752008892106576666833853411939711280970145570546868549934865719229538926506588929417873149597614787608112658086250354719939407543740242931571462165384138560315454455247539461818779966171917173966217706187439870264672508450210272481951994459523586160979759782950984370978171111340529321052541588344733968902238813379990628157732181128074253104347868153860527298911917508606081710893794973605227829729403843750412766366804402629686458092685235454222856584200220355212623917637542398554907364450159627359316156463617143173</br>
-p1000 (probably a prime) = 7662841304438384296568220077355872003841475576593385710590818274399706072141018649398767137142090308734613594718593893634649122767374115742644499040193270857876678047220373151142747088797516044505739487695946446362769947024029728822155570722524629197074319602110260674029276185098937139753025851896997</br>
+a1000 = 3187705437890850041662973758105262878153514794996698172406519277876060364087986868049465132757493318066301987043192958841748826350731448419937544810921786918975580180410200630645469411588934094075222404396990984350815153163569041641732160380739556436955287671287935796642478260435292021117614349253825<br/>
+b1000 = 9159373012373110951130589007821321098436345855865428979299172149373720601254669552044211236974571462005332583657082428026625366060511329189733296464187785766230514564038057370938741745651937465362625449921195096442684523511715110908407508139315000469851121118117438147266381183636498494901233452870695<br/>
+c2000 = 1190583332681083129323588684910845359379915367459759242106618067261956856381281184752008892106576666833853411939711280970145570546868549934865719229538926506588929417873149597614787608112658086250354719939407543740242931571462165384138560315454455247539461818779966171917173966217706187439870264672508450210272481951994459523586160979759782950984370978171111340529321052541588344733968902238813379990628157732181128074253104347868153860527298911917508606081710893794973605227829729403843750412766366804402629686458092685235454222856584200220355212623917637542398554907364450159627359316156463617143173<br/>
+p1000 (probably a prime) = 7662841304438384296568220077355872003841475576593385710590818274399706072141018649398767137142090308734613594718593893634649122767374115742644499040193270857876678047220373151142747088797516044505739487695946446362769947024029728822155570722524629197074319602110260674029276185098937139753025851896997<br/>
 
 <h2 id="frac"><b>Fractions</b></h2>
 Fractions are represented as BFraction values consisting of a numerator BInt value and a denominator BInt value. The representation is normalized:
@@ -158,7 +159,7 @@ Fractions are created by
 Defining a fraction by giving its decimal value (like 4.25) might lead to surprises,
 because not all decimal values can be represented exactly as a floating point number.
 For example, one might think that BFraction(0.1) would equal 1/10,
-but in fact it equals 3602879701896397 / 36028797018963968 = 0.1000000000000000055511151231257827021181583404541015625</br>
+but in fact it equals 3602879701896397 / 36028797018963968 = 0.1000000000000000055511151231257827021181583404541015625<br/>
 <h3><b>Operations</b></h3>
 The operations available to fractions are:
 <ul>
@@ -180,7 +181,23 @@ The operations available to fractions are:
 </ul>
 </li>
 <li>Comparison - the six standard operations == != < <= > >=</li>
+<h3><b>Bernoulli Numbers</b></h3>
+The static function<br/>
 
+	let bn = BFraction.bernoulli(n)
+
+computes the n'th (n >= 0) Bernoulli number, which is a rational number.<br/>
+For example<br/>
+
+	print(BFraction.bernoulli(60))
+	print(BFraction.bernoulli(60).asDouble())
+
+would print<br/>
+
+	-1215233140483755572040304994079820246041491 / 56786730
+	-2.1399949257225335e+34
+
+The largest Bernoulli number that can be represented as a Double is bernoulli(258)
 </ul><h2 id="ref"><b>References</b></h2>
 
 Algorithms from the following books and papers have been used in the implementation.
@@ -195,6 +212,7 @@ There are references in the source code where appropriate.
 <li>[HANDBOOK] - Menezes, Oorschot, Vanstone: Handbook of Applied Cryptography. CRC Press 1996</li>
 <li>[JEBELEAN] - Tudor Jebelean: An Algorithm for Exact Division. Journal of Symbolic Computation, volume 15, 1993</li>
 <li>[KNUTH] - Donald E. Knuth: Seminumerical Algorithms, Third Edition</li>
+<li>[KOC] - Cetin Kaya Koc: A New Algorithm for Inversion mod p^k</li>
 </ul>
 
 <h2 id="alg"><b>Algorithms</b></h2>
@@ -218,7 +236,8 @@ Lehmer's algorithm [KNUTH] chapter 4.5.2, with binary GCD basecase.
 Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction for exponents with fewer than 2048 bits
 and Montgomery reduction for larger exponents.
 <h3><b>Inverse Modulus</b></h3>
-Computed via extended GCD algorithm.
+If the modulus is a (not too large) power of 2, the algorithm from [KOC] section 7.
+Else, it is computed via the extended GCD algorithm.
 <h3><b>Square Root</b></h3>
 Algorithm 1.12 (SqrtRem) from [BRENT] with algorithm 9.2.11 from [CRANDALL] as basecase.
 <h3><b>Square Root Modulo a Prime Number</b></h3>
@@ -233,3 +252,5 @@ The 'SplitRecursive' algorithm from Peter Luschny: https://www.luschny.de
 The 'fastDoubling' algorithm from Project Nayuki: https://www.nayuki.io
 <h3><b>Jacobi and Kronecker symbols</b></h3>
 Algorithm 2.3.5 from [CRANDALL].
+<h3><b>Bernoulli Numbers</b></h3>
+The Akiyama-Tanigawa algorithm.
