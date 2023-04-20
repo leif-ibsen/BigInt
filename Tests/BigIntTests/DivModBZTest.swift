@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import BigInt
 
 // Test of the Burnikel-Ziegler division algorithm
 // Tests are performed by verifying that the result of using Burnikel-Ziegler

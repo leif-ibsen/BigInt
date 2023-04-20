@@ -1251,6 +1251,32 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: If *self* and m are coprime, x such that (*self* \* x) mod m = 1
     public func modInverse(_ m: Int) -> Int {
         precondition(m > 0, "Modulus must be positive")
+        guard m > 1 else {
+            return 0
+        }
+        let tb = m.trailingZeroBitCount
+        if tb + m.leadingZeroBitCount == 63 {
+            
+            precondition(self.isOdd, "No inverse modulus")
+
+            // Fast power of 2 implementation
+            // [KOC] - section 7
+
+            // Reduce mod m
+            let m = self.magnitude[0] & (1 << tb - 1)
+            let selfr = self.isNegative ? -Int(m) : Int(m)
+            
+            var x = 0
+            var b = 1
+            for i in 0 ..< tb {
+                if b & 1 == 1 {
+                    x |= 1 << i
+                    b -= selfr
+                }
+                b >>= 1
+            }
+            return x
+        }
         var a = 1
         var g = self.mod(m)
         var u = 0

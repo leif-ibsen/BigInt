@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import BigInt
 
 class ModInverseTest: XCTestCase {
     
@@ -62,6 +63,18 @@ class ModInverseTest: XCTestCase {
         XCTAssertEqual((-BInt.TWO).modInverse(BInt.ONE), BInt.ZERO)
         XCTAssertEqual(BInt.THREE.modInverse(BInt.ONE), BInt.ZERO)
         XCTAssertEqual((-BInt.THREE).modInverse(BInt.ONE), BInt.ZERO)
+    }
+    
+    func test3() {
+        let x1 = BInt.ONE << 20 + 1
+        let x2 = BInt.ONE << 200 + 1
+        for i in 0 ... 62 {
+            let m = 1 << i
+            XCTAssertEqual(BInt(x1.modInverse(m)), x1.modInverse(BInt(m)))
+            XCTAssertEqual(BInt((-x1).modInverse(m)), (-x1).modInverse(BInt(m)))
+            XCTAssertEqual(BInt(x2.modInverse(m)), x2.modInverse(BInt(m)))
+            XCTAssertEqual(BInt((-x2).modInverse(m)), (-x2).modInverse(BInt(m)))
+        }
     }
     
 }

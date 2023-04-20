@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import BigInt
 
 class JacobiTest: XCTestCase {
 
