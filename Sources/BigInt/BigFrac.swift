@@ -924,7 +924,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     // MARK: Miscellaneous functions
 
     /*
-     * Akiyama-Tanigawa algorithm
+     * Compute via Tangent numbers
      */
     /// Bernoulli numbers
     ///
@@ -934,20 +934,28 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Returns: The n'th Bernoulli number
     public static func bernoulli(_ n: Int) -> BFraction {
         precondition(n >= 0, "Negative Bernoulli index")
-        if n > 1 && n & 1 == 1 {
+        if n == 0 {
+            return BFraction.ONE
+        } else if n == 1 {
+            return BFraction(1, 2)
+        } else if n & 1 == 1 {
             return BFraction.ZERO
         }
-        var A = [BFraction](repeating: BFraction.ZERO, count: n + 1)
-        A[0] = BFraction.ONE
-        if n > 0 {
-            for m in 1 ... n {
-                A[m] = BFraction(BInt.ONE, m + 1)
-                for j in (1 ... m).reversed() {
-                    A[j - 1] = j * (A[j - 1] - A[j])
-                }
+        let n1 = n >> 1
+        var T = [BInt](repeating: BInt.ZERO, count: n1)
+        T[0] = BInt.ONE
+        for k in 1 ..< n1 {
+            T[k] = k * T[k - 1]
+        }
+        for k in 1 ..< n1 {
+            for j in k ..< n1 {
+                T[j] = (j - k) * T[j - 1] + (j - k + 2) * T[j]
             }
         }
-        return A[0]
+        let numerator = T[n1 - 1] * n
+        let N = BInt.ONE << n
+        let denominator = N << n - N
+        return n1 & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
     }
 
 }

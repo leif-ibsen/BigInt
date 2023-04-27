@@ -5,6 +5,7 @@
 <li><a href="#ex">Examples</a>
 <li><a href="#perf">Performance</a>
 <li><a href="#frac">Fractions</a>
+<li><a href="#crt">Chinese Remainder Theorem</a>
 <li><a href="#ref">References</a>
 <li><a href="#alg">Algorithms</a>
 </ul>
@@ -29,7 +30,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.11.0"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.12.0"),
 	  ]
 
 <h2 id="ex"><b>Examples</b></h2>
@@ -135,7 +136,7 @@ Four large numbers 'a1000', 'b1000', 'c2000' and 'p1000' were used throughout th
 <tr><td>Is perfect root</td><td align="right">c2000.isPerfectRoot()</td><td align="right">13 mSec</td></tr>
 <tr><td>Jacobi symbol</td><td align="right">c2000.jacobiSymbol(p1000)</td><td align="right">0.15 mSec</td></tr>
 <tr><td>Kronecker symbol</td><td align="right">c2000.kroneckerSymbol(p1000)</td><td align="right">0.15 mSec</td></tr>
-<tr><td>Bernoulli number</td><td align="right">BFraction.bernoulli(100)</td><td align="right">20 mSec</td></tr>
+<tr><td>Bernoulli number</td><td align="right">BFraction.bernoulli(1000)</td><td align="right">83 mSec</td></tr>
 </table>
 
 a1000 = 3187705437890850041662973758105262878153514794996698172406519277876060364087986868049465132757493318066301987043192958841748826350731448419937544810921786918975580180410200630645469411588934094075222404396990984350815153163569041641732160380739556436955287671287935796642478260435292021117614349253825<br/>
@@ -198,7 +199,24 @@ would print<br/>
 	-2.1399949257225335e+34
 
 The largest Bernoulli number that can be represented as a Double is bernoulli(258)
-</ul><h2 id="ref"><b>References</b></h2>
+</ul>
+<h2 id="crt"><b>Chinese Remainder Theorem</b></h2>
+The CRT structure implements the Chinese Remainder Theorem. Construct a CRT instance from a given set of moduli,
+and then use the *compute* method to compute the CRT value for a given set of residues. The same instance can be reused
+for any set of input data, as long as the moduli are the same.
+This is relevant because it takes longer time to create the CRT instance than to compute the CRT value.<br/>
+For example<br/>
+
+	let moduli = [3, 5, 7]
+	let residues = [2, 2, 6]
+	let crt = CRT(moduli)!
+	print("CRT value:", crt.compute(residues))
+
+would print<br/>
+
+	CRT value: 62
+
+<h2 id="ref"><b>References</b></h2>
 
 Algorithms from the following books and papers have been used in the implementation.
 There are references in the source code where appropriate.
@@ -253,4 +271,7 @@ The 'fastDoubling' algorithm from Project Nayuki: https://www.nayuki.io
 <h3><b>Jacobi and Kronecker symbols</b></h3>
 Algorithm 2.3.5 from [CRANDALL].
 <h3><b>Bernoulli Numbers</b></h3>
-The Akiyama-Tanigawa algorithm.
+Computed via Tangent numbers which is fast because it only involves integer arithmetic
+but no fractional arithmetic.
+<h3><b>Chinese Remainder Theorem</b></h3>
+The Garner algorithm 2.1.7 from [CRANDALL].
