@@ -23,6 +23,142 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         }
     }
 
+    static func parseString(_ s: String) -> (mantissa: BInt, exponent: Int)? {
+        enum State {
+            case start
+            case inInteger
+            case inFraction
+            case startExponent
+            case inExponent
+        }
+        var state: State = .start
+        var digits = 0
+        var expDigits = 0
+        var exp = ""
+        var scale = 0
+        var val = ""
+        var negValue = false
+        var negExponent = false
+        for c in s {
+            switch c {
+            case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+                if state == .start {
+                    state = .inInteger
+                    digits += 1
+                    val.append(c)
+                } else if state == .inInteger {
+                    digits += 1
+                    val.append(c)
+                } else if state == .inFraction {
+                    digits += 1
+                    scale += 1
+                    val.append(c)
+                } else if state == .inExponent {
+                    expDigits += 1
+                    exp.append(c)
+                } else if state == .startExponent {
+                    state = .inExponent
+                    expDigits += 1
+                    exp.append(c)
+                }
+                break
+            case ".":
+                if state == .start || state == .inInteger {
+                    state = .inFraction
+                } else {
+                    return nil
+                }
+                break
+            case "E", "e":
+                if state == .inInteger || state == .inFraction {
+                    state = .startExponent
+                } else {
+                    return nil
+                }
+                break
+            case "+":
+                if state == .start {
+                    state = .inInteger
+                } else if state == .startExponent {
+                    state = .inExponent
+                } else {
+                    return nil
+                }
+                break
+            case "-":
+                if state == .start {
+                    state = .inInteger
+                    negValue = true
+                } else if state == .startExponent {
+                    state = .inExponent
+                    negExponent = true
+                } else {
+                    return nil
+                }
+                break
+            default:
+                return nil
+            }
+        }
+        if digits == 0 {
+            return nil
+        }
+        if (state == .startExponent || state == .inExponent) && expDigits == 0 {
+            return nil
+        }
+        let w = negValue ? -BInt(val)! : BInt(val)!
+        let E = Int(exp)
+        if E == nil && expDigits > 0 {
+            return nil
+        }
+        let e = expDigits == 0 ? 0 : (negExponent ? -E! : E!)
+        return (w, e - scale)
+    }
+
+    static func displayString(_ significand: BInt, _ exponent: Int, _ exponential: Bool) -> String {
+        var s = significand.abs.asString()
+        let precision = s.count
+        if exponential {
+            
+            // exponential notation
+            
+            let exp = precision + exponent - 1
+            if s.count > 1 {
+                s.insert(".", at: s.index(s.startIndex, offsetBy: 1))
+            }
+            s.append("E")
+            if exp > 0 {
+                s.append("+")
+            }
+            s.append(exp.description)
+        } else {
+
+            // plain notation
+            
+            if exponent > 0 {
+                if !significand.isZero {
+                    for _ in 0 ..< exponent {
+                        s.append("0")
+                    }
+                }
+            } else if exponent < 0 {
+                if -exponent < precision {
+                    s.insert(".", at: s.index(s.startIndex, offsetBy: precision + exponent))
+                } else {
+                    for _ in 0 ..< -(exponent + precision) {
+                        s.insert("0", at: s.startIndex)
+                    }
+                    s.insert(".", at: s.startIndex)
+                    s.insert("0", at: s.startIndex)
+                }
+            }
+        }
+        if significand.isNegative {
+            s.insert("-", at: s.startIndex)
+        }
+        return s
+    }
+
 
     // MARK: - Constants
 
@@ -97,6 +233,27 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         }
     }
 
+    /// Constructs a BFraction from a String representation
+    ///
+    /// - Parameters:
+    ///   - x: The String representation
+    /// - Returns: The BFraction represented by *x*, *nil* if *x* does not represent a decimal number
+    ///
+    /// Examples:
+    ///    * BFraction("3.1415") = 6283 / 2000
+    ///    * BFraction("-12345E-3") = -2469 / 200
+    ///    * BFraction("12345e3") = 12345000 / 1
+    public init?(_ x: String) {
+        guard let (m, e) = BFraction.parseString(x) else {
+            return nil
+        }
+        if e < 0 {
+            self.init(m, BInt.TEN ** -e)
+        } else {
+            self.init(m * (BInt.TEN ** e), BInt.ONE)
+        }
+    }
+
 
     // MARK: Stored properties
     
@@ -154,29 +311,31 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return self.numerator.asString() + " / " + self.denominator.asString()
     }
 
-    /// *self* as a Decimal String with a given number of digits</br>
-    /// Examples: BFraction(-97, 100).asDecimalString(digits: 3) is "-0.970"</br>
-    /// BFraction(-97, 100).asDecimalString(digits: 0) is "0"
+    /// *self* as a Decimal String with a specified precision, possibly using exponential notation
     ///
-    /// - Precondition: digits >= 0
+    /// - Precondition: precision > 0
     /// - Parameters:
-    ///   - digits: Number of digits after the decimal point
+    ///   - precision: The number of significant digits
+    ///   - exponential: *true* to use exponential notation, *false* to use plain notation, default is *false*
     /// - Returns: *self* as a decimal String
-    public func asDecimalString(digits: Int) -> String {
-        precondition(digits >= 0)
-        var (q, r) = self.abs.numerator.quotientAndRemainder(dividingBy: self.denominator)
-        var s = self.isNegative && (q > 0 || digits > 0) ? "-" : ""
-        s += q.asString()
-        if digits > 0 {
-            s += "."
-            for _ in 0 ..< digits {
-                r *= BInt.TEN
-                let q1 = r.quotientAndRemainder(dividingBy: self.denominator).quotient
-                r -= q1 * self.denominator
-                s += q1.asString()
-            }
+    public func asDecimalString(precision: Int, exponential: Bool = false) -> String {
+        precondition(precision > 0)
+        if self.isZero {
+            return BFraction.displayString(BInt.ZERO, -precision, exponential)
         }
-        return s
+        let P = BInt.TEN ** precision
+        var exp = 0
+        var q = self.numerator.abs
+        while q.quotientAndRemainder(dividingBy: self.denominator).quotient < P {
+            q *= BInt.TEN
+            exp -= 1
+        }
+        while q.quotientAndRemainder(dividingBy: self.denominator).quotient >= P {
+            q /= BInt.TEN
+            exp += 1
+        }
+        let x = q.quotientAndRemainder(dividingBy: self.denominator).quotient
+        return BFraction.displayString(self.isNegative ? -x : x, exp, exponential)
     }
 
     /// *self* as a Double
@@ -241,6 +400,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     public static func +(x: BInt, y: BFraction) -> BFraction {
         return BFraction(x, BInt.ONE) + y
     }
+
     /// Addition
     ///
     /// - Parameters:
@@ -556,7 +716,36 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return BFraction(self.denominator, self.numerator)
     }
 
-    
+
+    // MARK: Modulus functions
+
+    /// Modulus - BInt parameter
+    ///
+    /// - Precondition: Modulus is positive
+    /// - Parameter m: Modulus
+    /// - Returns: *self* *mod* m, a non-negative value or *nil* if the denominator and modulus are not coprime
+    public func mod(_ m: BInt) -> BInt? {
+        precondition(m.isPositive, "Modulus must be positive")
+        guard self.denominator.gcd(m).isOne else {
+            return nil
+        }
+        return (self.numerator * self.denominator.modInverse(m)).mod(m)
+    }
+
+    /// Modulus - Int parameter
+    ///
+    /// - Precondition: Modulus is positive
+    /// - Parameter m: Modulus
+    /// - Returns: *self* *mod* x, a non-negative value or *nil* if the denominator and modulus are not coprime
+    public func mod(_ m: Int) -> Int? {
+        precondition(m > 0, "Modulus must be positive")
+        guard self.denominator.gcd(BInt(m)).isOne else {
+            return nil
+        }
+        return (self.numerator * self.denominator.modInverse(m)).mod(m)
+    }
+
+
     // MARK: Exponentiation functions
 
     /// Exponentiation
@@ -926,7 +1115,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /*
      * Compute via Tangent numbers
      */
-    /// Bernoulli numbers
+    /// Bernoulli number
     ///
     /// - Precondition: n >= 0
     /// - Parameters:
@@ -956,6 +1145,35 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         let N = BInt.ONE << n
         let denominator = N << n - N
         return n1 & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
+    }
+
+    /// Bernoulli numbers
+    ///
+    /// - Precondition: n > 0
+    /// - Parameters:
+    ///   - n: The number of Bernoulli numbers to compute
+    /// - Returns: The even numbered Bernoulli numbers B(0), B(2), B(4) ... B(2 \* n - 2)
+    public static func bernoulliSequence(_ n: Int) -> [BFraction] {
+        precondition(n > 0, "Bernoulli count must be positive")
+        let n1 = n << 1
+        var x = [BFraction](repeating: BFraction.ONE, count: n)
+        var T = [BInt](repeating: BInt.ONE, count: n1)
+        for k in 1 ..< n1 {
+            T[k] = k * T[k - 1]
+        }
+        for k in 1 ..< n1 {
+            for j in k ..< n1 {
+                T[j] = (j - k) * T[j - 1] + (j - k + 2) * T[j]
+            }
+        }
+        for i in 1 ..< n {
+            let i2 = i << 1
+            let numerator = T[i - 1] * i2
+            let N = BInt.ONE << i2
+            let denominator = N << i2 - N
+            x[i] = i & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
+        }
+        return x
     }
 
 }

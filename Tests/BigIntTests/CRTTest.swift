@@ -70,4 +70,13 @@ final class CRTTest: XCTestCase {
         doTest2(20)
     }
 
+    func test3() {
+        let p = [3, 5, 7]
+        let a = [Int.min, 0, Int.max]
+        let crt = CRT(p)!
+        let x = crt.compute(a)
+        for i in 0 ..< 3 {
+            XCTAssertEqual(x.mod(p[i]), BInt(a[i]).mod(p[i]))
+        }
+    }
 }

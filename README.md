@@ -20,7 +20,7 @@ Its functionality falls in the following categories:
 <li>Conversion: to double, to integer, to string, to magnitude byte array, and to 2's complement byte array</li>
 <li>Primes: prime number testing, probable prime number generation and primorial</li>
 <li>Miscellaneous: random number generation, greatest common divisor, least common multiple, n-th root, square root modulo an odd prime,
-Jacobi symbol, Kronecker symbol, Factorial function, Binomial function, Fibonacci- and Lucas numbers</li>
+Jacobi symbol, Kronecker symbol, Factorial function, Binomial function, Fibonacci numbers, Lucas numbers and Bernoulli numbers</li>
 <li>Fractions: Standard arithmetic on fractions whose numerators and denominators are of unbounded size</li>
 </ul>
 
@@ -30,7 +30,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.12.0"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.13.0"),
 	  ]
 
 <h2 id="ex"><b>Examples</b></h2>
@@ -156,11 +156,27 @@ Fractions are created by
 <ul>
 <li>Specifying the numerator and denominator explicitly f.ex. BFraction(17, 4)</li>
 <li>Specifying the decimal value explictly f.ex. BFraction(4.25)</li>
+<li>Using a string representation f.ex. BFraction("4.25")! or equivalently BFraction("425E-2")!</li>
 </ul>
 Defining a fraction by giving its decimal value (like 4.25) might lead to surprises,
 because not all decimal values can be represented exactly as a floating point number.
 For example, one might think that BFraction(0.1) would equal 1/10,
 but in fact it equals 3602879701896397 / 36028797018963968 = 0.1000000000000000055511151231257827021181583404541015625<br/>
+<h3><b>Converting BFraction's</b></h3>
+BFraction values can be converted to String values, to decimal String values and to Double values.
+
+	  let x = BFraction(1000, 7)
+	  
+	  // To String
+	  let s1 = x.asString() // s1 = "1000 / 7"
+	  
+	  // To decimal String
+	  let s1 = x.asDecimalString(precision: 8, exponential: false) // s1 = "142.85714"
+	  let s2 = x.asDecimalString(precision: 8, exponential: true) // s2 = "1.4285714E+2"
+	  
+	  // To Double
+	  let d = x.asDouble() // d = 142.8571428571429
+	  
 <h3><b>Operations</b></h3>
 The operations available to fractions are:
 <ul>
@@ -170,6 +186,7 @@ The operations available to fractions are:
 	<li>subtraction</li>
 	<li>multiplication</li>
 	<li>division</li>
+	<li>modulo an integer</li>
 	<li>exponentiation</li>
 </ul>
 </li>
@@ -182,6 +199,7 @@ The operations available to fractions are:
 </ul>
 </li>
 <li>Comparison - the six standard operations == != < <= > >=</li>
+</ul>
 <h3><b>Bernoulli Numbers</b></h3>
 The static function<br/>
 
@@ -191,15 +209,19 @@ computes the n'th (n >= 0) Bernoulli number, which is a rational number.<br/>
 For example<br/>
 
 	print(BFraction.bernoulli(60))
-	print(BFraction.bernoulli(60).asDouble())
+	print(BFraction.bernoulli(60).asDecimalString(precision: 20, exponential: true))
 
 would print<br/>
 
 	-1215233140483755572040304994079820246041491 / 56786730
-	-2.1399949257225335e+34
+	-2.1399949257225333665E+34
 
-The largest Bernoulli number that can be represented as a Double is bernoulli(258)
-</ul>
+The static function<br/>
+
+	let x = BFraction.bernoulliSequence(n)
+
+computes the n even numbered Bernoulli numbers B(0), B(2) ... B(2 * n - 2).<br/>
+
 <h2 id="crt"><b>Chinese Remainder Theorem</b></h2>
 The CRT structure implements the Chinese Remainder Theorem. Construct a CRT instance from a given set of moduli,
 and then use the *compute* method to compute the CRT value for a given set of residues. The same instance can be reused

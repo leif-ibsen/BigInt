@@ -215,10 +215,10 @@ class FractionTest: XCTestCase {
     func testConversion() {
         let f1 = BFraction(1, 10)
         let f2 = BFraction(0.1)!
-        XCTAssertEqual(f1.asDecimalString(digits: 1), "0.1")
-        XCTAssertEqual(f1.asDecimalString(digits: 55), "0.1000000000000000000000000000000000000000000000000000000")
-        XCTAssertEqual(f2.asDecimalString(digits: 1), "0.1")
-        XCTAssertEqual(f2.asDecimalString(digits: 55), "0.1000000000000000055511151231257827021181583404541015625")
+        XCTAssertEqual(f1.asDecimalString(precision: 1), "0.1")
+        XCTAssertEqual(f1.asDecimalString(precision: 55), "0.1000000000000000000000000000000000000000000000000000000")
+        XCTAssertEqual(f2.asDecimalString(precision: 1), "0.1")
+        XCTAssertEqual(f2.asDecimalString(precision: 55), "0.1000000000000000055511151231257827021181583404541015625")
     }
     
     struct testB {
@@ -269,13 +269,58 @@ class FractionTest: XCTestCase {
         testB(60, BInt("-1215233140483755572040304994079820246041491")!, 56786730),
     ]
     
-    func testBernoulli() {
+    func testDecimalString() {
+        for _ in 0 ..< 100 {
+            let n = BInt(bitWidth: 1000)
+            let d = BInt(bitWidth: 100) + 1
+            let x = BFraction(n, d)
+            let s1 = x.asDecimalString(precision: 100, exponential: false)
+            let s2 = x.asDecimalString(precision: 100, exponential: true)
+            XCTAssertEqual(BFraction(s1)!, BFraction(s2)!)
+        }
+    }
+    
+    func testBernoulli1() {
         for t in tests {
             let b = BFraction.bernoulli(t.n)
             XCTAssertEqual(b, BFraction(t.num, t.denum))
         }
         for i in 1 ..< 100 {
             XCTAssertEqual(BFraction.bernoulli(2 * i + 1), BFraction.ZERO)
+        }
+    }
+    
+    func testBernoulli2() {
+        let x = BFraction.bernoulliSequence(200)
+        for i in 0 ..< 200 {
+            XCTAssertEqual(BFraction.bernoulli(2 * i), x[i])
+        }
+    }
+    
+    func doTestMod(_ f: BFraction, _ P: BInt) {
+        let p = P.asInt()!
+        let M = f.mod(P)
+        let m = f.mod(p)
+        if M == nil {
+            XCTAssertNil(m)
+            XCTAssertTrue(f.denominator.gcd(P) > 1)
+        } else {
+            let MI = f.denominator.modInverse(P)
+            XCTAssertEqual(M!, (MI * f.numerator).mod(P))
+            XCTAssertEqual(M!, BInt(m!))
+        }
+    }
+
+    func testMod() {
+        for _ in 0 ..< 1000 {
+            let P = BInt(bitWidth: 50)
+            let f = BFraction(BInt(bitWidth: 200), BInt(bitWidth: 100) + 1)
+            doTestMod(f, P)
+            doTestMod(-f, P)
+            doTestMod(f, BInt.ONE)
+            doTestMod(-f, BInt.ONE)
+            doTestMod(BFraction.ONE, P)
+            doTestMod(-BFraction.ONE, P)
         }
     }
     
