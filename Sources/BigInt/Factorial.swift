@@ -15,7 +15,7 @@ class Factorial {
         355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000]
 
     var N: Limbs = [1]
-    var result = BInt.ZERO
+    var result = BInt.zero
     
     init(_ n: Int) {
         self.result = n < Factorial.smallFacs.count ? BInt(Factorial.smallFacs[n]) : compute(n)

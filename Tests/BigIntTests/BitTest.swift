@@ -30,10 +30,10 @@ class BitTest: XCTestCase {
         doTest(BInt(1))
         doTest(BInt(-1))
         doTest(BInt(bitWidth: 200))
-        var x1 = BInt.ONE << 37
+        var x1 = BInt.one << 37
         x1.clearBit(37)
         XCTAssert(x1.isZero)
-        var x2 = BInt.ONE << 150
+        var x2 = BInt.one << 150
         x2.clearBit(150)
         XCTAssert(x2.isZero)
     }
@@ -59,11 +59,11 @@ class BitTest: XCTestCase {
 
     func test4() {
         let a = BInt(bitWidth: 300)
-        XCTAssertEqual(a | BInt.ZERO, a)
-        XCTAssertEqual(a & BInt.ZERO, BInt.ZERO)
-        XCTAssertEqual(a & ~BInt.ZERO, a)
-        XCTAssertEqual(a ^ BInt.ZERO, a)
-        XCTAssertEqual(a ^ ~BInt.ZERO, ~a)
+        XCTAssertEqual(a | BInt.zero, a)
+        XCTAssertEqual(a & BInt.zero, BInt.zero)
+        XCTAssertEqual(a & ~BInt.zero, a)
+        XCTAssertEqual(a ^ BInt.zero, a)
+        XCTAssertEqual(a ^ ~BInt.zero, ~a)
     }
 
     func test5() {
@@ -122,17 +122,17 @@ class BitTest: XCTestCase {
         XCTAssertFalse(y.testBit(-1))
         y = BInt(0)
         y.setBit(200)
-        XCTAssertEqual(y.magnitude.count, 4)
-        XCTAssertEqual(y, BInt.ONE << 200)
+        XCTAssertEqual(y.mag.count, 4)
+        XCTAssertEqual(y, BInt.one << 200)
         XCTAssertTrue(y.testBit(200))
         y.clearBit(200)
-        XCTAssertEqual(y.magnitude.count, 1)
+        XCTAssertEqual(y.mag.count, 1)
         XCTAssertFalse(y.testBit(200))
-        XCTAssertEqual(y, BInt.ZERO)
+        XCTAssertEqual(y, BInt.zero)
         y.flipBit(200)
-        XCTAssertEqual(y, BInt.ONE << 200)
+        XCTAssertEqual(y, BInt.one << 200)
         y.flipBit(200)
-        XCTAssertEqual(y, BInt.ZERO)
+        XCTAssertEqual(y, BInt.zero)
     }
     
     func popCount(_ a: BInt) -> Int {
@@ -148,10 +148,10 @@ class BitTest: XCTestCase {
     }
 
     func test8() {
-        XCTAssertEqual(BInt.ZERO.population, 0)
+        XCTAssertEqual(BInt.zero.population, 0)
         let x = BInt("ffffffffffffffff", radix: 16)!
         for i in 0 ..< 100 {
-            XCTAssertEqual((BInt.ONE << i).population, 1)
+            XCTAssertEqual((BInt.one << i).population, 1)
             XCTAssertEqual((x << i).population, 64)
         }
         for _ in 0 ..< 100 {

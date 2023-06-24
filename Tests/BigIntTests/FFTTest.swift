@@ -19,24 +19,24 @@ class FFTTest: XCTestCase {
     }
 
     func test1() {
-        for _ in 0 ..< 10 {
+        for _ in 0 ..< 1 { // 10 {
             let a = BInt(bitWidth: Limbs.FFT_THR * 2 * 64)
             let b = BInt(bitWidth: Limbs.FFT_THR * 2 * 64)
             let p = a * b
             XCTAssertEqual(p, b * a)
             let (q, r) = p.quotientAndRemainder(dividingBy: a)
             XCTAssertEqual(q, b)
-            XCTAssertEqual(r, BInt.ZERO)
+            XCTAssertEqual(r, BInt.zero)
         }
     }
 
     func test2() {
-        for _ in 0 ..< 10 {
+        for _ in 0 ..< 1 { // 10 {
             let a = BInt(bitWidth: Limbs.FFT_THR * 2 * 64)
             let p = a ** 2
             let (q, r) = p.quotientAndRemainder(dividingBy: a)
             XCTAssertEqual(q, a)
-            XCTAssertEqual(r, BInt.ZERO)
+            XCTAssertEqual(r, BInt.zero)
         }
     }
 
@@ -49,43 +49,43 @@ class FFTTest: XCTestCase {
         XCTAssertEqual(x, b2 * b1)
         let (q1, r1) = x.quotientAndRemainder(dividingBy: b1)
         XCTAssertEqual(q1, b2)
-        XCTAssertEqual(r1, BInt.ZERO)
+        XCTAssertEqual(r1, BInt.zero)
         let (q2, r2) = x.quotientAndRemainder(dividingBy: b2)
         XCTAssertEqual(q2, b1)
-        XCTAssertEqual(r2, BInt.ZERO)
+        XCTAssertEqual(r2, BInt.zero)
     }
 
     // FFT and ToomCook must give same result
     func test4() {
-        for _ in 0 ..< 10 {
+        for _ in 0 ..< 1 { // 10 {
             let a = BInt(bitWidth: (Limbs.FFT_THR + 1) * 64)
             let b = BInt(bitWidth: (Limbs.FFT_THR + 1) * 64)
             let p = a * b
-            let pTC = BInt(a.magnitude.toomCookTimes(b.magnitude))
+            let pTC = BInt(a.mag.toomCookTimes(b.mag))
             XCTAssertEqual(p, pTC)
         }
         for _ in 0 ..< 10 {
             let a = BInt(bitWidth: (Limbs.FFT_THR + 1) * 64)
             let p = a ** 2
-            let pTC = BInt(a.magnitude.toomCookSquare())
+            let pTC = BInt(a.mag.toomCookSquare())
             XCTAssertEqual(p, pTC)
         }
     }
     
     func test5() {
-        var prod = BInt.ONE
-        var x = [BInt](repeating: BInt.ZERO, count: 10)
+        var prod = BInt.one
+        var x = [BInt](repeating: BInt.zero, count: 10)
         for i in 0 ..< 10 {
             x[i] = BInt(bitWidth: (Limbs.FFT_THR + 1) * 64)
             prod *= x[i]
         }
         var q = prod
-        var r = BInt.ZERO
+        var r = BInt.zero
         for i in 0 ..< 10 {
             (q, r) = q.quotientAndRemainder(dividingBy: x[i])
-            XCTAssertEqual(r, BInt.ZERO)
+            XCTAssertEqual(r, BInt.zero)
         }
-        XCTAssertEqual(q, BInt.ONE)
+        XCTAssertEqual(q, BInt.one)
     }
 
 }

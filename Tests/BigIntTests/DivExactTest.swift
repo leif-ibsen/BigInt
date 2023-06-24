@@ -39,10 +39,10 @@ class DivExactTest: XCTestCase {
     }
 
     func test1() {
-        doTest1(BInt.ZERO, BInt.ONE)
+        doTest1(BInt.zero, BInt.one)
         for _ in 0 ..< 100 {
             let x = BInt(bitWidth: 200)
-            var d = BInt.ONE
+            var d = BInt.one
             for _ in 0 ..< 10 {
                 doTest1(x * d, d)
                 doTest1(x * d, x)
@@ -52,7 +52,7 @@ class DivExactTest: XCTestCase {
     }
 
     func test2() {
-        doTest2(BInt.ZERO, 1)
+        doTest2(BInt.zero, 1)
         for _ in 0 ..< 100 {
             let x = BInt(bitWidth: 200)
             var d = 1

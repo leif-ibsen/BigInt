@@ -25,9 +25,9 @@ class ModInverseTest: XCTestCase {
             if x1 == 0 {
                 x1 = BInt(1)
             }
-            if x1.gcd(p1) == BInt.ONE {
-                XCTAssert((x1 * x1.modInverse(p1)).mod(p1) == BInt.ONE)
-                XCTAssert(((-x1) * (-x1).modInverse(p1)).mod(p1) == BInt.ONE)
+            if x1.gcd(p1) == BInt.one {
+                XCTAssert((x1 * x1.modInverse(p1)).mod(p1) == BInt.one)
+                XCTAssert(((-x1) * (-x1).modInverse(p1)).mod(p1) == BInt.one)
                 if let pp1 = p1.asInt() {
                     XCTAssert(x1.modInverse(p1) == x1.modInverse(pp1))
                 }
@@ -36,11 +36,11 @@ class ModInverseTest: XCTestCase {
                 x1 += 1
             }
             for i in 1 ..< 12 {
-                let m = BInt.ONE << i
+                let m = BInt.one << i
                 let q1 = x1.modInverse(m)
                 let q2 = (-x1).modInverse(m)
-                XCTAssertEqual((q1 * x1).mod(m), BInt.ONE)
-                XCTAssertEqual((q2 * (-x1)).mod(m), BInt.ONE)
+                XCTAssertEqual((q1 * x1).mod(m), BInt.one)
+                XCTAssertEqual((q2 * (-x1)).mod(m), BInt.one)
             }
         }
     }
@@ -55,19 +55,19 @@ class ModInverseTest: XCTestCase {
     }
     
     func test2() {
-        XCTAssertEqual(BInt.TWO.modInverse(1), 0)
-        XCTAssertEqual((-BInt.TWO).modInverse(1), 0)
-        XCTAssertEqual(BInt.THREE.modInverse(1), 0)
-        XCTAssertEqual((-BInt.THREE).modInverse(1), 0)
-        XCTAssertEqual(BInt.TWO.modInverse(BInt.ONE), BInt.ZERO)
-        XCTAssertEqual((-BInt.TWO).modInverse(BInt.ONE), BInt.ZERO)
-        XCTAssertEqual(BInt.THREE.modInverse(BInt.ONE), BInt.ZERO)
-        XCTAssertEqual((-BInt.THREE).modInverse(BInt.ONE), BInt.ZERO)
+        XCTAssertEqual(BInt.two.modInverse(1), 0)
+        XCTAssertEqual((-BInt.two).modInverse(1), 0)
+        XCTAssertEqual(BInt.three.modInverse(1), 0)
+        XCTAssertEqual((-BInt.three).modInverse(1), 0)
+        XCTAssertEqual(BInt.two.modInverse(BInt.one), BInt.zero)
+        XCTAssertEqual((-BInt.two).modInverse(BInt.one), BInt.zero)
+        XCTAssertEqual(BInt.three.modInverse(BInt.one), BInt.zero)
+        XCTAssertEqual((-BInt.three).modInverse(BInt.one), BInt.zero)
     }
     
     func test3() {
-        let x1 = BInt.ONE << 20 + 1
-        let x2 = BInt.ONE << 200 + 1
+        let x1 = BInt.one << 20 + 1
+        let x2 = BInt.one << 200 + 1
         for i in 0 ... 62 {
             let m = 1 << i
             XCTAssertEqual(BInt(x1.modInverse(m)), x1.modInverse(BInt(m)))

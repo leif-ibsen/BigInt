@@ -48,16 +48,16 @@ class KroneckerTest: XCTestCase {
     }
 
     func test1() {
-        XCTAssertEqual(BInt.ZERO.kroneckerSymbol(BInt.ZERO), 0)
-        XCTAssertEqual(BInt.ONE.kroneckerSymbol(BInt.ZERO), 1)
-        XCTAssertEqual((-BInt.ONE).kroneckerSymbol(BInt.ZERO), 1)
+        XCTAssertEqual(BInt.zero.kroneckerSymbol(BInt.zero), 0)
+        XCTAssertEqual(BInt.one.kroneckerSymbol(BInt.zero), 1)
+        XCTAssertEqual((-BInt.one).kroneckerSymbol(BInt.zero), 1)
         for n in 1 ... 100 {
-            XCTAssertEqual(BInt(n).kroneckerSymbol(BInt.ONE), 1)
-            XCTAssertEqual(BInt(-n).kroneckerSymbol(BInt.ONE), 1)
+            XCTAssertEqual(BInt(n).kroneckerSymbol(BInt.one), 1)
+            XCTAssertEqual(BInt(-n).kroneckerSymbol(BInt.one), 1)
         }
         for k in 1 ... 100 {
-            XCTAssertEqual(BInt.ONE.kroneckerSymbol(k), 1)
-            XCTAssertEqual(BInt.ONE.kroneckerSymbol(-k), 1)
+            XCTAssertEqual(BInt.one.kroneckerSymbol(k), 1)
+            XCTAssertEqual(BInt.one.kroneckerSymbol(-k), 1)
         }
     }
 

@@ -22,19 +22,19 @@ class GcdTest: XCTestCase {
         let g = x.gcd(y)
         XCTAssertFalse(g.isNegative)
         XCTAssertEqual(g, y.gcd(x))
-        XCTAssertEqual(x.gcd(BInt.ZERO), x.abs)
-        XCTAssertEqual(x.gcd(BInt.ONE), BInt.ONE)
+        XCTAssertEqual(x.gcd(BInt.zero), x.abs)
+        XCTAssertEqual(x.gcd(BInt.one), BInt.one)
         XCTAssertEqual(x.gcd(x), x.abs)
         if g > 0 {
             precondition(g != 0)
             let (qx, rx) = x.quotientAndRemainder(dividingBy: g)
             let (qy, ry) = y.quotientAndRemainder(dividingBy: g)
-            XCTAssertEqual(rx, BInt.ZERO)
-            XCTAssertEqual(ry, BInt.ZERO)
-            XCTAssertEqual(qx.gcd(qy), BInt.ONE)
-            XCTAssertEqual(qy.gcd(qx), BInt.ONE)
+            XCTAssertEqual(rx, BInt.zero)
+            XCTAssertEqual(ry, BInt.zero)
+            XCTAssertEqual(qx.gcd(qy), BInt.one)
+            XCTAssertEqual(qy.gcd(qx), BInt.one)
         }
-        XCTAssertEqual(x.gcd(x + 1), BInt.ONE)
+        XCTAssertEqual(x.gcd(x + 1), BInt.one)
     }
 
     func doTest1(_ x: BInt, _ y: BInt) {
@@ -61,9 +61,9 @@ class GcdTest: XCTestCase {
     }
 
     func test2() {
-        doTest1(BInt.ZERO, BInt.ZERO)
-        doTest1(BInt.ZERO, BInt.ONE)
-        doTest1(BInt.ONE, BInt.ONE)
+        doTest1(BInt.zero, BInt.zero)
+        doTest1(BInt.zero, BInt.one)
+        doTest1(BInt.one, BInt.one)
     }
 
 }

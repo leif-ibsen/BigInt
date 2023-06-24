@@ -38,15 +38,15 @@ class GcdExtendedTest: XCTestCase {
     }
 
     func test1() {
-        doTest(BInt.ZERO, BInt.ZERO)
-        doTest(BInt.ZERO, BInt.ONE)
-        doTest(BInt.ONE, BInt.ZERO)
-        doTest(BInt.ONE, BInt.ONE)
+        doTest(BInt.zero, BInt.zero)
+        doTest(BInt.zero, BInt.one)
+        doTest(BInt.one, BInt.zero)
+        doTest(BInt.one, BInt.one)
         for _ in 0 ..< 100 {
             let a = BInt(bitWidth: 100)
-            doTest(a, BInt.ZERO)
-            doTest(a, BInt.ONE)
-            doTest(a, BInt.TWO)
+            doTest(a, BInt.zero)
+            doTest(a, BInt.one)
+            doTest(a, BInt.two)
             for _ in 0 ..< 100 {
                 let b = BInt(bitWidth: 100)
                 doTest(a, b)

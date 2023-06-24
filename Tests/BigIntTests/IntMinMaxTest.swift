@@ -60,7 +60,7 @@ class IntMinMaxTest: XCTestCase {
     }
 
     func test4() {
-        let x = BInt.ONE << 1000
+        let x = BInt.one << 1000
         XCTAssertEqual(x / Int.max, x / BInt(Int.max))
         XCTAssertEqual(x / Int.min, x / BInt(Int.min))
         XCTAssertEqual(-x / Int.max, -x / BInt(Int.max))

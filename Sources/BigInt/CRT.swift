@@ -17,10 +17,10 @@
 public struct CRT {
 
     static func uc(_ m: [BInt]) -> ([BInt], [BInt]) {
-        var u = [BInt](repeating: BInt.ZERO, count: m.count)
-        var c = [BInt](repeating: BInt.ZERO, count: m.count)
+        var u = [BInt](repeating: BInt.zero, count: m.count)
+        var c = [BInt](repeating: BInt.zero, count: m.count)
         for i in 1 ..< m.count {
-            u[i] = BInt.ONE
+            u[i] = BInt.one
             for j in 0 ..< i {
                 u[i] *= m[j]
             }
@@ -46,7 +46,7 @@ public struct CRT {
             return nil
         }
         for i in 0 ..< m.count - 1 {
-            guard m[i] > BInt.ZERO else {
+            guard m[i] > BInt.zero else {
                 return nil
             }
             for j in i + 1 ..< m.count {
@@ -66,7 +66,7 @@ public struct CRT {
     ///   - m: The moduli
     /// - Returns: The CRT instance for the moduli, *nil* if they do not fullfill the conditions
     public init?(_ m: [Int]) {
-        var x = [BInt](repeating: BInt.ZERO, count: m.count)
+        var x = [BInt](repeating: BInt.zero, count: m.count)
         for i in 0 ..< m.count {
             x[i] = BInt(m[i])
         }
@@ -99,7 +99,7 @@ public struct CRT {
     ///   - r: The residues
     /// - Returns: The CRT value
     public func compute(_ r: [Int]) -> BInt {
-        var x = [BInt](repeating: BInt.ZERO, count: r.count)
+        var x = [BInt](repeating: BInt.zero, count: r.count)
         for i in 0 ..< x.count {
             x[i] = BInt(r[i])
         }

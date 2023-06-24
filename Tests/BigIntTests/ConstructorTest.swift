@@ -20,10 +20,10 @@ class ConstructorTest: XCTestCase {
 
     func test1() {
         let x1 = BInt("123", radix: 10)!
-        XCTAssertEqual(x1.magnitude.count, 1)
+        XCTAssertEqual(x1.mag.count, 1)
         XCTAssertFalse((x1.isNegative))
         let x2 = BInt("-0", radix: 10)!
-        XCTAssertEqual(x2.magnitude.count, 1)
+        XCTAssertEqual(x2.mag.count, 1)
         XCTAssertFalse((x2.isNegative))
         let b: Bytes = [0, 0, 0, 123]
         let x3 = BInt(signed: b)
@@ -32,12 +32,12 @@ class ConstructorTest: XCTestCase {
         XCTAssertEqual(x1, x4)
         let x5 = BInt(bitWidth: 100)
         XCTAssertTrue(x5.bitWidth <= 100)
-        let x6 = BInt("-123")!
-        XCTAssertEqual(x6.magnitude[0], 123)
+        let x6 = BInt("-123")
+        XCTAssertEqual(x6.mag[0], 123)
         let x71 = BInt(bitWidth: 100)
         let x72 = BInt(signed: x71.asSignedBytes())
         XCTAssertEqual(x71, x72)
-        let x8 = BInt.ONE << 317
+        let x8 = BInt.one << 317
         XCTAssertEqual(x8.trailingZeroBitCount, 317)
         let x9 = BInt(1)
         XCTAssertFalse(x9.isEven)
@@ -61,7 +61,7 @@ class ConstructorTest: XCTestCase {
         XCTAssertTrue(x11.isZero)
         XCTAssertFalse(x11.isNotZero)
         let x12 = BInt(bitWidth: 1)
-        XCTAssertTrue(x12 == BInt.ONE || x12 == BInt.ZERO)
+        XCTAssertTrue(x12 == BInt.one || x12 == BInt.zero)
         let x13 = BInt("12345670", radix: 8)
         XCTAssertEqual(x13, BInt("2739128"))
         let x14 = BInt("12345678", radix: 8)
@@ -72,9 +72,9 @@ class ConstructorTest: XCTestCase {
         let x0 = BInt(0)
         let x1 = BInt(1)
         let xm1 = BInt(-1)
-        XCTAssertEqual(x0.magnitude.count, 1)
-        XCTAssertEqual(x1.magnitude.count, 1)
-        XCTAssertEqual(xm1.magnitude.count, 1)
+        XCTAssertEqual(x0.mag.count, 1)
+        XCTAssertEqual(x1.mag.count, 1)
+        XCTAssertEqual(xm1.mag.count, 1)
         XCTAssertFalse(x0.isNegative)
         XCTAssertFalse(x1.isNegative)
         XCTAssertTrue(xm1.isNegative)
@@ -87,7 +87,7 @@ class ConstructorTest: XCTestCase {
         let x0 = BInt([0x8000000000000000], true)
         XCTAssertEqual(x0.asInt(), Int.min)
         let x1 = BInt(signed: [0])
-        XCTAssertEqual(x1, BInt.ZERO)
+        XCTAssertEqual(x1, BInt.zero)
         let x2 = BInt(signed: [0, 255])
         XCTAssertEqual(x2, BInt(255))
         let x3 = BInt(signed: [255])
@@ -100,7 +100,7 @@ class ConstructorTest: XCTestCase {
 
     func test4() {
         let x1 = BInt(magnitude: [0])
-        XCTAssertEqual(x1, BInt.ZERO)
+        XCTAssertEqual(x1, BInt.zero)
         let x2 = BInt(magnitude: [0, 255])
         XCTAssertEqual(x2, BInt(255))
         let x3 = BInt(magnitude: [255])
@@ -109,10 +109,16 @@ class ConstructorTest: XCTestCase {
         XCTAssertEqual(x4, BInt(65280))
         let x5 = BInt(magnitude: [255, 255])
         XCTAssertEqual(x5, BInt(65535))
-        let x6 = BInt(magnitude: [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])
-        XCTAssertEqual(x6, BInt("fffffffffffffffffffffffffffffffeffffffffffffffff", radix: 16)!)
-        let x7 = BInt(signed: [0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff])
-        XCTAssertEqual(x7, BInt("fffffffffffffffffffffffffffffffeffffffffffffffff", radix: 16)!)
+        let x6 = BInt(magnitude:
+            [0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+             0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff, 0xff,
+             0xff, 0xff, 0xff, 0xff])
+        XCTAssertEqual(x6, BInt(0xfffffffffffffffffffffffffffffffeffffffffffffffff))
+        let x7 = BInt(signed:
+            [0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+             0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0xff, 0xff, 0xff,
+             0xff, 0xff, 0xff, 0xff, 0xff])
+        XCTAssertEqual(x7, BInt(0xfffffffffffffffffffffffffffffffeffffffffffffffff))
     }
 
     func doTest6(_ n: Int) {
@@ -130,30 +136,30 @@ class ConstructorTest: XCTestCase {
         doTest6(10)
         doTest6(100)
         doTest6(1000)
-        XCTAssertNil(BInt(""))
-        XCTAssertNil(BInt("+"))
-        XCTAssertNil(BInt("-"))
-        XCTAssertNil(BInt("+ 1"))
-        XCTAssertNil(BInt("- 1"))
+        XCTAssertNil(BInt("", radix:10))
+        XCTAssertNil(BInt("+", radix:10))
+        XCTAssertNil(BInt("-", radix:10))
+        XCTAssertNil(BInt("+ 1", radix:10))
+        XCTAssertNil(BInt("- 1", radix:10))
     }
     
     // BInt to Double
     func test7() {
-        XCTAssertEqual(BInt.ZERO.asDouble(), 0.0)
-        XCTAssertEqual((-BInt.ZERO).asDouble(), 0.0)
-        XCTAssertEqual(BInt.ONE.asDouble(), 1.0)
-        XCTAssertEqual((-BInt.ONE).asDouble(), -1.0)
-        XCTAssertEqual((BInt.ONE << 1024).asDouble(), Double.infinity)
-        XCTAssertEqual(-(BInt.ONE << 1024).asDouble(), -Double.infinity)
-        XCTAssert((BInt.ONE << 1023).asDouble().isFinite)
-        XCTAssert((-(BInt.ONE << 1023)).asDouble().isFinite)
+        XCTAssertEqual(BInt.zero.asDouble(), 0.0)
+        XCTAssertEqual((-BInt.zero).asDouble(), 0.0)
+        XCTAssertEqual(BInt.one.asDouble(), 1.0)
+        XCTAssertEqual((-BInt.one).asDouble(), -1.0)
+        XCTAssertEqual((BInt.one << 1024).asDouble(), Double.infinity)
+        XCTAssertEqual(-(BInt.one << 1024).asDouble(), -Double.infinity)
+        XCTAssert((BInt.one << 1023).asDouble().isFinite)
+        XCTAssert((-(BInt.one << 1023)).asDouble().isFinite)
     }
     
     // BInt from a Double value
     func test8() {
-        XCTAssertEqual(BInt(0.0), BInt.ZERO)
-        XCTAssertEqual(BInt(1.0), BInt.ONE)
-        XCTAssertEqual(BInt(-1.0), -BInt.ONE)
+        XCTAssertEqual(BInt(0.0), BInt.zero)
+        XCTAssertEqual(BInt(1.0), BInt.one)
+        XCTAssertEqual(BInt(-1.0), -BInt.one)
         XCTAssertNil(BInt(0.0 / 0.0))
         XCTAssertNil(BInt(1.0 / 0.0))
         XCTAssertNil(BInt(-1.0 / 0.0))
@@ -169,6 +175,16 @@ class ConstructorTest: XCTestCase {
             let x1 = BInt(d)!
             XCTAssertTrue((x - x1).abs.asDouble() / d <= 1.0e-15)
         }
+    }
+    
+    // BInt from a StaticBigInt
+    func test8a() {
+        let bigNumber = BInt(1234567890_1234567890_1234567890_1234567890)
+        let nbigNumber = BInt(-1234567890_1234567890_1234567890_1234567890)
+        XCTAssertEqual(bigNumber.description,
+                       "1234567890123456789012345678901234567890")
+        XCTAssertEqual(nbigNumber.description,
+                       "-1234567890123456789012345678901234567890")
     }
     
     let strings = ["0",

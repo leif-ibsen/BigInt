@@ -26,7 +26,7 @@ class KaratsubaTest: XCTestCase {
             XCTAssertEqual(p, b * a)
             let (q, r) = p.quotientAndRemainder(dividingBy: a)
             XCTAssertEqual(q, b)
-            XCTAssertEqual(r, BInt.ZERO)
+            XCTAssertEqual(r, BInt.zero)
         }
     }
     
@@ -36,7 +36,7 @@ class KaratsubaTest: XCTestCase {
             let p = a ** 2
             let (q, r) = p.quotientAndRemainder(dividingBy: a)
             XCTAssertEqual(q, a)
-            XCTAssertEqual(r, BInt.ZERO)
+            XCTAssertEqual(r, BInt.zero)
         }
     }
     
@@ -49,10 +49,10 @@ class KaratsubaTest: XCTestCase {
         XCTAssertEqual(x, b2 * b1)
         let (q1, r1) = x.quotientAndRemainder(dividingBy: b1)
         XCTAssertEqual(q1, b2)
-        XCTAssertEqual(r1, BInt.ZERO)
+        XCTAssertEqual(r1, BInt.zero)
         let (q2, r2) = x.quotientAndRemainder(dividingBy: b2)
         XCTAssertEqual(q2, b1)
-        XCTAssertEqual(r2, BInt.ZERO)
+        XCTAssertEqual(r2, BInt.zero)
     }
 
     // Karatsuba and ToomCook must give same result
@@ -61,13 +61,13 @@ class KaratsubaTest: XCTestCase {
             let a = BInt(bitWidth: (Limbs.KA_THR + 1) * 64)
             let b = BInt(bitWidth: (Limbs.KA_THR + 1) * 64)
             let p = a * b
-            let pTC = BInt(a.magnitude.toomCookTimes(b.magnitude))
+            let pTC = BInt(a.mag.toomCookTimes(b.mag))
             XCTAssertEqual(p, pTC)
         }
         for _ in 0 ..< 10 {
             let a = BInt(bitWidth: (Limbs.KA_THR + 1) * 64)
             let p = a ** 2
-            let pTC = BInt(a.magnitude.toomCookSquare())
+            let pTC = BInt(a.mag.toomCookSquare())
             XCTAssertEqual(p, pTC)
         }
     }

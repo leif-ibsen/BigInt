@@ -74,9 +74,9 @@ class RootTest: XCTestCase {
     }
     
     func test4() {
-        XCTAssert(BInt.ZERO.isPerfectSquare())
-        XCTAssert(BInt.ONE.isPerfectSquare())
-        XCTAssert(!(-BInt.ONE).isPerfectSquare())
+        XCTAssert(BInt.zero.isPerfectSquare())
+        XCTAssert(BInt.one.isPerfectSquare())
+        XCTAssert(!(-BInt.one).isPerfectSquare())
         for i in 2 ..< 1000 {
             let x = BInt(i)
             let x1 = x + 1
@@ -98,9 +98,9 @@ class RootTest: XCTestCase {
     }
 
     func test6() {
-        XCTAssert(BInt.ZERO.isPerfectRoot())
-        XCTAssert(BInt.ONE.isPerfectRoot())
-        XCTAssert((-BInt.ONE).isPerfectRoot())
+        XCTAssert(BInt.zero.isPerfectRoot())
+        XCTAssert(BInt.one.isPerfectRoot())
+        XCTAssert((-BInt.one).isPerfectRoot())
         for i in 0 ..< 1000 {
             let x = BInt(i)
             let perfect = x.isPerfectRoot()

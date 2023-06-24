@@ -20,7 +20,7 @@ class DivModTest: XCTestCase {
 
     func doTest1(_ bw1: Int, _ bw2: Int) {
         let x1 = BInt(bitWidth: bw1)
-        let x2 = BInt(bitWidth: bw2) + BInt.ONE
+        let x2 = BInt(bitWidth: bw2) + BInt.one
         doTest2(x1, x2)
     }
 
@@ -32,8 +32,8 @@ class DivModTest: XCTestCase {
         let (q2, r2) = x1.quotientAndRemainder(dividingBy: x2)
         XCTAssertEqual(q1, q2)
         XCTAssertEqual(r1, r2)
-        var q3 = BInt.ZERO
-        var r3 = BInt.ZERO
+        var q3 = BInt.zero
+        var r3 = BInt.zero
         x1.quotientAndRemainder(dividingBy: x2, &q3, &r3)
         XCTAssertEqual(q1, q3)
         XCTAssertEqual(r1, r3)
@@ -55,10 +55,10 @@ class DivModTest: XCTestCase {
         doTest1(30, 120)
         doTest1(130, 20)
         doTest1(130, 120)
-        doTest2(BInt.ONE << 512 - 1, BInt.ONE)
-        doTest2(BInt.ONE << 512 - 1, BInt.ONE << 512 - 1)
-        doTest2(BInt.ONE << 512, BInt.ONE)
-        doTest2(BInt.ONE << 512, BInt.ONE << 512 - 1)
+        doTest2(BInt.one << 512 - 1, BInt.one)
+        doTest2(BInt.one << 512 - 1, BInt.one << 512 - 1)
+        doTest2(BInt.one << 512, BInt.one)
+        doTest2(BInt.one << 512, BInt.one << 512 - 1)
     }
 
     func test2() {
@@ -90,25 +90,25 @@ class DivModTest: XCTestCase {
     }
     
     func test3() {
-        XCTAssertEqual(BInt(0) / BInt(7), BInt.ZERO)
-        XCTAssertEqual(-BInt(0) / BInt(7), BInt.ZERO)
-        XCTAssertEqual(BInt(0) / BInt(-7), BInt.ZERO)
-        XCTAssertEqual(-BInt(0) / BInt(-7), BInt.ZERO)
-        XCTAssertEqual(BInt(7) % BInt(7), BInt.ZERO)
-        XCTAssertEqual(BInt(-7) % BInt(7), BInt.ZERO)
-        XCTAssertEqual(BInt(7) % BInt(-7), BInt.ZERO)
-        XCTAssertEqual(BInt(-7) % BInt(-7), BInt.ZERO)
-        XCTAssertEqual(BInt(7) % 7, BInt.ZERO)
-        XCTAssertEqual(BInt(-7) % 7, BInt.ZERO)
-        XCTAssertEqual(BInt(7) % (-7), BInt.ZERO)
-        XCTAssertEqual(BInt(-7) % (-7), BInt.ZERO)
+        XCTAssertEqual(BInt(0) / BInt(7), BInt.zero)
+        XCTAssertEqual(-BInt(0) / BInt(7), BInt.zero)
+        XCTAssertEqual(BInt(0) / BInt(-7), BInt.zero)
+        XCTAssertEqual(-BInt(0) / BInt(-7), BInt.zero)
+        XCTAssertEqual(BInt(7) % BInt(7), BInt.zero)
+        XCTAssertEqual(BInt(-7) % BInt(7), BInt.zero)
+        XCTAssertEqual(BInt(7) % BInt(-7), BInt.zero)
+        XCTAssertEqual(BInt(-7) % BInt(-7), BInt.zero)
+        XCTAssertEqual(BInt(7) % 7, BInt.zero)
+        XCTAssertEqual(BInt(-7) % 7, BInt.zero)
+        XCTAssertEqual(BInt(7) % (-7), BInt.zero)
+        XCTAssertEqual(BInt(-7) % (-7), BInt.zero)
     }
     
     func test4() {
         // a BInt modulo an Int
         for _ in 0 ..< 100 {
             let x = BInt(bitWidth: 1000)
-            let m = x.magnitude[0] == 0 ? 1 : Int(x.magnitude[0] & 0x7fffffffffffffff)
+            let m = x.mag[0] == 0 ? 1 : Int(x.mag[0] & 0x7fffffffffffffff)
             XCTAssertEqual(x.mod(m), x.mod(BInt(m)).asInt()!)
             XCTAssertEqual(x.mod(-m), x.mod(-BInt(m)).asInt()!)
         }

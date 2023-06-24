@@ -19,14 +19,14 @@ final class CRTTest: XCTestCase {
     }
 
     func doTest1(_ n: Int) {
-        var p = [BInt](repeating: BInt.ZERO, count: 4)
+        var p = [BInt](repeating: BInt.zero, count: 4)
         p[0] = BInt.probablePrime(n)
         p[1] = BInt.probablePrime(2 * n)
         p[2] = BInt.probablePrime(3 * n)
         p[3] = p[0] + 1
         let crt = CRT(p)!
-        var a1 = [BInt](repeating: BInt.ZERO, count: 4)
-        var a2 = [BInt](repeating: BInt.ZERO, count: 4)
+        var a1 = [BInt](repeating: BInt.zero, count: 4)
+        var a2 = [BInt](repeating: BInt.zero, count: 4)
         for i in 0 ..< 4 {
             a1[i] = p[0].randomLessThan()
             a2[i] = -a1[i]

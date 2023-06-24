@@ -21,7 +21,7 @@ class BitSieve {
     init() {
         self.length = 150 * 64
         self.bits = [UInt64](repeating: 0, count: ((length - 1) >> 6) + 1)
-        self.base = BInt.ZERO
+        self.base = BInt.zero
         self.prob = 0
 
         // Mark 1 as composite
@@ -63,7 +63,7 @@ class BitSieve {
         // Construct the large sieve at an even offset specified by base
         repeat {
             // Calculate base mod convertedStep
-            let (_, r) = self.base.magnitude.divMod(UInt64(convertedStep))
+            let (_, r) = self.base.mag.divMod(UInt64(convertedStep))
             start = Int(r)
 
             // Take each multiple of step out of sieve

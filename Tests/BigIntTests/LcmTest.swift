@@ -11,9 +11,9 @@ import XCTest
 class LcmTest: XCTestCase {
 
     func test1() {
-        XCTAssertEqual(BInt.ZERO.lcm(BInt.ZERO), BInt.ZERO)
-        XCTAssertEqual(BInt.ZERO.lcm(BInt.ONE), BInt.ZERO)
-        XCTAssertEqual(BInt.ONE.lcm(BInt.ZERO), BInt.ZERO)
+        XCTAssertEqual(BInt.zero.lcm(BInt.zero), BInt.zero)
+        XCTAssertEqual(BInt.zero.lcm(BInt.one), BInt.zero)
+        XCTAssertEqual(BInt.one.lcm(BInt.zero), BInt.zero)
         XCTAssertEqual(BInt(18).lcm(BInt(21)), BInt(126))
         XCTAssertEqual(BInt(-18).lcm(BInt(21)), BInt(126))
         XCTAssertEqual(BInt(18).lcm(BInt(-21)), BInt(126))

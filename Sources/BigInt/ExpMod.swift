@@ -14,8 +14,8 @@ extension BInt {
         let base: Limbs
 
         init(_ a: BInt, _ modulus: BInt) {
-            self.modulus = modulus.magnitude
-            self.base = a.magnitude.divMod(self.modulus).remainder
+            self.modulus = modulus.mag
+            self.base = a.mag.divMod(self.modulus).remainder
         }
 
         func toMspace(_ x: Limbs) -> Limbs {

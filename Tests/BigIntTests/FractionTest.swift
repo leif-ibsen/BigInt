@@ -31,23 +31,23 @@ class FractionTest: XCTestCase {
             let n = BInt(bitWidth: 100)
             let d = BInt(bitWidth: 100) + 1
             let f1 = BFraction(n, d)
-            XCTAssertEqual(f1.numerator.gcd(f1.denominator), BInt.ONE)
+            XCTAssertEqual(f1.numerator.gcd(f1.denominator), BInt.one)
             XCTAssert(f1.denominator.isPositive)
             let f2 = BFraction(0, d)
-            XCTAssertEqual(f2.numerator, BInt.ZERO)
-            XCTAssertEqual(f2.denominator, BInt.ONE)
+            XCTAssertEqual(f2.numerator, BInt.zero)
+            XCTAssertEqual(f2.denominator, BInt.one)
         }
         for _ in 0 ..< 10 {
             let d = Double.random(in: -100.0 ... 100.0)
             let f = BFraction(d)!
-            XCTAssertEqual(f.numerator.gcd(f.denominator), BInt.ONE)
+            XCTAssertEqual(f.numerator.gcd(f.denominator), BInt.one)
             XCTAssert(f.denominator.isPositive)
             XCTAssert(f.abs <= 100)
         }
         XCTAssertNil(BFraction(0.0 / 0.0))
         XCTAssertNil(BFraction(1.0 / 0.0))
         XCTAssertEqual(BFraction(0.1)!, BFraction(
-            BInt("1000000000000000055511151231257827021181583404541015625")!, BInt(10) ** 55))
+            BInt("1000000000000000055511151231257827021181583404541015625"), BInt(10) ** 55))
         XCTAssertEqual(BFraction(0.1)!, BFraction(3602879701896397, 36028797018963968))
         XCTAssertTrue(BFraction(0.0)!.isZero)
         XCTAssertTrue(BFraction(-0.0)!.isZero)
@@ -235,38 +235,38 @@ class FractionTest: XCTestCase {
     }
     
     let tests: [testB] = [
-        testB(0, BInt("1")!, 1),
-        testB(1, BInt("1")!, 2),
-        testB(2, BInt("1")!, 6),
-        testB(4, BInt("-1")!, 30),
-        testB(6, BInt("1")!, 42),
-        testB(8, BInt("-1")!, 30),
-        testB(10, BInt("5")!, 66),
-        testB(12, BInt("-691")!, 2730),
-        testB(14, BInt("7")!, 6),
-        testB(16, BInt("-3617")!, 510),
-        testB(18, BInt("43867")!, 798),
-        testB(20, BInt("-174611")!, 330),
-        testB(22, BInt("854513")!, 138),
-        testB(24, BInt("-236364091")!, 2730),
-        testB(26, BInt("8553103")!, 6),
-        testB(28, BInt("-23749461029")!, 870),
-        testB(30, BInt("8615841276005")!, 14322),
-        testB(32, BInt("-7709321041217")!, 510),
-        testB(34, BInt("2577687858367")!, 6),
-        testB(36, BInt("-26315271553053477373")!, 1919190),
-        testB(38, BInt("2929993913841559")!, 6),
-        testB(40, BInt("-261082718496449122051")!, 13530),
-        testB(42, BInt("1520097643918070802691")!, 1806),
-        testB(44, BInt("-27833269579301024235023")!, 690),
-        testB(46, BInt("596451111593912163277961")!, 282),
-        testB(48, BInt("-5609403368997817686249127547")!, 46410),
-        testB(50, BInt("495057205241079648212477525")!, 66),
-        testB(52, BInt("-801165718135489957347924991853")!, 1590),
-        testB(54, BInt("29149963634884862421418123812691")!, 798),
-        testB(56, BInt("-2479392929313226753685415739663229")!, 870),
-        testB(58, BInt("84483613348880041862046775994036021")!, 354),
-        testB(60, BInt("-1215233140483755572040304994079820246041491")!, 56786730),
+        testB(0, BInt("1"), 1),
+        testB(1, BInt("1"), 2),
+        testB(2, BInt("1"), 6),
+        testB(4, BInt("-1"), 30),
+        testB(6, BInt("1"), 42),
+        testB(8, BInt("-1"), 30),
+        testB(10, BInt("5"), 66),
+        testB(12, BInt("-691"), 2730),
+        testB(14, BInt("7"), 6),
+        testB(16, BInt("-3617"), 510),
+        testB(18, BInt("43867"), 798),
+        testB(20, BInt("-174611"), 330),
+        testB(22, BInt("854513"), 138),
+        testB(24, BInt("-236364091"), 2730),
+        testB(26, BInt("8553103"), 6),
+        testB(28, BInt("-23749461029"), 870),
+        testB(30, BInt("8615841276005"), 14322),
+        testB(32, BInt("-7709321041217"), 510),
+        testB(34, BInt("2577687858367"), 6),
+        testB(36, BInt("-26315271553053477373"), 1919190),
+        testB(38, BInt("2929993913841559"), 6),
+        testB(40, BInt("-261082718496449122051"), 13530),
+        testB(42, BInt("1520097643918070802691"), 1806),
+        testB(44, BInt("-27833269579301024235023"), 690),
+        testB(46, BInt("596451111593912163277961"), 282),
+        testB(48, BInt("-5609403368997817686249127547"), 46410),
+        testB(50, BInt("495057205241079648212477525"), 66),
+        testB(52, BInt("-801165718135489957347924991853"), 1590),
+        testB(54, BInt("29149963634884862421418123812691"), 798),
+        testB(56, BInt("-2479392929313226753685415739663229"), 870),
+        testB(58, BInt("84483613348880041862046775994036021"), 354),
+        testB(60, BInt("-1215233140483755572040304994079820246041491"), 56786730),
     ]
     
     func testDecimalString() {
@@ -317,8 +317,8 @@ class FractionTest: XCTestCase {
             let f = BFraction(BInt(bitWidth: 200), BInt(bitWidth: 100) + 1)
             doTestMod(f, P)
             doTestMod(-f, P)
-            doTestMod(f, BInt.ONE)
-            doTestMod(-f, BInt.ONE)
+            doTestMod(f, BInt.one)
+            doTestMod(-f, BInt.one)
             doTestMod(BFraction.ONE, P)
             doTestMod(-BFraction.ONE, P)
         }

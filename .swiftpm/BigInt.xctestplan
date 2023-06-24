@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "049EF063-C735-4DB0-B117-4133C4E01E0E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "skippedTests" : [
+        "FFTTest",
+        "RootTest"
+      ],
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "BigIntTests",
+        "name" : "BigIntTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -47,8 +47,8 @@ class PrimeTest: XCTestCase {
     }
     
     func test3() {
-        XCTAssertEqual(BInt(-14).nextPrime(), BInt.TWO)
-        var x = BInt.ZERO
+        XCTAssertEqual(BInt(-14).nextPrime(), BInt.two)
+        var x = BInt.zero
         for _ in 0 ..< 1000 {
             let p = x.nextPrime()
             XCTAssertTrue(p.isProbablyPrime(100))

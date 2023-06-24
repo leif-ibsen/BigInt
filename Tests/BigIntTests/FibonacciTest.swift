@@ -14,9 +14,9 @@ class FibonacciTest: XCTestCase {
     func simpleFib(_ n: Int) -> BInt {
         XCTAssertTrue(n >= 0)
         if n == 0 {
-            return BInt.ZERO
+            return BInt.zero
         } else if n == 1 {
-            return BInt.ONE
+            return BInt.one
         } else {
             var t: Limbs = [0]
             var t1: Limbs = [0]
@@ -34,9 +34,9 @@ class FibonacciTest: XCTestCase {
     func simpleLucas(_ n: Int) -> BInt {
         XCTAssertTrue(n >= 0)
         if n == 0 {
-            return BInt.TWO
+            return BInt.two
         } else if n == 1 {
-            return BInt.ONE
+            return BInt.one
         } else {
             var t: Limbs = [0]
             var t1: Limbs = [2]
@@ -60,7 +60,7 @@ class FibonacciTest: XCTestCase {
     }
 
     func testLucas() {
-        XCTAssertEqual(BInt.lucas(0), BInt.TWO)
+        XCTAssertEqual(BInt.lucas(0), BInt.two)
         for i in 1 ... 1000 {
             XCTAssertEqual(simpleLucas(i), BInt.lucas(i))
             XCTAssertEqual(BInt.lucas(i), BInt.fibonacci(i - 1) + BInt.fibonacci(i + 1))

@@ -13,7 +13,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     mutating func normalize() {
         let g = self.numerator.gcd(self.denominator)
-        if g.magnitude.compare(1) > 0 {
+        if g.mag.compare(1) > 0 {
             self.numerator = self.numerator.quotientExact(dividingBy: g)
             self.denominator = self.denominator.quotientExact(dividingBy: g)
         }
@@ -163,9 +163,9 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     // MARK: - Constants
 
     /// BFraction(0, 1)
-    public static let ZERO = BFraction(BInt.ZERO, BInt.ONE)
+    public static let ZERO = BFraction(BInt.zero, BInt.one)
     /// BFraction(1, 1)
-    public static let ONE = BFraction(BInt.ONE, BInt.ONE)
+    public static let ONE = BFraction(BInt.one, BInt.one)
 
     
     // MARK: Initializers
@@ -227,9 +227,9 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         let exponent = Int(bits >> 52) & 0x7ff - 1075
         let significand = exponent == -1075 ? Int(bits & 0xfffffffffffff) << 1 : Int(bits & 0xfffffffffffff) | (1 << 52)
         if exponent < 0 {
-            self.init(sign * BInt(significand), BInt.ONE << -exponent)
+            self.init(sign * BInt(significand), BInt.one << -exponent)
         } else {
-            self.init(sign * BInt(significand) * (BInt.ONE << exponent), BInt.ONE)
+            self.init(sign * BInt(significand) * (BInt.one << exponent), BInt.one)
         }
     }
 
@@ -248,9 +248,9 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
             return nil
         }
         if e < 0 {
-            self.init(m, BInt.TEN ** -e)
+            self.init(m, BInt.ten ** -e)
         } else {
-            self.init(m * (BInt.TEN ** e), BInt.ONE)
+            self.init(m * (BInt.ten ** e), BInt.one)
         }
     }
 
@@ -321,17 +321,17 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     public func asDecimalString(precision: Int, exponential: Bool = false) -> String {
         precondition(precision > 0)
         if self.isZero {
-            return BFraction.displayString(BInt.ZERO, -precision, exponential)
+            return BFraction.displayString(BInt.zero, -precision, exponential)
         }
-        let P = BInt.TEN ** precision
+        let P = BInt.ten ** precision
         var exp = 0
         var q = self.numerator.abs
         while q.quotientAndRemainder(dividingBy: self.denominator).quotient < P {
-            q *= BInt.TEN
+            q *= BInt.ten
             exp -= 1
         }
         while q.quotientAndRemainder(dividingBy: self.denominator).quotient >= P {
-            q /= BInt.TEN
+            q /= BInt.ten
             exp += 1
         }
         let x = q.quotientAndRemainder(dividingBy: self.denominator).quotient
@@ -388,7 +388,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second addend
     /// - Returns: x + y
     public static func +(x: BFraction, y: BInt) -> BFraction {
-        return x + BFraction(y, BInt.ONE)
+        return x + BFraction(y, BInt.one)
     }
 
     /// Addition
@@ -398,7 +398,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second addend
     /// - Returns: x + y
     public static func +(x: BInt, y: BFraction) -> BFraction {
-        return BFraction(x, BInt.ONE) + y
+        return BFraction(x, BInt.one) + y
     }
 
     /// Addition
@@ -408,7 +408,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second addend
     /// - Returns: x + y
     public static func +(x: BFraction, y: Int) -> BFraction {
-        return x + BFraction(y, BInt.ONE)
+        return x + BFraction(y, BInt.one)
     }
 
     /// Addition
@@ -418,7 +418,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second addend
     /// - Returns: x + y
     public static func +(x: Int, y: BFraction) -> BFraction {
-        return BFraction(x, BInt.ONE) + y
+        return BFraction(x, BInt.one) + y
     }
 
     /// x = x + y
@@ -480,7 +480,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Subtrahend
     /// - Returns: x - y
     public static func -(x: BFraction, y: BInt) -> BFraction {
-        return x - BFraction(y, BInt.ONE)
+        return x - BFraction(y, BInt.one)
     }
 
     /// Subtraction
@@ -490,7 +490,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Subtrahend
     /// - Returns: x - y
     public static func -(x: BInt, y: BFraction) -> BFraction {
-        return BFraction(x, BInt.ONE) - y
+        return BFraction(x, BInt.one) - y
     }
 
     /// Subtraction
@@ -500,7 +500,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Subtrahend
     /// - Returns: x - y
     public static func -(x: BFraction, y: Int) -> BFraction {
-        return x - BFraction(y, BInt.ONE)
+        return x - BFraction(y, BInt.one)
     }
 
     /// Subtraction
@@ -510,7 +510,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Subtrahend
     /// - Returns: x - y
     public static func -(x: Int, y: BFraction) -> BFraction {
-        return BFraction(x, BInt.ONE) - y
+        return BFraction(x, BInt.one) - y
     }
 
     /// x = x - y
@@ -876,7 +876,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x != y, *false* otherwise
     public static func !=(x: BFraction, y: BInt) -> Bool {
-        return x != BFraction(y, BInt.ONE)
+        return x != BFraction(y, BInt.one)
     }
 
     /// Not equal
@@ -886,7 +886,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x != y, *false* otherwise
     public static func !=(x: BInt, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) != y
+        return BFraction(x, BInt.one) != y
     }
 
     /// Not equal
@@ -896,7 +896,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x != y, *false* otherwise
     public static func !=(x: BFraction, y: Int) -> Bool {
-        return x != BFraction(y, BInt.ONE)
+        return x != BFraction(y, BInt.one)
     }
 
     /// Not equal
@@ -906,7 +906,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x != y, *false* otherwise
     public static func !=(x: Int, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) != y
+        return BFraction(x, BInt.one) != y
     }
 
     /// Less than
@@ -926,7 +926,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x < y, *false* otherwise
     public static func <(x: BFraction, y: BInt) -> Bool {
-        return x < BFraction(y, BInt.ONE)
+        return x < BFraction(y, BInt.one)
     }
 
     /// Less than
@@ -936,7 +936,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x < y, *false* otherwise
     public static func <(x: BInt, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) < y
+        return BFraction(x, BInt.one) < y
     }
 
     /// Less than
@@ -946,7 +946,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x < y, *false* otherwise
     public static func <(x: BFraction, y: Int) -> Bool {
-        return x < BFraction(y, BInt.ONE)
+        return x < BFraction(y, BInt.one)
     }
 
     /// Less than
@@ -956,7 +956,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x < y, *false* otherwise
     public static func <(x: Int, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) < y
+        return BFraction(x, BInt.one) < y
     }
 
     /// Greater than
@@ -976,7 +976,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x > y, *false* otherwise
     public static func >(x: BFraction, y: BInt) -> Bool {
-        return x > BFraction(y, BInt.ONE)
+        return x > BFraction(y, BInt.one)
     }
 
     /// Greater than
@@ -986,7 +986,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x > y, *false* otherwise
     public static func >(x: BInt, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) > y
+        return BFraction(x, BInt.one) > y
     }
 
     /// Greater than
@@ -996,7 +996,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x > y, *false* otherwise
     public static func >(x: BFraction, y: Int) -> Bool {
-        return x > BFraction(y, BInt.ONE)
+        return x > BFraction(y, BInt.one)
     }
 
     /// Greater than
@@ -1006,7 +1006,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x > y, *false* otherwise
     public static func >(x: Int, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) > y
+        return BFraction(x, BInt.one) > y
     }
 
     /// Less than or equal
@@ -1026,7 +1026,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x <= y, *false* otherwise
     public static func <=(x: BFraction, y: BInt) -> Bool {
-        return x <= BFraction(y, BInt.ONE)
+        return x <= BFraction(y, BInt.one)
     }
 
     /// Less than or equal
@@ -1036,7 +1036,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x <= y, *false* otherwise
     public static func <=(x: BInt, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) <= y
+        return BFraction(x, BInt.one) <= y
     }
 
     /// Less than or equal
@@ -1046,7 +1046,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x <= y, *false* otherwise
     public static func <=(x: BFraction, y: Int) -> Bool {
-        return x <= BFraction(y, BInt.ONE)
+        return x <= BFraction(y, BInt.one)
     }
 
     /// Less than or equal
@@ -1056,7 +1056,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x <= y, *false* otherwise
     public static func <=(x: Int, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) <= y
+        return BFraction(x, BInt.one) <= y
     }
 
     /// Greater than or equal
@@ -1076,7 +1076,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x >= y, *false* otherwise
     public static func >=(x: BFraction, y: BInt) -> Bool {
-        return x >= BFraction(y, BInt.ONE)
+        return x >= BFraction(y, BInt.one)
     }
 
     /// Greater than or equal
@@ -1086,7 +1086,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x >= y, *false* otherwise
     public static func >=(x: BInt, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) >= y
+        return BFraction(x, BInt.one) >= y
     }
 
     /// Greater than or equal
@@ -1096,7 +1096,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x >= y, *false* otherwise
     public static func >=(x: BFraction, y: Int) -> Bool {
-        return x >= BFraction(y, BInt.ONE)
+        return x >= BFraction(y, BInt.one)
     }
 
     /// Greater than or equal
@@ -1106,7 +1106,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///   - y: Second operand
     /// - Returns: *true* if x >= y, *false* otherwise
     public static func >=(x: Int, y: BFraction) -> Bool {
-        return BFraction(x, BInt.ONE) >= y
+        return BFraction(x, BInt.one) >= y
     }
 
 
@@ -1131,8 +1131,8 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
             return BFraction.ZERO
         }
         let n1 = n >> 1
-        var T = [BInt](repeating: BInt.ZERO, count: n1)
-        T[0] = BInt.ONE
+        var T = [BInt](repeating: BInt.zero, count: n1)
+        T[0] = BInt.one
         for k in 1 ..< n1 {
             T[k] = k * T[k - 1]
         }
@@ -1142,7 +1142,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
             }
         }
         let numerator = T[n1 - 1] * n
-        let N = BInt.ONE << n
+        let N = BInt.one << n
         let denominator = N << n - N
         return n1 & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
     }
@@ -1157,7 +1157,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         precondition(n > 0, "Bernoulli count must be positive")
         let n1 = n << 1
         var x = [BFraction](repeating: BFraction.ONE, count: n)
-        var T = [BInt](repeating: BInt.ONE, count: n1)
+        var T = [BInt](repeating: BInt.one, count: n1)
         for k in 1 ..< n1 {
             T[k] = k * T[k - 1]
         }
@@ -1169,7 +1169,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         for i in 1 ..< n {
             let i2 = i << 1
             let numerator = T[i - 1] * i2
-            let N = BInt.ONE << i2
+            let N = BInt.one << i2
             let denominator = N << i2 - N
             x[i] = i & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
         }

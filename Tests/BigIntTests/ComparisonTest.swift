@@ -53,7 +53,7 @@ class ComparisonTest: XCTestCase {
     }
 
     func test1() {
-        doTest1(BInt.ZERO, BInt.ZERO)
+        doTest1(BInt.zero, BInt.zero)
         for _ in 0 ..< 10 {
             let a = BInt(bitWidth: 100)
             let b = BInt(bitWidth: 100)
@@ -69,7 +69,7 @@ class ComparisonTest: XCTestCase {
     }
 
     func test2() {
-        doTest2(BInt.ZERO, 0)
+        doTest2(BInt.zero, 0)
         for _ in 0 ..< 10 {
             let a = BInt(bitWidth: 50)
             doTest2(a, 0)
@@ -86,7 +86,7 @@ class ComparisonTest: XCTestCase {
     }
     
     func test3() {
-        doTest3(0, BInt.ZERO)
+        doTest3(0, BInt.zero)
         for _ in 0 ..< 10 {
             let b = BInt(bitWidth: 50)
             doTest3(0, b)
