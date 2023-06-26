@@ -14,10 +14,6 @@
   "testTargets" : [
     {
       "parallelizable" : true,
-      "skippedTests" : [
-        "FFTTest",
-        "RootTest"
-      ],
       "target" : {
         "containerPath" : "container:",
         "identifier" : "BigIntTests",

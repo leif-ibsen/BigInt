@@ -108,7 +108,7 @@ class DivModTest: XCTestCase {
         // a BInt modulo an Int
         for _ in 0 ..< 100 {
             let x = BInt(bitWidth: 1000)
-            let m = x.mag[0] == 0 ? 1 : Int(x.mag[0] & 0x7fffffffffffffff)
+            let m = x.limbs[0] == 0 ? 1 : Int(x.limbs[0] & 0x7fffffffffffffff)
             XCTAssertEqual(x.mod(m), x.mod(BInt(m)).asInt()!)
             XCTAssertEqual(x.mod(-m), x.mod(-BInt(m)).asInt()!)
         }

@@ -19,7 +19,7 @@ class FFTTest: XCTestCase {
     }
 
     func test1() {
-        for _ in 0 ..< 1 { // 10 {
+        for _ in 0 ..< 10 {
             let a = BInt(bitWidth: Limbs.FFT_THR * 2 * 64)
             let b = BInt(bitWidth: Limbs.FFT_THR * 2 * 64)
             let p = a * b
@@ -31,7 +31,7 @@ class FFTTest: XCTestCase {
     }
 
     func test2() {
-        for _ in 0 ..< 1 { // 10 {
+        for _ in 0 ..< 10 {
             let a = BInt(bitWidth: Limbs.FFT_THR * 2 * 64)
             let p = a ** 2
             let (q, r) = p.quotientAndRemainder(dividingBy: a)
@@ -57,17 +57,17 @@ class FFTTest: XCTestCase {
 
     // FFT and ToomCook must give same result
     func test4() {
-        for _ in 0 ..< 1 { // 10 {
+        for _ in 0 ..< 10 {
             let a = BInt(bitWidth: (Limbs.FFT_THR + 1) * 64)
             let b = BInt(bitWidth: (Limbs.FFT_THR + 1) * 64)
             let p = a * b
-            let pTC = BInt(a.mag.toomCookTimes(b.mag))
+            let pTC = BInt(a.limbs.toomCookTimes(b.limbs))
             XCTAssertEqual(p, pTC)
         }
         for _ in 0 ..< 10 {
             let a = BInt(bitWidth: (Limbs.FFT_THR + 1) * 64)
             let p = a ** 2
-            let pTC = BInt(a.mag.toomCookSquare())
+            let pTC = BInt(a.limbs.toomCookSquare())
             XCTAssertEqual(p, pTC)
         }
     }

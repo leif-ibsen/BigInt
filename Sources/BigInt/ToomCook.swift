@@ -13,10 +13,10 @@ extension Array where Element == Limb {
 
     // Works only when the remainder of the division is known to be 0
     static func divideBy3(_ d: BInt) -> BInt {
-        var quotient = Limbs(repeating: 0, count: d.mag.count)
+        var quotient = Limbs(repeating: 0, count: d.limbs.count)
         var remainder = Limb(0)
         for i in 0 ..< quotient.count {
-            let w = remainder > d.mag[i] ? remainder - d.mag[i] : d.mag[i] - remainder
+            let w = remainder > d.limbs[i] ? remainder - d.limbs[i] : d.limbs[i] - remainder
             let x = w &* 0xaaaaaaaaaaaaaaab
             quotient[i] = x
             remainder = x < 0x5555555555555556 ? 0 : (x < 0xaaaaaaaaaaaaaaab ? 1 : 2)
@@ -72,13 +72,13 @@ extension Array where Element == Limb {
         
         var result = Limbs(repeating: 0, count: 6 * k)
         var offset = k << 2
-        result.add(rinf.mag, offset)
+        result.add(rinf.limbs, offset)
         offset -= k
-        result.add(rr3.mag, offset)
+        result.add(rr3.limbs, offset)
         offset -= k
-        result.add(rr2.mag, offset)
-        result.add(rr1.mag, k)
-        result.add(r0.mag, 0)
+        result.add(rr2.limbs, offset)
+        result.add(rr1.limbs, k)
+        result.add(r0.limbs, 0)
         return result
     }
 
@@ -105,13 +105,13 @@ extension Array where Element == Limb {
 
         var result = Limbs(repeating: 0, count: 6 * k)
         var offset = k << 2
-        result.add(vinf.mag, offset)
+        result.add(vinf.limbs, offset)
         offset -= k
-        result.add(t2.mag, offset)
+        result.add(t2.limbs, offset)
         offset -= k
-        result.add(t1.mag, offset)
-        result.add(tm1.mag, k)
-        result.add(v0.mag, 0)
+        result.add(t1.limbs, offset)
+        result.add(tm1.limbs, k)
+        result.add(v0.limbs, 0)
         return result
     }
 

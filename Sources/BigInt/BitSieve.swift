@@ -63,7 +63,7 @@ class BitSieve {
         // Construct the large sieve at an even offset specified by base
         repeat {
             // Calculate base mod convertedStep
-            let (_, r) = self.base.mag.divMod(UInt64(convertedStep))
+            let (_, r) = self.base.limbs.divMod(UInt64(convertedStep))
             start = Int(r)
 
             // Take each multiple of step out of sieve

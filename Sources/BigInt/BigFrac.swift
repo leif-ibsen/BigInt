@@ -13,7 +13,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     mutating func normalize() {
         let g = self.numerator.gcd(self.denominator)
-        if g.mag.compare(1) > 0 {
+        if g.limbs.compare(1) > 0 {
             self.numerator = self.numerator.quotientExact(dividingBy: g)
             self.denominator = self.denominator.quotientExact(dividingBy: g)
         }

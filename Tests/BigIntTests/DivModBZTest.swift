@@ -27,14 +27,14 @@ class DivModBZTest: XCTestCase {
         var r1: Limbs = []
         var q2: Limbs = []
         var r2: Limbs = []
-        (q1, r1) = dividend.mag.divMod(divisor.mag)
-        (q2, r2) = dividend.mag.bzDivMod(divisor.mag)
+        (q1, r1) = dividend.limbs.divMod(divisor.limbs)
+        (q2, r2) = dividend.limbs.bzDivMod(divisor.limbs)
         XCTAssertEqual(q1, q2)
         XCTAssertEqual(r1, r2)
     }
 
     func test1() {
-        for _ in 0 ..< 1 { // 1000 {  1000 takes a really lone time
+        for _ in 0 ..< 1000 {
             let x = BInt(bitWidth: 2 * (Limbs.BZ_DIV_LIMIT + 1) * 64)
             let y = BInt(bitWidth: (Limbs.BZ_DIV_LIMIT + 1) * 64)
             doTest1(x, y)
@@ -44,7 +44,7 @@ class DivModBZTest: XCTestCase {
 
     func test2() {
         var n = 2
-        for _ in 0 ..< 1 { // 8 takes a long time {
+        for _ in 0 ..< 8 {
             let y1 = BInt.one << ((Limbs.BZ_DIV_LIMIT + 1) * 64 * n)
             let y2 = BInt(bitWidth: (Limbs.BZ_DIV_LIMIT + 1) * 64 * n)
             n *= 2

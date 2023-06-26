@@ -22,7 +22,7 @@ class BinomialTest: XCTestCase {
         XCTAssertEqual(BInt.binomial(1, 1), BInt.one)
         XCTAssertEqual(BInt.binomial(1000, 0), BInt.one)
         XCTAssertEqual(BInt.binomial(1000, 1000), BInt.one)
-        for n in 0 ... 1 { // 500 {  // 500 takes a really long time!
+        for n in 0 ... 500 { 
             doTest(n)
         }
     }
