@@ -330,38 +330,49 @@ extension BInt : Numeric { // Also implies AdditiveArithmetic compliance
     public var abs: BInt { self.magnitude }
     
     public init?<T>(exactly source: T) where T : BinaryInteger {
-        if let int = source as? Int {
-            self.init(int)
-        } else {
-            return nil
+        var isNegative = false
+        if source.signum() < 0 {
+            isNegative = true
         }
+        let words = source.words
+        var bwords = Limbs()
+        for word in words {
+            // StaticBigInt words are 2's complement so negative
+            // values needed to be inverted and have one added
+            if isNegative { bwords.append(UInt64(~word)) }
+            else { bwords.append(UInt64(word)) }
+        }
+        self.init(bwords, false)
+        if isNegative { self += 1; self.negate() }
     }
 }
 
 extension BInt : BinaryInteger {
     
     public static func <<= <RHS:BinaryInteger>(lhs: inout BInt, rhs: RHS) {
-        // FIXME: - Shift
         lhs = lhs << Int(rhs)
     }
     
     public static func >>= <RHS:BinaryInteger>(lhs: inout BInt, rhs: RHS) {
-        // FIXME: - Shift
         lhs = lhs >> Int(rhs)
     }
     
     public typealias Words = [UInt]
 
     public init<T>(truncatingIfNeeded source: T) where T : BinaryInteger {
-        self.init(0) // FIXME: - initializer for BinaryFloatingPoint
+        self.init(source)
     }
 
     public init<T>(clamping source: T) where T : BinaryInteger {
-        self.init(0) // FIXME: - initializer for BinaryFloatingPoint
+        self.init(source)
     }
     
     public init<T>(_ source: T) where T : BinaryInteger {
-        self.init(0) // FIXME: - initializer for BinaryFloatingPoint
+        if let int = BInt(exactly: source) {
+            self = int
+        } else {
+            self.init(0)
+        }
     }
     
     public var words: Words {
