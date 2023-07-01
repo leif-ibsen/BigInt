@@ -285,6 +285,8 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable, Co
     
 }
 
+extension BInt : SignedInteger { }
+
 /// Add support for `StaticBigInt` - 24 Jun 2023 - MG
 extension BInt : ExpressibleByIntegerLiteral {
     public init(integerLiteral value: StaticBigInt) {
