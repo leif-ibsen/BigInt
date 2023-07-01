@@ -376,17 +376,25 @@ extension BInt : BinaryInteger {
     }
     
     public var words: Words {
-        return Words() // FIXME: - output for words
+        return self.limbs.map { UInt($0) }
     }
     
     public static var isSigned: Bool { true }
     
     public init<T>(_ source: T) where T : BinaryFloatingPoint {
-        self.init(0) // FIXME: - initializer for BinaryFloatingPoint
+        // FIXME: - Support other types of BinaryFloatingPoint
+        if let bint = BInt(Double(source)) {
+            self = bint
+        } else {
+            self.init(0)
+        }
     }
     
     public init?<T>(exactly source: T) where T : BinaryFloatingPoint {
-        self.init(0)  // FIXME: - initializer for BinaryFloatingPoint
+        guard source.isFinite else { return nil }
+        if source.rounded() != source { return nil }
+        if source.isZero { self.init(0); return }
+        self.init(source)
     }
 }
     

@@ -19,8 +19,6 @@ class AdditionTest: XCTestCase {
     }
 
     func test1() {
-        let i = Int8(-7)
-        let x = BInt(i)
         XCTAssertEqual(BInt(7) + BInt(4), BInt(11))
         XCTAssertEqual(BInt(7) + BInt(-4), BInt(3))
         XCTAssertEqual(BInt(-7) + BInt(4), BInt(-3))
