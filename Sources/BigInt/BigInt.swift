@@ -1005,8 +1005,8 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public func quotientAndRemainder(dividingBy x: BInt) -> (quotient: BInt, remainder: BInt) {
         var quotient = BInt.ZERO
         var remainder = BInt.ZERO
-        if x.magnitude.count > Limbs.BZ_DIV_LIMIT && self.magnitude.count > x.magnitude.count + Limbs.BZ_DIV_LIMIT {
-            (quotient.magnitude, remainder.magnitude) = self.magnitude.bzDivMod(x.magnitude)
+        if x.magnitude.count > BInt.BZ_DIV_LIMIT && self.magnitude.count > x.magnitude.count + BInt.BZ_DIV_LIMIT {
+            (quotient, remainder) = self.bzDivMod(x)
         } else {
             (quotient.magnitude, remainder.magnitude) = self.magnitude.divMod(x.magnitude)
         }

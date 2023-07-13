@@ -5,146 +5,104 @@
 //  Created by Leif Ibsen on 05/12/2021.
 //
 
-
-extension Array where Element == Limb {
-
+extension BInt {
+    
     // Divisor limb limit for Burnikel-Ziegler division
-    static let BZ_DIV_LIMIT = 60
+    static var BZ_DIV_LIMIT = 60
 
     /*
      * [BURNIKEL] - algorithm 3
      */
-    func bzDivMod(_ v: Limbs) -> (quotient: Limbs, remainder: Limbs) {
-        var quotient: Limbs = [0]
-        var remainder: Limbs = []
-        var A = self
-        var B = v
-        let s = B.count
-        let m = 1 << (64 - (s / Limbs.BZ_DIV_LIMIT).leadingZeroBitCount)
+    func bzDivMod(_ v: BInt) -> (q: BInt, r: BInt) {
+        var A = self.abs
+        var B = v.abs
+        let s = B.magnitude.count
+        let m = 1 << (64 - (s / BInt.BZ_DIV_LIMIT).leadingZeroBitCount)
         let j = (s + m - 1) / m
         let n = j * m
         let n64 = n << 6
         let sigma = Swift.max(0, n64 - B.bitWidth)
-        A.shiftLeft(sigma)
-        B.shiftLeft(sigma)
+        A <<= sigma
+        B <<= sigma
         let t = Swift.max(2, (A.bitWidth + n64) / n64)
-        var Z = Limbs(repeating: 0, count: 2 * n)
-        var from = (t - 1) * n
-        var zi = n
-        for ai in from ..< A.count {
-            Z[zi] = A[ai]
-            zi += 1
-        }
-        from -= n
-        zi = 0
-        for ai in from ..< from + n {
-            Z[zi] = A[ai]
-            zi += 1
-        }
+        var Q = BInt.ZERO
+        var R = BInt.ZERO
+        var Z = A.blockA(n, t - 1) << n64 | A.blockA(n, t - 2)
         for i in (0 ... t - 2).reversed() {
-            var (Q, R) = Div2n1n(n, Z, B)
-            R.normalize()
-            quotient.add(Q, from)
+            var Qi: BInt
+            (Qi, R) = Z.bzDiv2n1n(n, B)
+            Q = Q << n64 | Qi
             if i > 0 {
-                from -= n
-                for zi in 0 ..< R.count {
-                    Z[n + zi] = R[zi]
-                }
-                for zi in R.count ..< n {
-                    Z[n + zi] = 0
-                }
-                zi = 0
-                for ai in from ..< from + n {
-                    Z[zi] = A[ai]
-                    zi += 1
-                }
-            } else {
-                remainder = R
-                remainder.shiftRight(sigma)
+                Z = R << n64 | A.blockA(n, i - 1)
             }
         }
-        return (quotient, remainder)
+        return (Q, R >> sigma)
+
+    }
+
+    func blockA(_ n: Int, _ i: Int) -> BInt {
+        let mc = self.magnitude.count
+        assert(i * n <= mc)
+        if (i + 1) * n < mc {
+            return BInt(Limbs(self.magnitude[i * n ..< (i + 1) * n]))
+        } else {
+            return BInt(Limbs(self.magnitude[i * n ..< mc]))
+        }
     }
 
     /*
      * [BURNIKEL] - algorithm 1
      */
-    func Div2n1n(_ n: Int, _ A: Limbs, _ B: Limbs) -> (Limbs, Limbs) {
-        if B.count & 1 == 1 || B.count < Limbs.BZ_DIV_LIMIT {
+    func bzDiv2n1n(_ n: Int, _ B: BInt) -> (q: BInt, r: BInt) {
+        if n & 1 == 1 || B.magnitude.count < BInt.BZ_DIV_LIMIT {
             
-            // Basecase
-
-            var a = A
-            a.normalize()
-            var b = B
-            b.normalize()
-            return a.divMod(b)
+            // Base case
+            
+            let (q, r) = self.magnitude.divMod(B.magnitude)
+            return (BInt(q), BInt(r))
         }
-        var A1: Limbs
-        var A2: Limbs
-        var A3: Limbs
-        var A4: Limbs
-        let n12 = n >> 1
-        let n32 = 3 * n12
-        if A.count > n32 {
-            A1 = Limbs(A[n32 ..< A.count])
-            A2 = Limbs(A[n ..< n32])
-            A3 = Limbs(A[n12 ..< n])
-            A4 = Limbs(A[0 ..< n12])
-        } else if A.count > n {
-            A1 = [0]
-            A2 = Limbs(A[n ..< A.count])
-            A3 = Limbs(A[n12 ..< n])
-            A4 = Limbs(A[0 ..< n12])
-        } else if A.count > n12 {
-            A1 = [0]
-            A2 = [0]
-            A3 = Limbs(A[n12 ..< A.count])
-            A4 = Limbs(A[0 ..< n12])
-        } else {
-            A1 = [0]
-            A2 = [0]
-            A3 = [0]
-            A4 = Limbs(A[0 ..< A.count])
-        }
-        let (Q1, R1) = Div3n2n(n12, A1, A2, A3, B)
-        let R11 = Limbs(R1.count > n12 ? R1[n12 ..< R1.count] : [0])
-        let R12 = Limbs(R1.count > n12 ? R1[0 ..< n12] : R1[0 ..< R1.count])
-        let (Q2, R) = Div3n2n(n12, R11, R12, A4, B)
-        var Q = Q1.shiftedLeft(n12 << 6)
-        Q.add(Q2, 0)
-        return (Q, R)
+        let n2 = n >> 1
+        let n32 = n << 5
+        let (A123, A4) = self.split(n2)
+        let (Q1, R1) = A123.bzDiv3n2n(n2, B)
+        let (R11, R12) = R1.split(n)
+        let (Q2, R) = ((R11 << n32 | R12) << n32 | A4).bzDiv3n2n(n2, B)
+        return (Q1 << n32 + Q2, R)
     }
 
     /*
      * [BURNIKEL] - algorithm 2
      */
-    func Div3n2n(_ n: Int, _ A1: Limbs, _ A2: Limbs, _ A3: Limbs, _ B: Limbs) -> (Limbs, Limbs) {
-        let B1 = Limbs(B.count > n ? B[n ..< B.count] : [0])
-        let B2 = Limbs(B.count > n ? B[0 ..< n] : B[0 ..< B.count])
-        var Q: Limbs
-        var R1: Limbs
-        if A1.compare(B1) < 0 {
-            var A = A1.shiftedLeft(n << 6)
-            A.add(A2, 0)
-            (Q, R1) = Div2n1n(n, A, B1)
+    func bzDiv3n2n(_ n: Int, _ B: BInt) -> (q: BInt, r: BInt) {
+        let n64 = n << 6
+        let (B1, B2) = B.split(n)
+        let (A12, A3) = self.split(n)
+        let (A1, _) = A12.split(n)
+        var Q: BInt
+        var R1: BInt
+        if A1 < B1 {
+            (Q, R1) = A12.bzDiv2n1n(n, B1)
         } else {
-            R1 = A1
-            _ = R1.subtract(B1, 0)
-            R1.shiftLeft(n << 6)
-            R1.add(B1, 0)
-            Q = Limbs(repeating: 0xffffffffffffffff, count: n)
+            R1 = A12 - (B1 << n64) + B1
+            Q = BInt.ONE << n64 - BInt.ONE
         }
-        var D = Q
-        D.multiply(B2)
-        var R = R1.shiftedLeft(n << 6)
-        R.add(A3)
-        while R.compare(D) < 0 {
-            R.add(B)
-            _ = Q.subtract([1], 0)
+        let D = Q * B2
+        var R = R1 << n64 | A3
+        while R < D {
+            R += B
+            Q -= BInt.ONE
         }
-        _ = R.subtract(D, 0)
-        return (Q, R)
+        return (Q, R - D)
+    }
+    
+    func split(_ n: Int) -> (BInt, BInt) {
+        let mc = self.magnitude.count
+        if mc > n {
+            return (BInt(Limbs(self.magnitude[n ..< mc])), BInt(Limbs(self.magnitude[0 ..< n])))
+        } else {
+            return (BInt.ZERO, self)
+        }
     }
 
 }
+
