@@ -61,13 +61,13 @@ class KaratsubaTest: XCTestCase {
             let a = BInt(bitWidth: (Limbs.KA_THR + 1) * 64)
             let b = BInt(bitWidth: (Limbs.KA_THR + 1) * 64)
             let p = a * b
-            let pTC = BInt(a.magnitude.toomCookTimes(b.magnitude))
+            let pTC = BInt(a.words.toomCookTimes(b.words))
             XCTAssertEqual(p, pTC)
         }
         for _ in 0 ..< 10 {
             let a = BInt(bitWidth: (Limbs.KA_THR + 1) * 64)
             let p = a ** 2
-            let pTC = BInt(a.magnitude.toomCookSquare())
+            let pTC = BInt(a.words.toomCookSquare())
             XCTAssertEqual(p, pTC)
         }
     }

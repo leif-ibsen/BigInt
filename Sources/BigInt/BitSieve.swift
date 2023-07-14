@@ -63,7 +63,7 @@ class BitSieve {
         // Construct the large sieve at an even offset specified by base
         repeat {
             // Calculate base mod convertedStep
-            let (_, r) = self.base.magnitude.divMod(UInt64(convertedStep))
+            let (_, r) = self.base.words.divMod(UInt(convertedStep))
             start = Int(r)
 
             // Take each multiple of step out of sieve
@@ -83,14 +83,14 @@ class BitSieve {
      * Get the value of the bit at the specified index.
      */
     func get(_ bitIndex: Int) -> Bool {
-        return (self.bits[bitIndex >> 6] & Limbs.UMasks[bitIndex & 0x3f]) != 0
+        (self.bits[bitIndex >> 6] & UInt64(Limbs.UMasks[bitIndex & 0x3f])) != 0
     }
     
     /**
      * Set the bit at the specified index.
      */
     func set(_ bitIndex: Int) {
-        self.bits[bitIndex >> 6] |= Limbs.UMasks[bitIndex & 0x3f]
+        self.bits[bitIndex >> 6] |= UInt64(Limbs.UMasks[bitIndex & 0x3f])
     }
     
     /**
@@ -134,7 +134,7 @@ class BitSieve {
         for i in 0 ..< bits.count {
             let nextWord = ~bits[i]
             for j in 0 ..< 64 {
-                if nextWord & Limbs.UMasks[j] != 0 {
+                if nextWord & UInt64(Limbs.UMasks[j]) != 0 {
                     let candidate = self.base + offset
                     if candidate.isProbablyPrime(prob) {
                         return candidate

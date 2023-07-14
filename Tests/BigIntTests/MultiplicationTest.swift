@@ -28,7 +28,7 @@ class MultiplicationTest: XCTestCase {
         let (q1, r1) = c.quotientAndRemainder(dividingBy: b)
         XCTAssertEqual(r1, BInt(0))
         XCTAssertEqual(q1, a)
-        var am = a.magnitude
+        var am = a.words
         am = am.times(am)
         XCTAssertEqual(a * a, BInt(am))
     }

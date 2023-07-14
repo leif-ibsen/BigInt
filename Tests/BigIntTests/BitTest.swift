@@ -111,6 +111,9 @@ class BitTest: XCTestCase {
     }
     
     func test7() {
+        
+        
+        
         let x = BInt(bitWidth: 50)
         var y = x
         y.setBit(-1)
@@ -122,11 +125,11 @@ class BitTest: XCTestCase {
         XCTAssertFalse(y.testBit(-1))
         y = BInt(0)
         y.setBit(200)
-        XCTAssertEqual(y.magnitude.count, 4)
+        XCTAssertEqual(y.words.count, 4)
         XCTAssertEqual(y, BInt.ONE << 200)
         XCTAssertTrue(y.testBit(200))
         y.clearBit(200)
-        XCTAssertEqual(y.magnitude.count, 1)
+        XCTAssertEqual(y.words.count, 1)
         XCTAssertFalse(y.testBit(200))
         XCTAssertEqual(y, BInt.ZERO)
         y.flipBit(200)

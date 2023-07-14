@@ -20,10 +20,10 @@ class ConstructorTest: XCTestCase {
 
     func test1() {
         let x1 = BInt("123", radix: 10)!
-        XCTAssertEqual(x1.magnitude.count, 1)
+        XCTAssertEqual(x1.words.count, 1)
         XCTAssertFalse((x1.isNegative))
         let x2 = BInt("-0", radix: 10)!
-        XCTAssertEqual(x2.magnitude.count, 1)
+        XCTAssertEqual(x2.words.count, 1)
         XCTAssertFalse((x2.isNegative))
         let b: Bytes = [0, 0, 0, 123]
         let x3 = BInt(signed: b)
@@ -33,7 +33,7 @@ class ConstructorTest: XCTestCase {
         let x5 = BInt(bitWidth: 100)
         XCTAssertTrue(x5.bitWidth <= 100)
         let x6 = BInt("-123")!
-        XCTAssertEqual(x6.magnitude[0], 123)
+        XCTAssertEqual(x6.words[0], 123)
         let x71 = BInt(bitWidth: 100)
         let x72 = BInt(signed: x71.asSignedBytes())
         XCTAssertEqual(x71, x72)
@@ -72,9 +72,9 @@ class ConstructorTest: XCTestCase {
         let x0 = BInt(0)
         let x1 = BInt(1)
         let xm1 = BInt(-1)
-        XCTAssertEqual(x0.magnitude.count, 1)
-        XCTAssertEqual(x1.magnitude.count, 1)
-        XCTAssertEqual(xm1.magnitude.count, 1)
+        XCTAssertEqual(x0.words.count, 1)
+        XCTAssertEqual(x1.words.count, 1)
+        XCTAssertEqual(xm1.words.count, 1)
         XCTAssertFalse(x0.isNegative)
         XCTAssertFalse(x1.isNegative)
         XCTAssertTrue(xm1.isNegative)

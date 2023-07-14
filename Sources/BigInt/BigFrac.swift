@@ -7,13 +7,14 @@
 
 /// A signed fraction with numerator and denominator of unbounded size.
 /// A BFraction value is represented by a BInt numerator and a BInt denominator.
-/// The representation is normalized, so that numerator and denominator has no common divisors except 1.
-/// The denominator is always positive, 0 has the representation 0/1
+/// The representation is normalized, so that numerator and denominator has no
+/// common divisors except 1. The denominator is always positive, 0 has the
+/// representation 0/1.
 public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     mutating func normalize() {
         let g = self.numerator.gcd(self.denominator)
-        if g.magnitude.compare(1) > 0 {
+        if g.words.compare(1) > 0 {
             self.numerator = self.numerator.quotientExact(dividingBy: g)
             self.denominator = self.denominator.quotientExact(dividingBy: g)
         }

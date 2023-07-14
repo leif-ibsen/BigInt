@@ -22,10 +22,10 @@ class DivModBZTest: XCTestCase {
         var r1: Limbs = []
         var q2: BInt
         var r2: BInt
-        (q1, r1) = dividend.magnitude.divMod(divisor.magnitude)
+        (q1, r1) = dividend.words.divMod(divisor.words)
         (q2, r2) = dividend.bzDivMod(divisor)
-        XCTAssertEqual(q1, q2.magnitude)
-        XCTAssertEqual(r1, r2.magnitude)
+        XCTAssertEqual(q1, q2.words)
+        XCTAssertEqual(r1, r2.words)
     }
 
     func doTest2(_ dividend: BInt, _ divisor: BInt) {
@@ -43,7 +43,7 @@ class DivModBZTest: XCTestCase {
             doTest2(-x, y)
             doTest2(-x, -y)
         }
-        doTest1(BInt(Limbs(repeating: UInt64.max, count: 2 * (BInt.BZ_DIV_LIMIT + 1))), BInt(Limbs(repeating: UInt64.max, count: BInt.BZ_DIV_LIMIT + 1)))
+        doTest1(BInt(Limbs(repeating: UInt.max, count: 2 * (BInt.BZ_DIV_LIMIT + 1))), BInt(Limbs(repeating: UInt.max, count: BInt.BZ_DIV_LIMIT + 1)))
     }
 
     func test2() {

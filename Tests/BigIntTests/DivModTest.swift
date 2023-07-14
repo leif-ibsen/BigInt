@@ -86,7 +86,7 @@ class DivModTest: XCTestCase {
         doTest2(BInt(-7), BInt(4))
         doTest2(BInt(7), BInt(-4))
         doTest2(BInt(-7), BInt(-4))
-        doTest2(BInt(Limbs(repeating: UInt64.max, count: 50)), BInt(Limbs(repeating: UInt64.max, count: 35)))
+        doTest2(BInt(Limbs(repeating: UInt.max, count: 50)), BInt(Limbs(repeating: UInt.max, count: 35)))
     }
     
     func test3() {
@@ -108,7 +108,7 @@ class DivModTest: XCTestCase {
         // a BInt modulo an Int
         for _ in 0 ..< 100 {
             let x = BInt(bitWidth: 1000)
-            let m = x.magnitude[0] == 0 ? 1 : Int(x.magnitude[0] & 0x7fffffffffffffff)
+            let m = x.words[0] == 0 ? 1 : Int(x.words[0] & 0x7fffffffffffffff)
             XCTAssertEqual(x.mod(m), x.mod(BInt(m)).asInt()!)
             XCTAssertEqual(x.mod(-m), x.mod(-BInt(m)).asInt()!)
         }

@@ -16,7 +16,7 @@ extension BInt {
     func bzDivMod(_ v: BInt) -> (q: BInt, r: BInt) {
         var A = self.abs
         var B = v.abs
-        let s = B.magnitude.count
+        let s = B.words.count
         let m = 1 << (64 - (s / BInt.BZ_DIV_LIMIT).leadingZeroBitCount)
         let j = (s + m - 1) / m
         let n = j * m
@@ -41,12 +41,12 @@ extension BInt {
     }
 
     func blockA(_ n: Int, _ i: Int) -> BInt {
-        let mc = self.magnitude.count
+        let mc = self.words.count
         assert(i * n <= mc)
         if (i + 1) * n < mc {
-            return BInt(Limbs(self.magnitude[i * n ..< (i + 1) * n]))
+            return BInt(Limbs(self.words[i * n ..< (i + 1) * n]))
         } else {
-            return BInt(Limbs(self.magnitude[i * n ..< mc]))
+            return BInt(Limbs(self.words[i * n ..< mc]))
         }
     }
 
@@ -54,11 +54,11 @@ extension BInt {
      * [BURNIKEL] - algorithm 1
      */
     func bzDiv2n1n(_ n: Int, _ B: BInt) -> (q: BInt, r: BInt) {
-        if n & 1 == 1 || B.magnitude.count < BInt.BZ_DIV_LIMIT {
+        if n & 1 == 1 || B.words.count < BInt.BZ_DIV_LIMIT {
             
             // Base case
             
-            let (q, r) = self.magnitude.divMod(B.magnitude)
+            let (q, r) = self.words.divMod(B.words)
             return (BInt(q), BInt(r))
         }
         let n2 = n >> 1
@@ -96,9 +96,9 @@ extension BInt {
     }
     
     func split(_ n: Int) -> (BInt, BInt) {
-        let mc = self.magnitude.count
+        let mc = self.words.count
         if mc > n {
-            return (BInt(Limbs(self.magnitude[n ..< mc])), BInt(Limbs(self.magnitude[0 ..< n])))
+            return (BInt(Limbs(self.words[n ..< mc])), BInt(Limbs(self.words[0 ..< n])))
         } else {
             return (BInt.ZERO, self)
         }

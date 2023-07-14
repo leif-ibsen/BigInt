@@ -14,9 +14,9 @@ public typealias Byte = UInt8
 public typealias Bytes = [UInt8]
 
 /// Unsigned 64 bit value
-public typealias Limb = UInt64
+public typealias Limb = UInt
 /// Array of unsigned 64 bit values
-public typealias Limbs = [UInt64]
+public typealias Limbs = [UInt]
 
 precedencegroup ExponentiationPrecedence {
     associativity: left
@@ -33,7 +33,33 @@ infix operator ** : ExponentiationPrecedence
 /// The representation is little-endian, least significant Limb has index 0.
 /// The representation is minimal, there is no leading zero Limbs.
 /// The exception is that the value 0 is represented as a single 64 bit zero Limb and sign *false*
-public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
+///
+///  Added `SignedInteger`, `BinaryInteger`, and `Numeric` protocol compliance.
+///  Optional support for `StaticBigInt`.  Note: These extensions require
+///  renaming `magnitude` to `words` to avoid conflict with the
+///  `Numeric` protocol variable also called `magnitude`.
+///
+///  Why support protocols? By supporting them you have the ability to
+///  formulate generic algorithms and make use of algorithms from others
+///  that use the protocol type(s) you support. For example, `Strideable`
+///  compliance is free (with `BinaryInteger`) and lets you do things like
+///
+///  ```swift
+///  for i in BInt(1)...10 {
+///     print(i.words)
+///  }
+///  ```
+///
+///  The main header also includes `Codable` compliance conformity (for free).
+///  `Codable` compliance allows `BInt`s to be distributed/received or
+///  stored/read as JSONs.
+///
+///  Protocols mean you can support generic arguments:
+///  (e.g., `func * <T:BinaryInteger>(_ lhs: Self, rhs: T) -> Self`)
+///  which works with all `BinaryIntegers`, including `BigInt`s instead of
+///  just `Int`s or a single integer type.
+///
+public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable, Codable {
     
     // MARK: - Constants
     
@@ -66,11 +92,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// Constructs a BInt from magnitude and sign
     ///
     /// - Parameters:
-    ///   - magnitude: magnitude of value
+    ///   - words: unsigned value array
     ///   - isNegative: *true* means negative value, *false* means 0 or positive value, default is *false*
-    public init(_ magnitude: Limbs, _ isNegative : Bool = false) {
-        self.magnitude = magnitude
-        self.magnitude.normalize()
+    public init(_ words: Limbs, _ isNegative : Bool = false) {
+        precondition(Limb.bitWidth == 64, "64-bit UInt REQUIRED!")
+        self.words = words
+        self.words.normalize()
         self.isNegative = isNegative
         if self.isZero {
             self.isNegative = false
@@ -101,7 +128,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         let bits = d.bitPattern
         let exponent = Int(bits >> 52) & 0x7ff - 1075
-        let significand = exponent == -1075 ? bits & 0xfffffffffffff << 1 : bits & 0xfffffffffffff | (1 << 52)
+        let significand = UInt(exponent == -1075 ? bits & 0xfffffffffffff << 1 : bits & 0xfffffffffffff | (1 << 52))
         if exponent < 0 {
             self.init([significand].shiftedRight(-exponent), d < 0.0)
         } else {
@@ -253,22 +280,22 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         let chunks = bb.count / 8
         let remaining = bb.count - chunks * 8
-        self.magnitude = Limbs(repeating: 0, count: chunks + (remaining == 0 ? 0 : 1))
+        self.words = Limbs(repeating: 0, count: chunks + (remaining == 0 ? 0 : 1))
         var bi = 0
-        var li = self.magnitude.count
+        var li = self.words.count
         if remaining > 0 {
             li -= 1
         }
         for _ in 0 ..< remaining {
-            self.magnitude[li] <<= 8
-            self.magnitude[li] |= Limb(bb[bi])
+            self.words[li] <<= 8
+            self.words[li] |= Limb(bb[bi])
             bi += 1
         }
         for _ in 0 ..< chunks {
             li -= 1
             for _ in 0 ..< 8 {
-                self.magnitude[li] <<= 8
-                self.magnitude[li] |= Limb(bb[bi])
+                self.words[li] <<= 8
+                self.words[li] |= Limb(bb[bi])
                 bi += 1
             }
         }
@@ -281,19 +308,19 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public internal(set) var isNegative: Bool
     
     /// The magnitude limb array
-    public internal(set) var magnitude: Limbs
+    public internal(set) var words: Limbs
     
     
     // MARK: Computed properties
     
     /// The absolute value of *self*
     public var abs: BInt {
-        return BInt(self.magnitude)
+        return BInt(self.words)
     }
     
     /// The number of bits in the binary representation of the magnitude of *self*. 0 if *self* = 0
     public var bitWidth: Int {
-        return self.magnitude.bitWidth
+        return self.words.bitWidth
     }
     
     /// Base 10 string value of *self*
@@ -303,22 +330,22 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     /// Is *true* if *self* is even, *false* if *self* is odd
     public var isEven: Bool {
-        return self.magnitude[0] & 1 == 0
+        return self.words[0] & 1 == 0
     }
     
     /// Is *false* if *self* = 0, *true* otherwise
     public var isNotZero: Bool {
-        return self.magnitude.count > 1 || self.magnitude[0] > 0
+        return self.words.count > 1 || self.words[0] > 0
     }
     
     /// Is *true* if *self* is odd, *false* if *self* is even
     public var isOdd: Bool {
-        return self.magnitude[0] & 1 == 1
+        return self.words[0] & 1 == 1
     }
     
     /// Is *true* if *self* = 1, *false* otherwise
     public var isOne: Bool {
-        return self.magnitude.count == 1 && self.magnitude[0] == 1 && !self.isNegative
+        return self.words.count == 1 && self.words[0] == 1 && !self.isNegative
     }
     
     /// Is *true* if *self* > 0, *false* otherwise
@@ -328,18 +355,18 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     /// Is *true* if *self* = 0, *false* otherwise
     public var isZero: Bool {
-        return self.magnitude.count == 1 && self.magnitude[0] == 0
+        return self.words.count == 1 && self.words[0] == 0
     }
     
     /// The number of leading zero bits in the magnitude of *self*. 0 if *self* = 0
     public var leadingZeroBitCount: Int {
-        return self.isZero ? 0 : self.magnitude.last!.leadingZeroBitCount
+        return self.isZero ? 0 : self.words.last!.leadingZeroBitCount
     }
     
     /// The number of 1 bits in the magnitude of *self*
     public var population: Int {
         var p = 0
-        for m in self.magnitude {
+        for m in self.words {
             p += BInt.population(m)
         }
         return p
@@ -352,7 +379,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     /// The number of trailing zero bits in the magnitude of *self*. 0 if *self* = 0
     public var trailingZeroBitCount: Int {
-        return self.magnitude.trailingZeroBitCount()
+        return self.words.trailingZeroBitCount()
     }
     
     /*
@@ -383,7 +410,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: *self* as a Double or *Infinity* if *self* is not representable as a Double
     public func asDouble() -> Double {
         var d = 0.0
-        for m in self.magnitude.reversed() {
+        for m in self.words.reversed() {
             d *= BInt.d264
             d += Double(m)
         }
@@ -394,10 +421,10 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///
     /// - Returns: *self* as an Int or *nil* if *self* is not representable as an Int
     public func asInt() -> Int? {
-        if self.magnitude.count > 1 {
+        if self.words.count > 1 {
             return nil
         }
-        let mag0 = self.magnitude[0]
+        let mag0 = self.words[0]
         if self.isNegative {
             return mag0 > 0x8000000000000000 ? nil : (mag0 == 0x8000000000000000 ? Int.min : -Int(mag0))
         } else {
@@ -471,7 +498,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///    * BInt(1).asSignedBytes() = [1]
     ///    * BInt(-1).asSignedBytes() = [255]
     public func asSignedBytes() -> Bytes {
-        var xl = self.magnitude
+        var xl = self.words
         if self.isNegative {
             var carry = true
             for i in 0 ..< xl.count {
@@ -528,7 +555,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         let d = BInt.limbRadix[radix]
         var digitGroups = [String]()
-        var tmp = self.magnitude
+        var tmp = self.words
         while !tmp.equalTo(0) {
             let (q, r) = tmp.divMod(d)
             digitGroups.append(String(r, radix: radix, uppercase: uppercase))
@@ -545,8 +572,8 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     }
     
     static func toSignedLimbsPair(_ x: BInt, _ y: BInt) -> (bx: Limbs, by: Limbs) {
-        var bx = x.magnitude
-        var by = y.magnitude
+        var bx = x.words
+        var by = y.words
         if x.isNegative {
             invert(&bx)
             if bx.last! & 0x8000000000000000 == 0 {
@@ -698,21 +725,21 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///
     /// - Parameter n: Bit number
     public mutating func clearBit(_ n: Int) {
-        self.magnitude.clearBitAt(n)
+        self.words.clearBitAt(n)
     }
     
     /// Invert a specified bit - a no-op if bit number < 0
     ///
     /// - Parameter n: Bit number
     public mutating func flipBit(_ n: Int) {
-        self.magnitude.flipBitAt(n)
+        self.words.flipBitAt(n)
     }
     
     /// Set a specified bit - a no-op if bit number < 0
     ///
     /// - Parameter n: Bit number
     public mutating func setBit(_ n: Int) {
-        self.magnitude.setBitAt(n)
+        self.words.setBitAt(n)
     }
     
     /// Test a specified bit - *false* if bit number < 0
@@ -720,7 +747,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameter n: Bit number
     /// - Returns: *true* if bit is set, *false* otherwise
     public func testBit(_ n: Int) -> Bool {
-        return self.magnitude.testBitAt(n)
+        return self.words.testBitAt(n)
     }
     
     
@@ -777,9 +804,9 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Right hand addend
     public static func +=(x: inout BInt, y: BInt) {
         if x.isNegative == y.isNegative {
-            x.magnitude.add(y.magnitude)
+            x.words.add(y.words)
         } else {
-            let cmp = x.magnitude.difference(y.magnitude)
+            let cmp = x.words.difference(y.words)
             if cmp < 0 {
                 x.isNegative = !x.isNegative
             } else if cmp == 0 {
@@ -800,18 +827,18 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         
         if y > 0 {
             if x.isNegative {
-                if x.magnitude.difference(Limb(y)) <= 0 {
+                if x.words.difference(Limb(y)) <= 0 {
                     x.setSign(false)
                 }
             } else {
-                x.magnitude.add(Limb(y))
+                x.words.add(Limb(y))
             }
         } else if y < 0 {
             let yy = y == Int.min ? 0x8000000000000000 : Limb(-y)
             if x.isNegative {
-                x.magnitude.add(yy)
+                x.words.add(yy)
             } else {
-                if x.magnitude.difference(yy) < 0 {
+                if x.words.difference(yy) < 0 {
                     x.setSign(true)
                 }
             }
@@ -884,14 +911,14 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Right hand subtrahend
     public static func -=(x: inout BInt, y: BInt) {
         if x.isNegative == y.isNegative {
-            let cmp = x.magnitude.difference(y.magnitude)
+            let cmp = x.words.difference(y.words)
             if cmp < 0 {
                 x.isNegative = !x.isNegative
             } else if cmp == 0 {
                 x.isNegative = false
             }
         } else {
-            x.magnitude.add(y.magnitude)
+            x.words.add(y.words)
         }
     }
     
@@ -907,18 +934,18 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         
         if y > 0 {
             if x.isNegative {
-                x.magnitude.add(Limb(y))
+                x.words.add(Limb(y))
             } else {
-                if x.magnitude.difference(Limb(y)) < 0 {
+                if x.words.difference(Limb(y)) < 0 {
                     x.setSign(true)
                 }
             }
         } else if y < 0 {
             let yy = y == Int.min ? 0x8000000000000000 : Limb(-y)
             if x.isPositive {
-                x.magnitude.add(yy)
+                x.words.add(yy)
             } else {
-                if x.magnitude.difference(yy) <= 0 {
+                if x.words.difference(yy) <= 0 {
                     x.setSign(false)
                 }
             }
@@ -970,7 +997,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - x: Left hand multiplier
     ///   - y: Right hand multiplicand
     public static func *=(x: inout BInt, y: BInt) {
-        x.magnitude.multiply(y.magnitude)
+        x.words.multiply(y.words)
         x.setSign(x.isNegative != y.isNegative)
     }
     
@@ -981,12 +1008,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Right hand multiplicand
     public static func *=(x: inout BInt, y: Int) {
         if y > 0 {
-            x.magnitude.multiply(Limb(y))
+            x.words.multiply(Limb(y))
         } else if y < 0 {
             if y == Int.min {
-                x.magnitude.shiftLeft(63)
+                x.words.shiftLeft(63)
             } else {
-                x.magnitude.multiply(Limb(-y))
+                x.words.multiply(Limb(-y))
             }
             x.setSign(!x.isNegative)
         } else {
@@ -1005,10 +1032,10 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public func quotientAndRemainder(dividingBy x: BInt) -> (quotient: BInt, remainder: BInt) {
         var quotient = BInt.ZERO
         var remainder = BInt.ZERO
-        if x.magnitude.count > BInt.BZ_DIV_LIMIT && self.magnitude.count > x.magnitude.count + BInt.BZ_DIV_LIMIT {
+        if x.words.count > BInt.BZ_DIV_LIMIT && self.words.count > x.words.count + BInt.BZ_DIV_LIMIT {
             (quotient, remainder) = self.bzDivMod(x)
         } else {
-            (quotient.magnitude, remainder.magnitude) = self.magnitude.divMod(x.magnitude)
+            (quotient.words, remainder.words) = self.words.divMod(x.words)
         }
         quotient.setSign(self.isNegative != x.isNegative)
         remainder.setSign(self.isNegative)
@@ -1040,7 +1067,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         var quotient = BInt.ZERO
         var r: Limb
-        (quotient.magnitude, r) = self.magnitude.divMod(divisor)
+        (quotient.words, r) = self.words.divMod(divisor)
         quotient.setSign(self.isNegative && x > 0 || self.isPositive && x < 0)
         let remainder = self.isNegative ? -Int(r) : Int(r)
         return (quotient, remainder)
@@ -1063,7 +1090,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Parameter x: Divisor - a BInt value
     /// - Returns: Quotient of *self* / x - undefined if the remainder is in fact not 0
     public func quotientExact(dividingBy x: BInt) -> BInt {
-        return BInt(self.magnitude.divExact(x.magnitude), self.isNegative != x.isNegative)
+        return BInt(self.words.divExact(x.words), self.isNegative != x.isNegative)
     }
     
     /// Division
@@ -1196,11 +1223,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: *self* *mod* x, a non-negative value
     public func mod(_ x: Int) -> Int {
         if x == Int.min {
-            let r = Int(self.magnitude[0] & 0x7fffffffffffffff)
+            let r = Int(self.words[0] & 0x7fffffffffffffff)
             return self.isNegative && r > 0 ? -(Int.min + r) : r
         }
         let absx = Limb(Swift.abs(x))
-        let (_, r) = self.magnitude.divMod(absx)
+        let (_, r) = self.words.divMod(absx)
         return Int(self.isNegative && r > 0 ? absx - r : r)
     }
     
@@ -1218,7 +1245,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return BInt.ZERO
         }
         let tb = m.trailingZeroBitCount
-        if tb <= 1024 && tb + m.leadingZeroBitCount == m.magnitude.count << 6 - 1 {
+        if tb <= 1024 && tb + m.leadingZeroBitCount == m.words.count << 6 - 1 {
             
             precondition(self.isOdd, "No inverse modulus")
             
@@ -1231,7 +1258,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             var x = BInt.ZERO
             var b = BInt.ONE
             for i in 0 ..< tb {
-                if b.magnitude[0] & 1 == 1 {
+                if b.words[0] & 1 == 1 {
                     x.setBit(i)
                     b -= selfr
                 }
@@ -1263,7 +1290,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             // [KOC] - section 7
             
             // Reduce mod m
-            let m = self.magnitude[0] & (1 << tb - 1)
+            let m = self.words[0] & (1 << tb - 1)
             let selfr = self.isNegative ? -Int(m) : Int(m)
             
             var x = 0
@@ -1301,7 +1328,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: a^x
     public static func **(a: BInt, x: Int) -> BInt {
         precondition(x >= 0, "Exponent must be non-negative")
-        return x == 2 ? (a.magnitude.count > 16 ? BInt(a.magnitude.squared()) : a * a) : BInt(a.magnitude.raisedTo(x), a.isNegative && (x & 1 == 1))
+        return x == 2 ? (a.words.count > 16 ? BInt(a.words.squared()) : a * a) : BInt(a.words.raisedTo(x), a.isNegative && (x & 1 == 1))
     }
     
     /*
@@ -1323,7 +1350,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         let exponent = x.isNegative ? -x : x
         var result: BInt
-        if exponent.magnitude.count <= 32 {
+        if exponent.words.count <= 32 {
             result = BarrettModulus(self, m).expMod(exponent)
         } else if m.isOdd {
             result = MontgomeryModulus(self, m).expMod(exponent)
@@ -1409,7 +1436,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Second operand
     /// - Returns: *true* if x = y, *false* otherwise
     public static func ==(x: BInt, y: BInt) -> Bool {
-        return x.magnitude == y.magnitude && x.isNegative == y.isNegative
+        return x.words == y.words && x.isNegative == y.isNegative
     }
     
     /// Equal
@@ -1439,7 +1466,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///   - y: Second operand
     /// - Returns: *true* if x != y, *false* otherwise
     public static func !=(x: BInt, y: BInt) -> Bool {
-        return x.magnitude != y.magnitude || x.isNegative != y.isNegative
+        return x.words != y.words || x.isNegative != y.isNegative
     }
     
     /// Not equal
@@ -1471,7 +1498,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public static func <(x: BInt, y: BInt) -> Bool {
         if x.isNegative {
             if y.isNegative {
-                return y.magnitude.compare(x.magnitude) < 0
+                return y.words.compare(x.words) < 0
             } else {
                 return true
             }
@@ -1479,7 +1506,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             if y.isNegative {
                 return false
             } else {
-                return x.magnitude.compare(y.magnitude) < 0
+                return x.words.compare(y.words) < 0
             }
         }
     }
@@ -1493,7 +1520,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public static func <(x: BInt, y: Int) -> Bool {
         if x.isNegative {
             if y < 0 {
-                return y == Int.min ? x < BInt(y) : x.magnitude.compare(Limb(-y)) > 0
+                return y == Int.min ? x < BInt(y) : x.words.compare(Limb(-y)) > 0
             } else {
                 return true
             }
@@ -1501,7 +1528,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             if y < 0 {
                 return false
             } else {
-                return x.magnitude.compare(Limb(y)) < 0
+                return x.words.compare(Limb(y)) < 0
             }
         }
     }
@@ -1515,7 +1542,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public static func <(x: Int, y: BInt) -> Bool {
         if y.isNegative {
             if x < 0 {
-                return x == Int.min ? BInt(x) < y : y.magnitude.compare(Limb(-x)) <= 0
+                return x == Int.min ? BInt(x) < y : y.words.compare(Limb(-x)) <= 0
             } else {
                 return false
             }
@@ -1523,7 +1550,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             if x < 0 {
                 return true
             } else {
-                return y.magnitude.compare(Limb(x)) > 0
+                return y.words.compare(Limb(x)) > 0
             }
         }
     }
@@ -1634,7 +1661,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if n < 0 {
             return n == Int.min ? (x >> Int.max) >> 1 : x >> -n
         }
-        return BInt(n == 1 ? x.magnitude.shifted1Left() : x.magnitude.shiftedLeft(n), x.isNegative)
+        return BInt(n == 1 ? x.words.shifted1Left() : x.words.shiftedLeft(n), x.isNegative)
     }
     
     /// x = x << n
@@ -1645,15 +1672,15 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public static func <<=(x: inout BInt, n: Int) {
         if n < 0 {
             if n == Int.min {
-                x.magnitude.shiftRight(Int.max)
-                x.magnitude.shift1Right()
+                x.words.shiftRight(Int.max)
+                x.words.shift1Right()
             } else {
-                x.magnitude.shiftRight(-n)
+                x.words.shiftRight(-n)
             }
         } else if n == 1 {
-            x.magnitude.shift1Left()
+            x.words.shift1Left()
         } else {
-            x.magnitude.shiftLeft(n)
+            x.words.shiftLeft(n)
         }
     }
     
@@ -1670,7 +1697,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if n < 0 {
             return n == Int.min ? (x << Int.max) << 1 : x << -n
         }
-        return BInt(n == 1 ? x.magnitude.shifted1Right() : x.magnitude.shiftedRight(n), x.isNegative)
+        return BInt(n == 1 ? x.words.shifted1Right() : x.words.shiftedRight(n), x.isNegative)
     }
     
     /// x = x >> n
@@ -1681,15 +1708,15 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public static func >>=(x: inout BInt, n: Int) {
         if n < 0 {
             if n == Int.min {
-                x.magnitude.shiftLeft(Int.max)
-                x.magnitude.shift1Left()
+                x.words.shiftLeft(Int.max)
+                x.words.shift1Left()
             } else {
-                x.magnitude.shiftLeft(-n)
+                x.words.shiftLeft(-n)
             }
         } else if n == 1 {
-            x.magnitude.shift1Right()
+            x.words.shift1Right()
         } else {
-            x.magnitude.shiftRight(n)
+            x.words.shiftRight(n)
         }
         if x.isZero {
             x.isNegative = false
@@ -2020,16 +2047,16 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: root = the integer part of the square root of *self*, rem = *self* - root^2
     public func sqrtRemainder() -> (root: BInt, rem: BInt) {
         precondition(!self.isNegative, "Square root of negative number")
-        let l = (self.magnitude.count - 1) >> 2
+        let l = (self.words.count - 1) >> 2
         if l == 0 {
             let sq = self.basicSqrt()
             return (sq, self - sq ** 2)
         }
         let shifts = l * 64
-        let a0 = BInt(Limbs(self.magnitude[0 ..< l]))
-        let a1 = BInt(Limbs(self.magnitude[l ..< 2 * l]))
-        let a2 = BInt(Limbs(self.magnitude[2 * l ..< 3 * l]))
-        let a3 = BInt(Limbs(self.magnitude[3 * l ..< self.magnitude.count]))
+        let a0 = BInt(Limbs(self.words[0 ..< l]))
+        let a1 = BInt(Limbs(self.words[l ..< 2 * l]))
+        let a2 = BInt(Limbs(self.words[2 * l ..< 3 * l]))
+        let a3 = BInt(Limbs(self.words[3 * l ..< self.words.count]))
         let (s1, r1) = (a3 << shifts + a2).sqrtRemainder()
         let (q, u) = (r1 << shifts + a1).quotientAndRemainder(dividingBy: s1 << 1)
         var s = s1 << shifts + q
@@ -2066,7 +2093,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if self.isNegative {
             return false
         } else {
-            return BInt.maybeSquare[Int(self.magnitude[0] & 0xff)] ? self.sqrtRemainder().rem.isZero : false
+            return BInt.maybeSquare[Int(self.words[0] & 0xff)] ? self.sqrtRemainder().rem.isZero : false
         }
     }
     
@@ -2347,7 +2374,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if v.isZero {
             return u
         }
-        if u.magnitude.count > 1 {
+        if u.words.count > 1 {
             let r = u.quotientAndRemainder(dividingBy: v).remainder
             u = v
             v = r
@@ -2358,7 +2385,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         // u and v are one-limb values
         assert(u < BInt.ONE << 64)
         assert(v < BInt.ONE << 64)
-        return BInt([Limbs.binaryGcd(u.magnitude[0], v.magnitude[0])])
+        return BInt([Limbs.binaryGcd(u.words[0], v.words[0])])
      }
 
     /*
@@ -2466,7 +2493,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         while a.isNotZero {
             while a.isEven {
                 a >>= 1
-                let x = m1.magnitude[0] & 7
+                let x = m1.words[0] & 7
                 if x == 3 || x == 5 {
                     t = -t
                 }
@@ -2474,7 +2501,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             let x = a
             a = m1
             m1 = x
-            if a.magnitude[0] & 3 == 3 && m1.magnitude[0] & 3 == 3 {
+            if a.words[0] & 3 == 3 && m1.words[0] & 3 == 3 {
                 t = -t
             }
             a = a.mod(m1)
@@ -2525,7 +2552,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
                 if self.isEven {
                     return 0
                 } else {
-                    let r = self.magnitude[0] & 7
+                    let r = self.words[0] & 7
                     return r == 1 || r == 7 ? self.kroneckerSymbol(m >> 1) : -self.kroneckerSymbol(m >> 1)
                 }
             }
@@ -2549,7 +2576,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
                 if self.isEven {
                     return 0
                 } else {
-                    let r = self.magnitude[0] & 7
+                    let r = self.words[0] & 7
                     return r == 1 || r == 7 ? self.kroneckerSymbol(m >> 1) : -self.kroneckerSymbol(m >> 1)
                 }
             }
