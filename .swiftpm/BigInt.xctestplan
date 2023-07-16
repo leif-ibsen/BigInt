@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "46597F33-8980-4C78-B801-7249D0CA45D2",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "BigIntTests",
+        "name" : "BigIntTests"
+      }
+    }
+  ],
+  "version" : 1
+}

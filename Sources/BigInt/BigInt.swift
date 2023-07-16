@@ -1726,6 +1726,15 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable, Co
     
     // MARK: Prime number functions
     
+    #if os(Linux)
+    static internal func randomBytes(_ bytes: inout Bytes) {
+        for i in bytes.indices { bytes[i] = Byte.random(in: bytes.indices) }
+    }
+    
+    static internal func randomLimbs(_ limbs: inout Limbs) {
+        for i in limbs.indices { limbs[i] = Limb.random(in: limbs.indices) }
+    }
+    #else
     static internal func randomBytes(_ bytes: inout Bytes) {
         guard SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess else {
             fatalError("randomBytes failed")
@@ -1737,6 +1746,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable, Co
             fatalError("randomLimbs failed")
         }
     }
+    #endif
     
     // Small prime product
     static let SPP = BInt("152125131763605")! // = 3 * 5 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31 * 37 * 41
