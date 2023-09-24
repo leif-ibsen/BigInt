@@ -310,7 +310,7 @@ class FractionTest: XCTestCase {
             XCTAssertEqual(M!, BInt(m!))
         }
     }
-
+    
     func testMod() {
         for _ in 0 ..< 1000 {
             let P = BInt(bitWidth: 50)
@@ -324,4 +324,133 @@ class FractionTest: XCTestCase {
         }
     }
     
+    func testContinuedFractionsBInt() {
+        let f = BFraction([BInt.ZERO])
+        XCTAssertEqual(f, BFraction.ZERO)
+        XCTAssertEqual(f.asContinuedFraction(), [BInt.ZERO])
+        for _ in 0 ..< 10 {
+            var x = [BInt](repeating: BInt.ZERO, count: 100)
+            for i in 0 ..< x.count {
+                x[i] = BInt(1000).randomLessThan() + 1
+            }
+            let f = BFraction(x)
+            let y = f.asContinuedFraction()
+            XCTAssert(x == y || x[x.count - 1] == BInt.ONE)
+            XCTAssert(x != y || x[x.count - 1] != BInt.ONE)
+            x[0] = -x[0]
+            let g = BFraction(x)
+            let z = g.asContinuedFraction()
+            XCTAssert(x == z || x[x.count - 1] == BInt.ONE)
+            XCTAssert(x != z || x[x.count - 1] != BInt.ONE)
+        }
+    }
+    
+    func B2I(_ b: [BInt]) -> [Int] {
+        var x = [Int](repeating: 0, count: b.count)
+        for i in 0 ..< x.count {
+            x[i] = b[i].asInt()!
+        }
+        return x
+    }
+
+    func testContinuedFractionsInt() {
+        let f = BFraction([0])
+        XCTAssertEqual(f, BFraction.ZERO)
+        XCTAssertEqual(f.asContinuedFraction(), [BInt.ZERO])
+        for _ in 0 ..< 10 {
+            var x = [Int](repeating: 0, count: 100)
+            for i in 0 ..< x.count {
+                x[i] = (BInt(1000).randomLessThan() + 1).asInt()!
+            }
+            let f = BFraction(x)
+            let y = f.asContinuedFraction()
+            XCTAssert(x == B2I(y) || x[x.count - 1] == BInt.ONE)
+            XCTAssert(x != B2I(y) || x[x.count - 1] != BInt.ONE)
+            x[0] = -x[0]
+            let g = BFraction(x)
+            let z = g.asContinuedFraction()
+            XCTAssert(x == B2I(z) || x[x.count - 1] == BInt.ONE)
+            XCTAssert(x != B2I(z) || x[x.count - 1] != BInt.ONE)
+        }
+    }
+    
+    func testEQ() {
+        let x = BFraction(35, 7)
+        XCTAssertTrue(x == BInt(5))
+        XCTAssertTrue(BInt(5) == x)
+        XCTAssertTrue(x == 5)
+        XCTAssertTrue(5 == x)
+        XCTAssertTrue(-x == BInt(-5))
+        XCTAssertTrue(BInt(-5) == -x)
+        XCTAssertTrue(-x == -5)
+        XCTAssertTrue(-5 == -x)
+    }
+    
+    func testNE() {
+        let x = BFraction(35, 7)
+        XCTAssertTrue(x != BInt(6))
+        XCTAssertTrue(BInt(6) != x)
+        XCTAssertTrue(x != 6)
+        XCTAssertTrue(6 != x)
+        XCTAssertTrue(-x != BInt(-6))
+        XCTAssertTrue(BInt(-6) != -x)
+        XCTAssertTrue(-x != -6)
+        XCTAssertTrue(-6 != -x)
+    }
+    
+    func testLT() {
+        let x = BFraction(35, 7)
+        XCTAssertTrue(x < BInt(6))
+        XCTAssertTrue(BInt(4) < x)
+        XCTAssertTrue(x < 6)
+        XCTAssertTrue(4 < x)
+        XCTAssertTrue(BInt(-6) < -x)
+        XCTAssertTrue(-x < BInt(-4))
+        XCTAssertTrue(-6 < -x)
+        XCTAssertTrue(-x < -4)
+    }
+    
+    func testGT() {
+        let x = BFraction(35, 7)
+        XCTAssertTrue(x > BInt(4))
+        XCTAssertTrue(BInt(6) > x)
+        XCTAssertTrue(x > 4)
+        XCTAssertTrue(6 > x)
+        XCTAssertTrue(-x > BInt(-6))
+        XCTAssertTrue(BInt(-4) > -x)
+        XCTAssertTrue(-x > -6)
+        XCTAssertTrue(-4 > -x)
+    }
+    
+    func testLE() {
+        let x = BFraction(35, 7)
+        XCTAssertTrue(x <= BInt(6))
+        XCTAssertTrue(x <= BInt(5))
+        XCTAssertTrue(x <= 6)
+        XCTAssertTrue(x <= 5)
+        XCTAssertTrue(BInt(-6) <= -x)
+        XCTAssertTrue(BInt(-5) <= -x)
+        XCTAssertTrue(-6 <= -x)
+        XCTAssertTrue(-5 <= -x)
+    }
+    
+    func testGE() {
+        let x = BFraction(35, 7)
+        XCTAssertTrue(x >= BInt(4))
+        XCTAssertTrue(x >= BInt(5))
+        XCTAssertTrue(x >= 4)
+        XCTAssertTrue(x >= 5)
+        XCTAssertTrue(BInt(-4) >= -x)
+        XCTAssertTrue(BInt(-5) >= -x)
+        XCTAssertTrue(-4 >= -x)
+        XCTAssertTrue(-5 >= -x)
+    }
+    
+    func testHarmonic() {
+        let n = 100
+        let harmonics = BFraction.harmonicSequence(n)
+        for i in 0 ..< n {
+            XCTAssertEqual(harmonics[i], BFraction.harmonic(i + 1))
+        }
+    }
 }

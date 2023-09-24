@@ -30,7 +30,7 @@ BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bi
 In your projects Package.swift file add a dependency like<br/>
 
 	  dependencies: [
-	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.13.0"),
+	  .package(url: "https://github.com/leif-ibsen/BigInt", from: "1.14.0"),
 	  ]
 
 <h2 id="ex"><b>Examples</b></h2>
@@ -157,13 +157,14 @@ Fractions are created by
 <li>Specifying the numerator and denominator explicitly f.ex. BFraction(17, 4)</li>
 <li>Specifying the decimal value explictly f.ex. BFraction(4.25)</li>
 <li>Using a string representation f.ex. BFraction("4.25")! or equivalently BFraction("425E-2")!</li>
+<li>Specifying a continued fraction like BFraction([3, 4, 12, 4]) equivalent to 649 / 200</li>
 </ul>
 Defining a fraction by giving its decimal value (like 4.25) might lead to surprises,
 because not all decimal values can be represented exactly as a floating point number.
 For example, one might think that BFraction(0.1) would equal 1/10,
 but in fact it equals 3602879701896397 / 36028797018963968 = 0.1000000000000000055511151231257827021181583404541015625<br/>
 <h3><b>Converting BFraction's</b></h3>
-BFraction values can be converted to String values, to decimal String values and to Double values.
+BFraction values can be converted to String values, to decimal String values, to Double values and to Continued Fraction values.
 
 	  let x = BFraction(1000, 7)
 	  
@@ -176,6 +177,9 @@ BFraction values can be converted to String values, to decimal String values and
 	  
 	  // To Double
 	  let d = x.asDouble() // d = 142.8571428571429
+	  
+	  // To Continued Fraction
+	  let f = x.asContinuedFraction() // f = [BInt(142), BInt(1), BInt(6)]
 	  
 <h3><b>Operations</b></h3>
 The operations available to fractions are:
@@ -222,6 +226,17 @@ The static function<br/>
 
 computes the n even numbered Bernoulli numbers B(0), B(2) ... B(2 * n - 2).<br/>
 
+<h3><b>Harmonic Numbers</b></h3>
+The static function<br/>
+
+	let Hn = BFraction.harmonic(n)
+
+computes the n'th harmonic number, that is, 1 + 1/2 + ... + 1/n<br/>
+The static function<br/>
+	
+	let x = BFraction.harmonicSequence(n)
+
+returns an array containing the first n harmonic numbers.
 <h2 id="crt"><b>Chinese Remainder Theorem</b></h2>
 The CRT structure implements the Chinese Remainder Theorem. Construct a CRT instance from a given set of moduli,
 and then use the *compute* method to compute the CRT value for a given set of residues. The same instance can be reused

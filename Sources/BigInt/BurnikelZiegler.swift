@@ -8,7 +8,7 @@
 extension BInt {
     
     // Divisor limb limit for Burnikel-Ziegler division
-    static var BZ_DIV_LIMIT = 60
+    static let BZ_DIV_LIMIT = 60
 
     /*
      * [BURNIKEL] - algorithm 3

@@ -179,16 +179,18 @@ extension BInt {
     class MontgomeryModulus: Modulus {
 
         var Rsize: Int = 0
+        var Rsize64: Int = 0
         var Rinv: Limbs = [1]
         var mprime: Limbs = [0]
         
         override init(_ a: BInt, _ modulus: BInt) {
             super.init(a, modulus)
             self.Rsize = self.modulus.count
+            self.Rsize64 = self.Rsize << 6
 
             // Compute Rinv and mprime such that R * Rinv - modulus * mprime = 1
             
-            for _ in 0 ..< Rsize * 64 {
+            for _ in 0 ..< Rsize64 {
                 if self.Rinv[0] & 1 == 0 {
                     self.Rinv.shift1Right()
                     self.mprime.shift1Right()
@@ -196,13 +198,13 @@ extension BInt {
                     self.Rinv.add(self.modulus)
                     self.Rinv.shift1Right()
                     self.mprime.shift1Right()
-                    self.mprime.setBitAt(Rsize * 64 - 1)
+                    self.mprime.setBitAt(Rsize64 - 1)
                 }
             }
         }
         
         override func toMspace(_ x: Limbs) -> Limbs {
-            return (x.shiftedLeft(self.Rsize * 64)).divMod(self.modulus).remainder
+            return (x.shiftedLeft(self.Rsize64)).divMod(self.modulus).remainder
         }
 
         override func fromMspace(_ x: Limbs) -> Limbs {

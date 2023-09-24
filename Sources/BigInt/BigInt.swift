@@ -27,6 +27,7 @@ precedencegroup ExponentiationPrecedence {
 infix operator ** : ExponentiationPrecedence
 
 /// A signed integer of unbounded size.
+/// 
 /// A BInt value is represented with magnitude and sign.
 /// The magnitude is an array of unsigned 64 bit integers (a.k.a. Limbs).
 /// The sign is a boolean value, *true* means value < 0, *false* means value >= 0
@@ -1218,8 +1219,8 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return BInt.ZERO
         }
         let tb = m.trailingZeroBitCount
-        if tb <= 1024 && tb + m.leadingZeroBitCount == m.magnitude.count << 6 - 1 {
-            
+        if tb <= 1024 && (m >> tb).isOne {
+
             precondition(self.isOdd, "No inverse modulus")
             
             // Fast power of 2 implementation
@@ -1255,8 +1256,8 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return 0
         }
         let tb = m.trailingZeroBitCount
-        if tb + m.leadingZeroBitCount == 63 {
-            
+        if m >> tb == 1 {
+
             precondition(self.isOdd, "No inverse modulus")
             
             // Fast power of 2 implementation

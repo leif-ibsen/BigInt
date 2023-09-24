@@ -68,13 +68,24 @@ class ModInverseTest: XCTestCase {
     func test3() {
         let x1 = BInt.ONE << 20 + 1
         let x2 = BInt.ONE << 200 + 1
-        for i in 0 ... 62 {
+        for i in 1 ... 62 {
             let m = 1 << i
             XCTAssertEqual(BInt(x1.modInverse(m)), x1.modInverse(BInt(m)))
+            XCTAssertEqual((x1 * x1.modInverse(m)).mod(m), 1)
+            
             XCTAssertEqual(BInt((-x1).modInverse(m)), (-x1).modInverse(BInt(m)))
+            XCTAssertEqual(((-x1) * (-x1).modInverse(m)).mod(m), 1)
+
             XCTAssertEqual(BInt(x2.modInverse(m)), x2.modInverse(BInt(m)))
+            XCTAssertEqual((x2 * x2.modInverse(m)).mod(m), 1)
+
             XCTAssertEqual(BInt((-x2).modInverse(m)), (-x2).modInverse(BInt(m)))
+            XCTAssertEqual(((-x2) * (-x2).modInverse(m)).mod(m), 1)
         }
+        XCTAssertEqual(BInt(x1.modInverse(1)), x1.modInverse(BInt(1)))
+        XCTAssertEqual(BInt((-x1).modInverse(1)), (-x1).modInverse(BInt(1)))
+        XCTAssertEqual(BInt(x2.modInverse(1)), x2.modInverse(BInt(1)))
+        XCTAssertEqual(BInt((-x2).modInverse(1)), (-x2).modInverse(BInt(1)))
     }
     
 }
