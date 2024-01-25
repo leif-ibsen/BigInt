@@ -513,7 +513,12 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     public prefix static func -(x: BFraction) -> BFraction {
         return BFraction(-x.numerator, x.denominator)
     }
-    
+
+    /// Negates *self*
+    public mutating func negate() {
+        self.numerator.negate()
+    }
+
     /// Subtraction
     ///
     /// - Parameters:
@@ -826,7 +831,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     // MARK: Rounding functions
     
-    /// Round
+    /// Round to nearest
     ///
     /// Returns: *self* rounded to the nearest integer
     public func round() -> BInt {
@@ -838,14 +843,14 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         }
     }
 
-    /// Truncate
+    /// Round towards 0
     ///
     /// Returns: *self* rounded to an integer towards 0
     public func truncate() -> BInt {
         return self.isPositive ? self.floor() : self.ceil()
     }
 
-    /// Ceil
+    /// Round towards +Infinity
     ///
     /// Returns: *self* rounded to an integer towards +Infinity
     public func ceil() -> BInt {
@@ -853,7 +858,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return r.isPositive ? q + 1 : q
     }
 
-    /// Floor
+    /// Round towards -Infinity
     ///
     /// Returns: *self* rounded to an integer towards -Infinity
     public func floor() -> BInt {
