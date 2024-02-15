@@ -39,10 +39,10 @@ Miller-Rabin test.
 The algorithm from Java BigInteger translated to Swift.
 
 ### Factorial
-The *SplitRecursive* algorithm from Peter Luschny: https://www.luschny.de
+The `SplitRecursive` algorithm from Peter Luschny: [https://www.luschny.de](https://www.luschny.de)
 
 ### Fibonacci
-The *fastDoubling* algorithm from Project Nayuki: https://www.nayuki.io
+The `fastDoubling` algorithm from Project Nayuki: [https://www.nayuki.io](https://www.nayuki.io)
 
 ### Jacobi and Kronecker symbols
 Algorithm 2.3.5 from [CRANDALL].

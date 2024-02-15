@@ -2,6 +2,16 @@
 
 ## Overview
 
+> Important:
+**Please note:** Due to a bug in the DocC plugin that generated this documentation,
+> clicking on certain `BInt` and `BFraction` operators in GitHub Pages (f.ex. < and | ) will show the message
+>
+>    The page you're looking for can't be found.
+>   
+> The *BigInt.doccarchive* file contains the correct documentation.
+> It is emphasized that it is only the documentation that's in error.
+> The operators themselves work correctly.
+
 The BigInt package provides arbitrary-precision integer arithmetic in Swift.
 Its functionality falls in the following categories:
 
@@ -17,7 +27,7 @@ Jacobi symbol, Kronecker symbol, Factorial function, Binomial function, Fibonacc
 * **Fractions:** Standard arithmetic on fractions whose numerators and denominators are of unbounded size
 
 > Important:
-BigInt requires Swift 5.0. It also requires that the Int and UInt types be 64 bit types.
+BigInt requires Swift 5.0. It also requires that the `Int` and `UInt` types be 64 bit types.
 
 ## Topics
 

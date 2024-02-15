@@ -1,5 +1,16 @@
 # ``BigInt/BFraction``
 
+## Overview
+
+A signed fraction with numerator and denominator of unbounded size.
+
+A BFraction value is represented by a ``BigInt/BInt`` numerator and a ``BigInt/BInt`` denominator.  
+The representation is normalized:
+
+* The numerator and denominator have no common divisors except 1
+* The denominator is always positive
+* Zero is represented as 0/1
+
 ## Topics
 
 ### Constants

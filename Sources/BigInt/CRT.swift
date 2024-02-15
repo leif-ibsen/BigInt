@@ -5,15 +5,7 @@
 //  Created by Leif Ibsen on 25/04/2023.
 //
 
-/// CRT instances implement the Chinese Remainder Theorem
-///
-/// Create an instance from a given set of moduli which fullfill the following conditions:
-/// - at least two moduli
-/// - all moduli are positive
-/// - the moduli are pairwise coprime
-///
-/// Then use the *compute* method to compute the CRT value for a given set of residues.
-/// The same CRT instance can be used for different inputs, as long as the moduli are the same.
+/// The CRT structure
 public struct CRT {
 
     static func uc(_ m: [BInt]) -> ([BInt], [BInt]) {
@@ -36,11 +28,11 @@ public struct CRT {
 
     // MARK: - Initializers
 
-    /// Constructs a CRT instance from the moduli - BInt version
+    /// Constructs a CRT instance from the moduli - `BInt` version
     ///
     /// - Parameters:
     ///   - m: The moduli
-    /// - Returns: The CRT instance for the moduli, *nil* if they do not fullfill the conditions
+    /// - Returns: The CRT instance for the moduli, `nil` if they do not fullfill the conditions
     public init?(_ m: [BInt]) {
         guard m.count > 1 else {
             return nil
@@ -60,11 +52,11 @@ public struct CRT {
         self.M = self.u[self.u.count - 1] * self.m[self.m.count - 1]
     }
     
-    /// Constructs a CRT instance from the moduli - Int version
+    /// Constructs a CRT instance from the moduli - `Int` version
     ///
     /// - Parameters:
     ///   - m: The moduli
-    /// - Returns: The CRT instance for the moduli, *nil* if they do not fullfill the conditions
+    /// - Returns: The CRT instance for the moduli, `nil` if they do not fullfill the conditions
     public init?(_ m: [Int]) {
         var x = [BInt](repeating: BInt.ZERO, count: m.count)
         for i in 0 ..< m.count {
@@ -76,7 +68,7 @@ public struct CRT {
     
     // MARK: - Instance methods
     
-    /// Compute the CRT value - BInt version
+    /// Compute the CRT value - `BInt` version
     ///
     /// - Precondition: r.count = number of moduli
     /// - Parameters:
@@ -92,7 +84,7 @@ public struct CRT {
         return x.mod(self.M)
     }
     
-    /// Compute the CRT value - Int version
+    /// Compute the CRT value - `Int` version
     ///
     /// - Precondition: r.count = number of moduli
     /// - Parameters:

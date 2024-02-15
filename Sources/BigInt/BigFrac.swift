@@ -5,11 +5,7 @@
 //  Created by Leif Ibsen on 26/06/2022.
 //
 
-/// A signed fraction with numerator and denominator of unbounded size.
-/// 
-/// A BFraction value is represented by a BInt numerator and a BInt denominator.
-/// The representation is normalized, so that numerator and denominator has no common divisors except 1.
-/// The denominator is always positive, 0 has the representation 0/1
+/// The BFraction structure
 public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     mutating func normalize() {
@@ -214,11 +210,11 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         self.init(BInt(n), BInt(d))
     }
 
-    /// Constructs a BFraction from its decimal value
+    /// Constructs a BFraction from a decimal value
     ///
     /// - Parameters:
     ///   - d: The decimal value
-    /// - Returns: The BFraction corresponding to *d*, *nil* if *d* is infinite or NaN
+    /// - Returns: The BFraction corresponding to `d`, `nil` if `d` is infinite or NaN
     public init?(_ d: Double) {
         if d.isNaN || d.isInfinite {
             return nil
@@ -238,7 +234,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///
     /// - Parameters:
     ///   - x: The String representation
-    /// - Returns: The BFraction represented by *x*, *nil* if *x* does not represent a decimal number
+    /// - Returns: The BFraction represented by `x`, `nil` if `x` does not represent a decimal number
     ///
     /// Examples:
     ///    * BFraction("3.1415") = 6283 / 2000
@@ -255,12 +251,12 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         }
     }
     
-    /// Constructs a BFraction from a continued fraction - BInt version
+    /// Constructs a BFraction from a continued fraction - `BInt` version
     ///
-    /// - Precondition: *x* contains at least one element, all elements except possibly the first are positive
+    /// - Precondition: `x` contains at least one element, all elements except possibly the first are positive
     /// - Parameters:
     ///   - x: The continued fraction
-    /// - Returns: The BFraction represented by *x*
+    /// - Returns: The BFraction represented by `x`
     public init(_ x: [BInt]) {
         precondition(x.count > 0)
         var numerator = BInt.ZERO
@@ -274,12 +270,12 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         self.init(numerator, denominator)
     }
 
-    /// Constructs a BFraction from a continued fraction - Int version
+    /// Constructs a BFraction from a continued fraction - `Int` version
     ///
-    /// - Precondition: *x* contains at least one element, all elements except possibly the first are positive
+    /// - Precondition: `x` contains at least one element, all elements except possibly the first are positive
     /// - Parameters:
     ///   - x: The continued fraction
-    /// - Returns: The BFraction represented by *x*
+    /// - Returns: The BFraction represented by `x`
     public init(_ x: [Int]) {
         var bx = [BInt](repeating: BInt.ZERO, count: x.count)
         for i in 0 ..< bx.count {
@@ -299,37 +295,37 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     // MARK: Computed properties
 
-    /// The absolute value of *self*
+    /// The absolute value of `self`
     public var abs: BFraction {
         return BFraction(self.numerator.abs, self.denominator)
     }
 
-    /// String value of *self*
+    /// String value of `self`
     public var description: String {
         return self.asString()
     }
 
-    /// Is *true* if *self* is an integer, that is, the denominator is 1
+    /// Is `true` if `self` is an integer, that is, the denominator is 1
     public var isInteger: Bool {
         return self.denominator.isOne
     }
 
-    /// Is *true* if *self* < 0, *false* otherwise
+    /// Is `true` if `self` < 0, `false` otherwise
     public var isNegative: Bool {
         return self.numerator.isNegative
     }
 
-    /// Is *true* if *self* > 0, *false* otherwise
+    /// Is `true` if `self` > 0, `false` otherwise
     public var isPositive: Bool {
         return self.numerator.isPositive
     }
 
-    /// Is *true* if *self* = 0, *false* otherwise
+    /// Is `true` if `self` = 0, `false` otherwise
     public var isZero: Bool {
         return self.numerator.isZero
     }
 
-    /// Is 0 if *self* = 0, 1 if *self* > 0, and -1 if *self* < 0
+    /// Is 0 if `self` = 0, 1 if `self` > 0, and -1 if `self` < 0
     public var signum: Int {
         return self.numerator.signum
     }
@@ -337,21 +333,20 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     // MARK: Conversion functions to String, Decimal String, Double and Continued Fractions
 
-    /// *self* as a String</br>
-    /// Examples: BFraction(-97, 100).asString() is "-97 / 100"</br>
+    /// `self` as a String
     ///
-    /// - Returns: *self* as a String
+    /// - Returns: `self` as a String
     public func asString() -> String {
         return self.numerator.asString() + " / " + self.denominator.asString()
     }
 
-    /// *self* as a Decimal String with a specified precision, possibly using exponential notation
+    /// `self` as a Decimal String with a specified precision, possibly using exponential notation
     ///
     /// - Precondition: precision > 0
     /// - Parameters:
     ///   - precision: The number of significant digits
-    ///   - exponential: *true* to use exponential notation, *false* to use plain notation, default is *false*
-    /// - Returns: *self* as a decimal String
+    ///   - exponential: `true` to use exponential notation, `false` to use plain notation, default is `false`
+    /// - Returns: `self` as a decimal String
     public func asDecimalString(precision: Int, exponential: Bool = false) -> String {
         precondition(precision > 0)
         if self.isZero {
@@ -372,9 +367,9 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return BFraction.displayString(self.isNegative ? -x : x, exp, exponential)
     }
 
-    /// *self* as a Double
+    /// `self` as a Double
     ///
-    /// - Returns: *self* as a Double or *Infinity* if *self* is not representable as a Double
+    /// - Returns: `self` as a Double or `Infinity` if `self` is not representable as a Double
     public func asDouble() -> Double {
         var (q, r) = self.numerator.quotientAndRemainder(dividingBy: self.denominator)
         var d = q.asDouble()
@@ -390,9 +385,9 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return d
     }
 
-    /// *self* as a Continued Fraction
+    /// `self` as a Continued Fraction
     ///
-    /// - Returns: *self* as a Continued Fraction
+    /// - Returns: `self` as a Continued Fraction
     public func asContinuedFraction() -> [BInt] {
         var numerator = self.numerator
         var denominator = self.denominator
@@ -514,7 +509,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return BFraction(-x.numerator, x.denominator)
     }
 
-    /// Negates *self*
+    /// Negates `self`
     public mutating func negate() {
         self.numerator.negate()
     }
@@ -768,10 +763,10 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         x = x / y
     }
 
-    /// Invert *self*
+    /// Invert `self`
     ///
-    /// - Precondition: *self* is not zero
-    /// - Returns: 1 / *self*
+    /// - Precondition: `self` is not zero
+    /// - Returns: 1 / `self`
     public func invert() -> BFraction  {
         return BFraction(self.denominator, self.numerator)
     }
@@ -779,11 +774,11 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     // MARK: Modulus functions
 
-    /// Modulus - BInt parameter
+    /// Modulus - `BInt` version
     ///
     /// - Precondition: Modulus is positive
     /// - Parameter m: Modulus
-    /// - Returns: *self* *mod* m, a non-negative value or *nil* if the denominator and modulus are not coprime
+    /// - Returns: `self` `mod` m, a non-negative value or `nil` if the denominator and modulus are not coprime
     public func mod(_ m: BInt) -> BInt? {
         precondition(m.isPositive, "Modulus must be positive")
         guard self.denominator.gcd(m).isOne else {
@@ -792,11 +787,11 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return (self.numerator * self.denominator.modInverse(m)).mod(m)
     }
 
-    /// Modulus - Int parameter
+    /// Modulus - `Int` version
     ///
     /// - Precondition: Modulus is positive
     /// - Parameter m: Modulus
-    /// - Returns: *self* *mod* x, a non-negative value or *nil* if the denominator and modulus are not coprime
+    /// - Returns: `self` `mod` m, a non-negative value or `nil` if the denominator and modulus are not coprime
     public func mod(_ m: Int) -> Int? {
         precondition(m > 0, "Modulus must be positive")
         guard self.denominator.gcd(BInt(m)).isOne else {
@@ -833,7 +828,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     /// Round to nearest
     ///
-    /// Returns: *self* rounded to the nearest integer
+    /// - Returns: `self` rounded to the nearest integer
     public func round() -> BInt {
         let (q, r) = self.numerator.quotientAndRemainder(dividingBy: self.denominator)
         if r.isNegative {
@@ -845,14 +840,14 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     /// Round towards 0
     ///
-    /// Returns: *self* rounded to an integer towards 0
+    /// - Returns: `self` rounded to an integer towards 0
     public func truncate() -> BInt {
         return self.isPositive ? self.floor() : self.ceil()
     }
 
     /// Round towards +Infinity
     ///
-    /// Returns: *self* rounded to an integer towards +Infinity
+    /// - Returns: `self` rounded to an integer towards +Infinity
     public func ceil() -> BInt {
         let (q, r) = self.numerator.quotientAndRemainder(dividingBy: self.denominator)
         return r.isPositive ? q + 1 : q
@@ -860,7 +855,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     /// Round towards -Infinity
     ///
-    /// Returns: *self* rounded to an integer towards -Infinity
+    /// - Returns: `self` rounded to an integer towards -Infinity
     public func floor() -> BInt {
         let (q, r) = self.numerator.quotientAndRemainder(dividingBy: self.denominator)
         return r.isNegative ? q - 1 : q
@@ -874,7 +869,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x = y, *false* otherwise
+    /// - Returns: `true` if x = y, `false` otherwise
     public static func ==(x: BFraction, y: BFraction) -> Bool {
         return x.numerator == y.numerator && x.denominator == y.denominator
     }
@@ -884,7 +879,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x = y, *false* otherwise
+    /// - Returns: `true` if x = y, `false` otherwise
     public static func ==(x: BFraction, y: BInt) -> Bool {
         return x.numerator == y && x.denominator.isOne
     }
@@ -894,7 +889,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x = y, *false* otherwise
+    /// - Returns: `true` if x = y, `false` otherwise
     public static func ==(x: BInt, y: BFraction) -> Bool {
         return x == y.numerator && y.denominator.isOne
     }
@@ -904,7 +899,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x = y, *false* otherwise
+    /// - Returns: `true` if x = y, `false` otherwise
     public static func ==(x: BFraction, y: Int) -> Bool {
         return x.numerator == y && x.denominator.isOne
     }
@@ -914,7 +909,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x = y, *false* otherwise
+    /// - Returns: `true` if x = y, `false` otherwise
     public static func ==(x: Int, y: BFraction) -> Bool {
         return x == y.numerator && y.denominator.isOne
     }
@@ -924,7 +919,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x != y, *false* otherwise
+    /// - Returns: `true` if x != y, `false` otherwise
     public static func !=(x: BFraction, y: BFraction) -> Bool {
         return x.numerator != y.numerator || x.denominator != y.denominator
     }
@@ -934,7 +929,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x != y, *false* otherwise
+    /// - Returns: `true` if x != y, `false` otherwise
     public static func !=(x: BFraction, y: BInt) -> Bool {
         return x.numerator != y || !x.denominator.isOne
     }
@@ -944,7 +939,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x != y, *false* otherwise
+    /// - Returns: `true` if x != y, `false` otherwise
     public static func !=(x: BInt, y: BFraction) -> Bool {
         return y.numerator != x || !y.denominator.isOne
     }
@@ -954,7 +949,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x != y, *false* otherwise
+    /// - Returns: `true` if x != y, `false` otherwise
     public static func !=(x: BFraction, y: Int) -> Bool {
         return x.numerator != y || !x.denominator.isOne
     }
@@ -964,7 +959,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x != y, *false* otherwise
+    /// - Returns: `true` if x != y, `false` otherwise
     public static func !=(x: Int, y: BFraction) -> Bool {
         return y.numerator != x || !y.denominator.isOne
     }
@@ -974,7 +969,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x < y, *false* otherwise
+    /// - Returns: `true` if x < y, `false` otherwise
     public static func <(x: BFraction, y: BFraction) -> Bool {
         return x.numerator * y.denominator < y.numerator * x.denominator
     }
@@ -984,7 +979,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x < y, *false* otherwise
+    /// - Returns: `true` if x < y, `false` otherwise
     public static func <(x: BFraction, y: BInt) -> Bool {
         return x.numerator < y * x.denominator
     }
@@ -994,7 +989,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x < y, *false* otherwise
+    /// - Returns: `true` if x < y, `false` otherwise
     public static func <(x: BInt, y: BFraction) -> Bool {
         return x * y.denominator < y.numerator
     }
@@ -1004,7 +999,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x < y, *false* otherwise
+    /// - Returns: `true` if x < y, `false` otherwise
     public static func <(x: BFraction, y: Int) -> Bool {
         return x.numerator < y * x.denominator
     }
@@ -1014,7 +1009,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x < y, *false* otherwise
+    /// - Returns: `true` if x < y, `false` otherwise
     public static func <(x: Int, y: BFraction) -> Bool {
         return x * y.denominator < y.numerator
     }
@@ -1024,7 +1019,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x > y, *false* otherwise
+    /// - Returns: `true` if x > y, `false` otherwise
     public static func >(x: BFraction, y: BFraction) -> Bool {
         return x.numerator * y.denominator > y.numerator * x.denominator
     }
@@ -1034,7 +1029,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x > y, *false* otherwise
+    /// - Returns: `true` if x > y, `false` otherwise
     public static func >(x: BFraction, y: BInt) -> Bool {
         return x.numerator > y * x.denominator
     }
@@ -1044,7 +1039,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x > y, *false* otherwise
+    /// - Returns: `true` if x > y, `false` otherwise
     public static func >(x: BInt, y: BFraction) -> Bool {
         return x * y.denominator > y.numerator
     }
@@ -1054,7 +1049,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x > y, *false* otherwise
+    /// - Returns: `true` if x > y, `false` otherwise
     public static func >(x: BFraction, y: Int) -> Bool {
         return x.numerator > y * x.denominator
     }
@@ -1064,7 +1059,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x > y, *false* otherwise
+    /// - Returns: `true` if x > y, `false` otherwise
     public static func >(x: Int, y: BFraction) -> Bool {
         return x * y.denominator > y.numerator
     }
@@ -1074,7 +1069,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x <= y, *false* otherwise
+    /// - Returns: `true` if x <= y, `false` otherwise
     public static func <=(x: BFraction, y: BFraction) -> Bool {
         return !(x > y)
     }
@@ -1084,7 +1079,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x <= y, *false* otherwise
+    /// - Returns: `true` if x <= y, `false` otherwise
     public static func <=(x: BFraction, y: BInt) -> Bool {
         return !(x > y)
     }
@@ -1094,7 +1089,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x <= y, *false* otherwise
+    /// - Returns: `true` if x <= y, `false` otherwise
     public static func <=(x: BInt, y: BFraction) -> Bool {
         return !(x > y)
     }
@@ -1104,7 +1099,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x <= y, *false* otherwise
+    /// - Returns: `true` if x <= y, `false` otherwise
     public static func <=(x: BFraction, y: Int) -> Bool {
         return !(x > y)
     }
@@ -1114,7 +1109,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x <= y, *false* otherwise
+    /// - Returns: `true` if x <= y, `false` otherwise
     public static func <=(x: Int, y: BFraction) -> Bool {
         return !(x > y)
     }
@@ -1124,7 +1119,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x >= y, *false* otherwise
+    /// - Returns: `true` if x >= y, `false` otherwise
     public static func >=(x: BFraction, y: BFraction) -> Bool {
         return !(x < y)
     }
@@ -1134,7 +1129,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x >= y, *false* otherwise
+    /// - Returns: `true` if x >= y, `false` otherwise
     public static func >=(x: BFraction, y: BInt) -> Bool {
         return !(x < y)
     }
@@ -1144,7 +1139,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x >= y, *false* otherwise
+    /// - Returns: `true` if x >= y, `false` otherwise
     public static func >=(x: BInt, y: BFraction) -> Bool {
         return !(x < y)
     }
@@ -1154,7 +1149,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x >= y, *false* otherwise
+    /// - Returns: `true` if x >= y, `false` otherwise
     public static func >=(x: BFraction, y: Int) -> Bool {
         return !(x < y)
     }
@@ -1164,7 +1159,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First operand
     ///   - y: Second operand
-    /// - Returns: *true* if x >= y, *false* otherwise
+    /// - Returns: `true` if x >= y, `false` otherwise
     public static func >=(x: Int, y: BFraction) -> Bool {
         return !(x < y)
     }

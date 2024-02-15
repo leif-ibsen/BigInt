@@ -1,5 +1,15 @@
 # ``BigInt/BInt``
 
+## Overview
+
+A signed integer of unbounded size.
+
+* A BInt value is represented with magnitude and sign
+* The magnitude is an array of unsigned 64 bit integers (a.k.a. Limbs)
+* The sign is a boolean value, `true` means value < 0, `false` means value >= 0
+* The representation is little-endian, least significant Limb has index 0
+* The representation is minimal, there is no leading zero Limbs. The exception is that the value 0 is represented as a single 64 bit zero Limb and sign `false`
+
 ## Topics
 
 ### Contstants
@@ -77,8 +87,8 @@
 ### Multiplication
 
 - ``*(_:_:)-6ix02``
-- ``*(_:_:)-2wzsq``
 - ``*(_:_:)-6gaof``
+- ``*(_:_:)-2wzsq``
 - ``*=(_:_:)-162pt``
 - ``*=(_:_:)-58nlt``
 
@@ -102,14 +112,19 @@
 ### Remainder and Modulus
 
 - ``%(_:_:)-5wrfu``
-- ``%(_:_:)-5bnmh``
 - ``%(_:_:)-sgel``
+- ``%(_:_:)-5bnmh``
 - ``%=(_:_:)-9xw8j``
 - ``%=(_:_:)-7wqfe``
 - ``mod(_:)-8df0q``
 - ``mod(_:)-45rbl``
 - ``modInverse(_:)-2w6ad``
 - ``modInverse(_:)-7493u``
+
+### Modular Exponentiation
+
+- ``expMod(_:_:)-4sp4z``
+- ``expMod(_:_:)-9n2n9``
 
 ### Comparison
 
@@ -152,11 +167,6 @@
 - ``flipBit(_:)``
 - ``setBit(_:)``
 - ``testBit(_:)``
-
-### Modular Exponentiation
-
-- ``expMod(_:_:)-4sp4z``
-- ``expMod(_:_:)-9n2n9``
 
 ### Root Extraction
 
