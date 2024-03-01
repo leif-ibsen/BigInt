@@ -1,14 +1,10 @@
 # ``BigInt/BInt``
 
+The BInt structure
+
 ## Overview
 
-A signed integer of unbounded size.
-
-* A BInt value is represented with magnitude and sign
-* The magnitude is an array of unsigned 64 bit integers (a.k.a. Limbs)
-* The sign is a boolean value, `true` means value < 0, `false` means value >= 0
-* The representation is little-endian, least significant Limb has index 0
-* The representation is minimal, there is no leading zero Limbs. The exception is that the value 0 is represented as a single 64 bit zero Limb and sign `false`
+Please, see <doc:AboutBInt>
 
 ## Topics
 
@@ -108,6 +104,8 @@ A signed integer of unbounded size.
 ### Exponentiation
 
 - ``**(_:_:)``
+- ``expMod(_:_:)-4sp4z``
+- ``expMod(_:_:)-9n2n9``
 
 ### Remainder and Modulus
 
@@ -121,10 +119,11 @@ A signed integer of unbounded size.
 - ``modInverse(_:)-2w6ad``
 - ``modInverse(_:)-7493u``
 
-### Modular Exponentiation
+### GCD and LCM
 
-- ``expMod(_:_:)-4sp4z``
-- ``expMod(_:_:)-9n2n9``
+- ``gcd(_:)``
+- ``gcdExtended(_:)``
+- ``lcm(_:)``
 
 ### Comparison
 
@@ -170,35 +169,32 @@ A signed integer of unbounded size.
 
 ### Root Extraction
 
+- ``sqrt()``
+- ``sqrtMod(_:)-44ev6``
+- ``sqrtMod(_:)-5foxz``
+- ``sqrtRemainder()``
+- ``isPerfectSquare()``
 - ``root(_:)``
 - ``rootRemainder(_:)``
 - ``isPerfectRoot()``
-- ``sqrt()``
-- ``sqrtRemainder()``
-- ``isPerfectSquare()``
-- ``sqrtMod(_:)-44ev6``
-- ``sqrtMod(_:)-5foxz``
 
 ### Prime Number
 
-- ``isProbablyPrime(_:)``
-- ``nextPrime(_:)``
 - ``probablePrime(_:_:)``
+- ``nextPrime(_:)``
+- ``isProbablyPrime(_:)``
 - ``primorial(_:)``
 
 ### Miscellaneous
 
+- ``randomLessThan()``
 - ``binomial(_:_:)``
 - ``factorial(_:)``
 - ``fibonacci(_:)``
 - ``fibonacci2(_:)``
-- ``gcd(_:)``
-- ``gcdExtended(_:)``
 - ``jacobiSymbol(_:)-3695r``
 - ``jacobiSymbol(_:)-9whxs``
 - ``kroneckerSymbol(_:)-7ml1a``
 - ``kroneckerSymbol(_:)-6q1ca``
-- ``lcm(_:)``
 - ``lucas(_:)``
 - ``lucas2(_:)``
-- ``randomLessThan()``

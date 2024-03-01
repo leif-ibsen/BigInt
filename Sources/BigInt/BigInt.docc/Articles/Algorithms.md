@@ -1,8 +1,8 @@
 # Algorithms
 
-## 
+Some of the algorithms used in BigInt are described below
 
-Some of the algorithms used in BigInt are described below.
+## 
 
 ### Multiplication
 * Schonhage-Strassen FFT based algorithm for numbers above 384000 bits
@@ -49,7 +49,7 @@ Algorithm 2.3.5 from [CRANDALL].
 
 ### Bernoulli Numbers
 Computed via Tangent numbers which is fast because it only involves integer arithmetic
-but no fractional arithmetic.
+but no fraction arithmetic.
 
 ### Chinese Remainder Theorem
 The Garner algorithm 2.1.7 from [CRANDALL].

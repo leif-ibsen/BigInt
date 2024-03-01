@@ -5,7 +5,6 @@
 //  Created by Leif Ibsen on 25/04/2023.
 //
 
-/// The CRT structure
 public struct CRT {
 
     static func uc(_ m: [BInt]) -> ([BInt], [BInt]) {

@@ -5,7 +5,6 @@
 //  Created by Leif Ibsen on 26/06/2022.
 //
 
-/// The BFraction structure
 public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     mutating func normalize() {

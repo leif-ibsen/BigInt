@@ -1,6 +1,8 @@
 # ``BigInt``
 
-## Overview
+Signed integers and fractions of unbounded size
+
+## 
 
 > Important:
 **Please note:** Due to a bug in the DocC plugin that generated this documentation,
@@ -12,30 +14,57 @@
 > It is emphasized that it is only the documentation that's in error.
 > The operators themselves work correctly.
 
-The BigInt package provides arbitrary-precision integer arithmetic in Swift.
-Its functionality falls in the following categories:
+## Overview
 
-* **Arithmetic:** add, subtract, multiply, divide, remainder and exponentiation
-* **Comparison:** the six standard operations == != < <= > >=
-* **Shifting:** logical left shift and rigth shift
-* **Logical:** bitwise and, or, xor, and not
-* **Modulo:** normal modulus, inverse modulus, and modular exponentiation
-* **Conversion:** to double, to integer, to string, to magnitude byte array, and to 2's complement byte array
-* **Primes:** prime number testing, probable prime number generation and primorial
-* **Miscellaneous:** random number generation, greatest common divisor, least common multiple, n-th root, square root modulo an odd prime,
-Jacobi symbol, Kronecker symbol, Factorial function, Binomial function, Fibonacci numbers, Lucas numbers and Bernoulli numbers
-* **Fractions:** Standard arithmetic on fractions whose numerators and denominators are of unbounded size
+The BigInt package provides arbitrary-precision integer and fraction arithmetic in Swift:
+
+* **Integer arithmetic and functions**
+
+    Please, see <doc:AboutBInt>
+
+* **Fraction arithmetic and functions**
+
+    Please, see <doc:AboutBFraction>
+
+* **Chinese Remainder Theorem**
+
+    Please, see <doc:AboutCRT>
+
+### Usage
+
+To use BigInt, in your project Package.swift file add a dependency like
+
+```swift
+dependencies: [
+  package(url: "https://github.com/leif-ibsen/BigInt", from: "1.17.0"),
+]
+```
+
+BigInt itself does not depend on other packages.
 
 > Important:
 BigInt requires Swift 5.0. It also requires that the `Int` and `UInt` types be 64 bit types.
 
 ## Topics
 
-- <doc:Usage>
-- <doc:Examples>
+### Structures
+
+- ``BigInt/BInt``
+- ``BigInt/BFraction``
+- ``BigInt/CRT``
+
+### Type Aliases
+
+- ``BigInt/Byte``
+- ``BigInt/Bytes``
+- ``BigInt/Limb``
+- ``BigInt/Limbs``
+
+### Articles
+
+- <doc:AboutBInt>
+- <doc:AboutBFraction>
+- <doc:AboutCRT>
 - <doc:Performance>
-- <doc:Fractions>
-- <doc:Chinese>
-- <doc:Dependencies>
 - <doc:References>
 - <doc:Algorithms>

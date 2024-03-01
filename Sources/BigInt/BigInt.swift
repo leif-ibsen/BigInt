@@ -16,6 +16,7 @@ public typealias Bytes = [UInt8]
 
 /// Unsigned 64 bit value
 public typealias Limb = UInt64
+
 /// Array of unsigned 64 bit values
 public typealias Limbs = [UInt64]
 
@@ -27,7 +28,6 @@ precedencegroup ExponentiationPrecedence {
 
 infix operator ** : ExponentiationPrecedence
 
-/// The BInt structure
 public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     // MARK: - Constants
@@ -1298,7 +1298,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
      *
      * Use Barrett reduction algorithm for x.bitWidth < 2048, else use Montgomery reduction algorithm
      */
-    /// Modular exponentiation - `BInt` modulus
+    /// Modular exponentiation - `BInt` version
     ///
     /// - Precondition: Modulus is positive
     /// - Parameters:
@@ -1339,7 +1339,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
     }
     
-    /// Modular exponentiation - `Int` modulus
+    /// Modular exponentiation - `Int` version
     ///
     /// - Precondition: Modulus is positive
     /// - Parameters:
@@ -1871,29 +1871,38 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// - Returns: The product of primes less than or equal to n
     public static func primorial(_ n: Int) -> BInt {
         precondition(n >= 0, "negative primorial")
-        var p = BInt.ONE
-        if n > 0 {
-            var sieve = [Bool](repeating: true, count: n + 1)
-            sieve[0] = false
-            sieve[1] = false
-            var ndx = 2
-            while ndx < sieve.count {
-                if sieve[ndx] {
-                    for i in stride(from: ndx + ndx, to: sieve.count, by: ndx) {
-                        sieve[i] = false
-                    }
+        if n == 0 {
+            return BInt.ONE
+        }
+        var sieve = [Bool](repeating: true, count: n + 1)
+        sieve[0] = false
+        sieve[1] = false
+        var ndx = 2
+        while ndx < sieve.count {
+            if sieve[ndx] {
+                for i in stride(from: ndx + ndx, to: sieve.count, by: ndx) {
+                    sieve[i] = false
                 }
-                ndx += 1
             }
-            for i in 0 ... n {
+            ndx += 1
+        }
+        return _primorial(1, n, sieve)
+    }
+
+    static func _primorial(_ from: Int, _ to: Int, _ sieve: [Bool]) -> BInt {
+        if to - from < 10000 {
+            var p = BInt.ONE
+            for i in from ... to {
                 if sieve[i] {
                     p *= i
                 }
             }
+            return p
         }
-        return p
+        let m = (from + to) >> 1
+        return _primorial(from, m, sieve) * _primorial(m + 1, to, sieve)
     }
-    
+
     
     // MARK: Root extraction functions
     

@@ -1,9 +1,9 @@
 # References
 
+Algorithms from the following books and papers have been used in the implementation
+
 ## 
 
-Algorithms from the following books and papers have been used in the implementation.
-There are references in the source code where appropriate.
 * [BRENT] - Brent and Zimmermann: Modern Computer Arithmetic, 2010
 * [BURNIKEL] - Burnikel and Ziegler: Fast Recursive Division, October 1998
 * [CRANDALL] - Crandall and Pomerance: Prime Numbers - A Computational Perspective. Second Edition, Springer 2005

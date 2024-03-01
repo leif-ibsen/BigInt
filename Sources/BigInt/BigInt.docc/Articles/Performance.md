@@ -1,12 +1,14 @@
 # Performance
 
+Execution times for certain BigInt operations
+
 ## 
 
 To assess the performance of BigInt, the execution times for a number of common operations were measured on an iMac 2021, Apple M1 chip.
 The results are shown in the table below. It shows the operation being measured and the time it took (in microseconds or milliseconds).
 
 > Note:
-Four large numbers `a1000`, `b1000`, `c2000` and `p1000` were used throughout the measurements. Their actual values are shown under the table.
+Four large numbers `a1000`, `b1000`, `c2000` and `p1000` were used throughout the measurements. Their actual values are shown below the table.
 
 | Operation | Swift code | Time |
 |:----------|:-----------|-----:|
