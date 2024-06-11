@@ -177,6 +177,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///
     /// - Precondition: bitWidth is positive
     /// - Parameter bitWidth: Number of bits
+    /// - Returns: Random BInt less than 2 ^ `bitWidth`
     public init(bitWidth: Int) {
         precondition(bitWidth > 0, "Bitwidth must be positive")
         let (q, r) = bitWidth.quotientAndRemainder(dividingBy: 64)
@@ -994,8 +995,8 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public func quotientAndRemainder(dividingBy x: BInt) -> (quotient: BInt, remainder: BInt) {
         var quotient = BInt.ZERO
         var remainder = BInt.ZERO
-        if x.magnitude.count > BInt.BZ_DIV_LIMIT && self.magnitude.count > x.magnitude.count + BInt.BZ_DIV_LIMIT {
-            (quotient, remainder) = self.bzDivMod(x)
+        if x.magnitude.count > Limbs.BZ_DIV_LIMIT && self.magnitude.count > x.magnitude.count + Limbs.BZ_DIV_LIMIT {
+            (quotient.magnitude, remainder.magnitude) = self.magnitude.bzDivMod(x.magnitude)
         } else {
             (quotient.magnitude, remainder.magnitude) = self.magnitude.divMod(x.magnitude)
         }
@@ -2230,7 +2231,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
         return BInt(c)
     }
-    
+
     /// Factorial function
     ///
     /// - Precondition: n >= 0
@@ -2292,77 +2293,31 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         return (BInt(a), BInt(b))
     }
 
-    /*
-     * Lehmer's gcd algorithm
-     * [KNUTH] - chapter 4.5.2, algorithm L
-     */
-    // Leave one bit for the sign and one for a possible overflow
-    static let B62 = BInt.ONE << 62
-
-    /// Greatest common divisor
+    /// Greatest common divisor - BInt version
     ///
     /// - Parameter x: Operand
     /// - Returns: Greatest common divisor of `self` and x
     public func gcd(_ x: BInt) -> BInt {
-        var u: BInt
-        var v: BInt
-        let selfabs = self.abs
-        let xabs = x.abs
-        if selfabs < xabs {
-            u = xabs
-            v = selfabs
+        if self.magnitude.count > BInt.RECURSIVE_GCD_LIMIT && x.magnitude.count > BInt.RECURSIVE_GCD_LIMIT {
+            return self.recursiveGCD(x)
         } else {
-            u = selfabs
-            v = xabs
+            return self.lehmerGCD(x)
         }
-        while v >= BInt.B62 {
-            let size = u.bitWidth - 62
-            var x = (u >> size).asInt()!
-            var y = (v >> size).asInt()!
-            var A = 1
-            var B = 0
-            var C = 0
-            var D = 1
-            while true {
-                let yC = y + C
-                let yD = y + D
-                if yC == 0 || yD == 0 {
-                    break
-                }
-                let q = (x + A) / yC
-                if q != (x + B) / yD {
-                    break
-                }
-                (A, B, x, C, D, y) = (C, D, y, A - q * C, B - q * D, x - q * y)
-            }
-            if B == 0 {
-                (u, v) = (v, u.mod(v))
-            } else {
-                (u, v) = (A * u + B * v, C * u + D * v)
-            }
-        }
-        if v.isZero {
-            return u
-        }
-        if u.magnitude.count > 1 {
-            let r = u.quotientAndRemainder(dividingBy: v).remainder
-            u = v
-            v = r
-            if v.isZero {
-                return u
-            }
-        }
-        // u and v are one-limb values
-        assert(u < BInt.ONE << 64)
-        assert(v < BInt.ONE << 64)
-        return BInt([Limbs.binaryGcd(u.magnitude[0], v.magnitude[0])])
-     }
+    }
+
+    /// Greatest common divisor - Int version
+    ///
+    /// - Parameter x: Operand
+    /// - Returns: Greatest common divisor of `self` and x
+    public func gcd(_ x: Int) -> BInt {
+        return self.lehmerGCD(BInt(x))
+    }
 
     /*
      * Lehmer's gcd algorithm
      * [KNUTH] - chapter 4.5.2, algorithm L - exercise 18
      */
-    /// Extended greatest common divisor
+    /// Extended greatest common divisor - BInt version
     ///
     /// - Parameter x: Operand
     /// - Returns: Greatest common divisor `g` of `self` and `x`, and `a` and `b` such that `a` \* `self` + `b` \* `x` = `g`
@@ -2444,6 +2399,14 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             u1 = -u1
         }
         return (u3, u1, u2)
+    }
+
+    /// Extended greatest common divisor - Int version
+    ///
+    /// - Parameter x: Operand
+    /// - Returns: Greatest common divisor `g` of `self` and `x`, and `a` and `b` such that `a` \* `self` + `b` \* `x` = `g`
+    public func gcdExtended(_ x: Int) -> (g: BInt, a: BInt, b: BInt) {
+        return gcdExtended(BInt(x))
     }
 
     /*
@@ -2557,12 +2520,20 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         }
     }
 
-    /// Least common multiple
+    /// Least common multiple - BInt version
     ///
     /// - Parameter x: Operand
     /// - Returns: Least common multiple of `self` and `x` - a non-negative number
     public func lcm(_ x: BInt) -> BInt {
         return self.isZero || x.isZero ? BInt.ZERO : (self * x).abs.quotientExact(dividingBy: self.gcd(x))
+    }
+
+    /// Least common multiple - Int version
+    ///
+    /// - Parameter x: Operand
+    /// - Returns: Least common multiple of `self` and `x` - a non-negative number
+    public func lcm(_ x: Int) -> BInt {
+        return self.isZero || x == 0 ? BInt.ZERO : (self * x).abs.quotientExact(dividingBy: self.lehmerGCD(BInt(x)))
     }
 
     /// n'th Lucas number

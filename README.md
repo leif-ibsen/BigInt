@@ -13,6 +13,7 @@ Its functionality falls in the following categories:
 * **Miscellaneous:** random number generation, n-th root, square root modulo an odd prime,
 Jacobi symbol, Kronecker symbol, Factorial function, Binomial function, Fibonacci numbers, Lucas numbers and Bernoulli numbers
 * **Fractions:** Standard arithmetic on fractions whose numerators and denominators are of unbounded size
+* **Chinese Remainder Theorem:** Compute the CRT value from given residues and moduli
 
 
 BigInt requires Swift 5.0. It also requires that the `Int` and `UInt` types be 64 bit types.

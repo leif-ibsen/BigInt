@@ -121,9 +121,12 @@ Please, see <doc:AboutBInt>
 
 ### GCD and LCM
 
-- ``gcd(_:)``
-- ``gcdExtended(_:)``
-- ``lcm(_:)``
+- ``gcd(_:)-4ftn8``
+- ``gcd(_:)-2jb2d``
+- ``gcdExtended(_:)-2qcf7``
+- ``gcdExtended(_:)-1dual``
+- ``lcm(_:)-3jk76``
+- ``lcm(_:)-4jr76``
 
 ### Comparison
 

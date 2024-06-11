@@ -56,7 +56,7 @@ extension Array where Element == Limb {
         while self[i] == 0 {
             i += 1
         }
-        return i * 64 + self[i].trailingZeroBitCount
+        return i << 6 + self[i].trailingZeroBitCount
     }
 
     /*
@@ -64,13 +64,7 @@ extension Array where Element == Limb {
      */
     
     var bitWidth: Int {
-        var lastBits = 0
-        var last = self.last!
-        while last != 0 {
-            last >>= 1
-            lastBits += 1
-        }
-        return (self.count - 1) * 64 + lastBits
+        return self.count << 6 - self.last!.leadingZeroBitCount
     }
     
     func testBitAt(_ i: Int) -> Bool {

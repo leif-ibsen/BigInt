@@ -15,28 +15,32 @@ Some of the algorithms used in BigInt are described below
 * Basecase - Knuth algorithm D
 * Exact Division - Jebelean's exact division algorithm
 
-### Greatest Common Divisor and Extended Greatest Common Divisor
-Lehmer's algorithm [KNUTH] chapter 4.5.2, with binary GCD basecase.
+### Greatest Common Divisor
+* Recursive GCD algorithm 9.4.6 from [CRANDALL] for numbers with more than 128000 bits
+* Lehmer's algorithm [KNUTH] chapter 4.5.2, with binary GCD basecase for smaller numbers
+
+### Extended Greatest Common Divisor
+Lehmer's algorithm [KNUTH] chapter 4.5.2, with binary GCD basecase
 
 ### Modular Exponentiation
 Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction for exponents with fewer than 2048 bits
-and Montgomery reduction for larger exponents.
+and Montgomery reduction for larger exponents
 
 ### Inverse Modulus
-If the modulus is a (not too large) power of 2, the algorithm from [KOC] section 7.
-Else, it is computed via the extended GCD algorithm.
+If the modulus is a (not too large) power of 2, the algorithm from [KOC] section 7,
+else it is computed via the extended GCD algorithm
 
 ### Square Root
-Algorithm 1.12 (SqrtRem) from [BRENT] with algorithm 9.2.11 from [CRANDALL] as basecase.
+Algorithm 1.12 (SqrtRem) from [BRENT] with algorithm 9.2.11 from [CRANDALL] as basecase
 
 ### Square Root Modulo a Prime Number
-Algorithm 2.3.8 from [CRANDALL].
+Algorithm 2.3.8 from [CRANDALL]
 
 ### Prime Number Test
-Miller-Rabin test.
+Miller-Rabin test
 
 ### Prime Number Generation
-The algorithm from Java BigInteger translated to Swift.
+The algorithm from Java BigInteger translated to Swift
 
 ### Factorial
 The `SplitRecursive` algorithm from Peter Luschny: [https://www.luschny.de](https://www.luschny.de)
@@ -45,11 +49,11 @@ The `SplitRecursive` algorithm from Peter Luschny: [https://www.luschny.de](http
 The `fastDoubling` algorithm from Project Nayuki: [https://www.nayuki.io](https://www.nayuki.io)
 
 ### Jacobi and Kronecker symbols
-Algorithm 2.3.5 from [CRANDALL].
+Algorithm 2.3.5 from [CRANDALL]
 
 ### Bernoulli Numbers
 Computed via Tangent numbers which is fast because it only involves integer arithmetic
-but no fraction arithmetic.
+but no fraction arithmetic
 
 ### Chinese Remainder Theorem
-The Garner algorithm 2.1.7 from [CRANDALL].
+The Garner algorithm 2.1.7 from [CRANDALL]

@@ -18,7 +18,26 @@ class GcdExtendedTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func doTest(_ a: BInt, _ b: BInt) {
+    func doTest1(_ a: BInt, _ b: BInt) {
+        let g1 = a.gcd(b)
+        let g2 = a.gcd(-b)
+        let g3 = (-a).gcd(b)
+        let g4 = (-a).gcd(-b)
+        let (ge1, x1, y1) = a.gcdExtended(b)
+        let (ge2, x2, y2) = a.gcdExtended(-b)
+        let (ge3, x3, y3) = (-a).gcdExtended(b)
+        let (ge4, x4, y4) = (-a).gcdExtended(-b)
+        XCTAssertEqual(g1, ge1)
+        XCTAssertEqual(g2, ge2)
+        XCTAssertEqual(g3, ge3)
+        XCTAssertEqual(g4, ge4)
+        XCTAssertEqual(g1, a * x1 + b * y1)
+        XCTAssertEqual(g2, a * x2 + (-b) * y2)
+        XCTAssertEqual(g3, (-a) * x3 + b * y3)
+        XCTAssertEqual(g4, (-a) * x4 + (-b) * y4)
+    }
+
+    func doTest2(_ a: BInt, _ b: Int) {
         let g1 = a.gcd(b)
         let g2 = a.gcd(-b)
         let g3 = (-a).gcd(b)
@@ -38,18 +57,35 @@ class GcdExtendedTest: XCTestCase {
     }
 
     func test1() {
-        doTest(BInt.ZERO, BInt.ZERO)
-        doTest(BInt.ZERO, BInt.ONE)
-        doTest(BInt.ONE, BInt.ZERO)
-        doTest(BInt.ONE, BInt.ONE)
+        doTest1(BInt.ZERO, BInt.ZERO)
+        doTest1(BInt.ZERO, BInt.ONE)
+        doTest1(BInt.ONE, BInt.ZERO)
+        doTest1(BInt.ONE, BInt.ONE)
         for _ in 0 ..< 100 {
             let a = BInt(bitWidth: 100)
-            doTest(a, BInt.ZERO)
-            doTest(a, BInt.ONE)
-            doTest(a, BInt.TWO)
+            doTest1(a, BInt.ZERO)
+            doTest1(a, BInt.ONE)
+            doTest1(a, BInt.TWO)
             for _ in 0 ..< 100 {
                 let b = BInt(bitWidth: 100)
-                doTest(a, b)
+                doTest1(a, b)
+            }
+        }
+    }
+
+    func test2() {
+        doTest2(BInt.ZERO, 0)
+        doTest2(BInt.ZERO, 1)
+        doTest2(BInt.ONE, 0)
+        doTest2(BInt.ONE, 1)
+        for _ in 0 ..< 100 {
+            let a = BInt(bitWidth: 100)
+            doTest2(a, 0)
+            doTest2(a, 1)
+            doTest2(a, 2)
+            for _ in 0 ..< 100 {
+                let b = BInt(bitWidth: 60).asInt()!
+                doTest2(a, b)
             }
         }
     }

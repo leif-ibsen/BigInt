@@ -66,4 +66,31 @@ class GcdTest: XCTestCase {
         doTest1(BInt.ONE, BInt.ONE)
     }
 
+    func test3() {
+        for _ in 0 ..< 3 {
+            let x = BInt(bitWidth: 100)
+            XCTAssertEqual(x.gcd(BInt.ZERO), x.gcd(0))
+            XCTAssertEqual(x.gcd(BInt.ONE), x.gcd(1))
+            XCTAssertEqual(x.gcd(BInt(Int.max)), x.gcd(Int.max))
+            XCTAssertEqual(x.gcd(BInt(Int.min)), x.gcd(Int.min))
+            XCTAssertEqual((-x).gcd(BInt.ZERO), (-x).gcd(0))
+            XCTAssertEqual((-x).gcd(BInt.ONE), (-x).gcd(1))
+            XCTAssertEqual((-x).gcd(BInt(Int.max)), (-x).gcd(Int.max))
+            XCTAssertEqual((-x).gcd(BInt(Int.min)), (-x).gcd(Int.min))
+        }
+    }
+
+    // Recursive GCD and Lehmer GCD must give same result
+    func testRecursiveGCD() {
+        var bw = BInt.RECURSIVE_GCD_LIMIT << 6
+        for _ in 0 ..< 5 {
+            let x = BInt(bitWidth: bw)
+            let y = BInt(bitWidth: bw)
+            XCTAssertEqual(x.recursiveGCD(y), x.lehmerGCD(y))
+            XCTAssertEqual(x.recursiveGCD(-y), x.lehmerGCD(-y))
+            XCTAssertEqual((-x).recursiveGCD(y), (-x).lehmerGCD(y))
+            XCTAssertEqual((-x).recursiveGCD(-y), (-x).lehmerGCD(-y))
+            bw *= 2
+        }
+    }
 }
