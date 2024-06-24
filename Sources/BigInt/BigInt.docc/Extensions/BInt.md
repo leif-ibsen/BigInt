@@ -191,6 +191,8 @@ Please, see <doc:AboutBInt>
 ### Miscellaneous
 
 - ``randomLessThan()``
+- ``randomFrom(_:)``
+- ``randomTo(_:)``
 - ``binomial(_:_:)``
 - ``factorial(_:)``
 - ``fibonacci(_:)``

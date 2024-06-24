@@ -32,9 +32,25 @@ class GcdExtendedTest: XCTestCase {
         XCTAssertEqual(g3, ge3)
         XCTAssertEqual(g4, ge4)
         XCTAssertEqual(g1, a * x1 + b * y1)
+        if g1.isNotZero {
+            XCTAssertTrue(x1.abs <= (b / g1).abs || a == 0 || b == 0)
+            XCTAssertTrue(y1.abs <= (a / g1).abs || a == 0 || b == 0)
+        }
         XCTAssertEqual(g2, a * x2 + (-b) * y2)
+        if g2.isNotZero {
+            XCTAssertTrue(x2.abs <= (b / g2).abs || a == 0 || b == 0)
+            XCTAssertTrue(y2.abs <= (a / g2).abs || a == 0 || b == 0)
+        }
         XCTAssertEqual(g3, (-a) * x3 + b * y3)
+        if g3.isNotZero {
+            XCTAssertTrue(x3.abs <= (b / g3).abs || a == 0 || b == 0)
+            XCTAssertTrue(y3.abs <= (a / g3).abs || a == 0 || b == 0)
+        }
         XCTAssertEqual(g4, (-a) * x4 + (-b) * y4)
+        if g4.isNotZero {
+            XCTAssertTrue(x4.abs <= (b / g4).abs || a == 0 || b == 0)
+            XCTAssertTrue(y4.abs <= (a / g4).abs || a == 0 || b == 0)
+        }
     }
 
     func doTest2(_ a: BInt, _ b: Int) {
@@ -51,9 +67,25 @@ class GcdExtendedTest: XCTestCase {
         XCTAssertEqual(g3, ge3)
         XCTAssertEqual(g4, ge4)
         XCTAssertEqual(g1, a * x1 + b * y1)
+        if g1.isNotZero {
+            XCTAssertTrue(x1.abs <= (b / g1).abs || a == 0 || b == 0)
+            XCTAssertTrue(y1.abs <= (a / g1).abs || a == 0 || b == 0)
+        }
         XCTAssertEqual(g2, a * x2 + (-b) * y2)
+        if g2.isNotZero {
+            XCTAssertTrue(x2.abs <= (b / g2).abs || a == 0 || b == 0)
+            XCTAssertTrue(y2.abs <= (a / g2).abs || a == 0 || b == 0)
+        }
         XCTAssertEqual(g3, (-a) * x3 + b * y3)
+        if g3.isNotZero {
+            XCTAssertTrue(x3.abs <= (b / g3).abs || a == 0 || b == 0)
+            XCTAssertTrue(y3.abs <= (a / g3).abs || a == 0 || b == 0)
+        }
         XCTAssertEqual(g4, (-a) * x4 + (-b) * y4)
+        if g4.isNotZero {
+            XCTAssertTrue(x4.abs <= (b / g4).abs || a == 0 || b == 0)
+            XCTAssertTrue(y4.abs <= (a / g4).abs || a == 0 || b == 0)
+        }
     }
 
     func test1() {
@@ -87,6 +119,46 @@ class GcdExtendedTest: XCTestCase {
                 let b = BInt(bitWidth: 60).asInt()!
                 doTest2(a, b)
             }
+        }
+    }
+    
+    func doTest3(_ x: BInt, _ y: BInt) {
+        var (g1, a1, b1) = x.recursiveGCDext(y)
+        var (g2, a2, b2) = x.lehmerGCDext(y)
+        XCTAssertEqual(g1, g2)
+        XCTAssertEqual(a1, a2)
+        XCTAssertEqual(b1, b2)
+        XCTAssertEqual(g1, a1 * x + b1 * y)
+        (g1, a1, b1) = x.recursiveGCDext(-y)
+        (g2, a2, b2) = x.lehmerGCDext(-y)
+        XCTAssertEqual(g1, g2)
+        XCTAssertEqual(a1, a2)
+        XCTAssertEqual(b1, b2)
+        XCTAssertEqual(g1, a1 * x + b1 * (-y))
+        (g1, a1, b1) = (-x).recursiveGCDext(y)
+        (g2, a2, b2) = (-x).lehmerGCDext(y)
+        XCTAssertEqual(g1, g2)
+        XCTAssertEqual(a1, a2)
+        XCTAssertEqual(b1, b2)
+        XCTAssertEqual(g1, a1 * (-x) + b1 * y)
+        (g1, a1, b1) = (-x).recursiveGCDext(-y)
+        (g2, a2, b2) = (-x).lehmerGCDext(-y)
+        XCTAssertEqual(g1, g2)
+        XCTAssertEqual(a1, a2)
+        XCTAssertEqual(b1, b2)
+        XCTAssertEqual(g1, a1 * (-x) + b1 * (-y))
+    }
+
+    // Recursive extended GCD and Lehmer extended GCD must give same result
+    func testRecursiveGCD() {
+        var bw = BInt.RECURSIVE_GCD_EXT_LIMIT << 6
+        for _ in 0 ..< 5 {
+            let x = BInt(bitWidth: bw)
+            let y = BInt(bitWidth: bw)
+            doTest3(x, y)
+            doTest3(x * y, y)
+            doTest3(x, x * y)
+            bw *= 2
         }
     }
 

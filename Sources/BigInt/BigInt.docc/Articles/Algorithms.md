@@ -5,25 +5,26 @@ Some of the algorithms used in BigInt are described below
 ## 
 
 ### Multiplication
-* Schonhage-Strassen FFT based algorithm for numbers above 384000 bits
-* ToomCook-3 algorithm for numbers above 12800 bits
-* Karatsuba algorithm for numbers above 6400 bits
+* Schonhage-Strassen FFT based algorithm for numbers with more than 384.000 bits
+* ToomCook-3 algorithm for numbers with more than 12.800 bits
+* Karatsuba algorithm for numbers with more than 6.400 bits
 * Basecase - Knuth algorithm M
 
 ### Division and Remainder
-* Burnikel-Ziegler algorithm for divisors above 3840 bits provided the dividend has at least 3840 bits more than the divisor
+* Burnikel-Ziegler algorithm for divisors with more than 3.840 bits provided the dividend has at least 3.840 bits more than the divisor
 * Basecase - Knuth algorithm D
 * Exact Division - Jebelean's exact division algorithm
 
 ### Greatest Common Divisor
-* Recursive GCD algorithm 9.4.6 from [CRANDALL] for numbers with more than 128000 bits
-* Lehmer's algorithm [KNUTH] chapter 4.5.2, with binary GCD basecase for smaller numbers
+* Recursive GCD algorithm 9.4.6 from [CRANDALL] for numbers with more than 128.000 bits
+* Lehmer's algorithm [KNUTH] chapter 4.5.2 for smaller numbers, with binary GCD basecase
 
 ### Extended Greatest Common Divisor
-Lehmer's algorithm [KNUTH] chapter 4.5.2, with binary GCD basecase
+* Recursive GCD algorithm 9.4.6 from [CRANDALL] for numbers with more than 64.000 bits, with extra logic to track cofactors
+* Lehmer's algorithm [KNUTH] chapter 4.5.2 and exercise 18 for smaller numbers
 
 ### Modular Exponentiation
-Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction for exponents with fewer than 2048 bits
+Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction for exponents with fewer than 2.048 bits
 and Montgomery reduction for larger exponents
 
 ### Inverse Modulus
@@ -35,6 +36,9 @@ Algorithm 1.12 (SqrtRem) from [BRENT] with algorithm 9.2.11 from [CRANDALL] as b
 
 ### Square Root Modulo a Prime Number
 Algorithm 2.3.8 from [CRANDALL]
+
+### Random Numbers
+Random BInt numbers are generated using the cryptographically secure function `SecRandomCopyBytes`
 
 ### Prime Number Test
 Miller-Rabin test

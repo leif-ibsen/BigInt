@@ -7,8 +7,13 @@
 
 extension BInt {
     
+    // Limb limits for recursive GCD
+
+    // 128.000 bits
     static let RECURSIVE_GCD_LIMIT = 2000
-    
+    // 64.000 bits
+    static let RECURSIVE_GCD_EXT_LIMIT = 1000
+
     /*
      * Recursive GCD algorithm
      * [CRANDALL] - algorithm 9.4.6
@@ -29,20 +34,7 @@ extension BInt {
             self.x = x
             self.y = y
         }
-        
-        func shgcd(_ x: BInt, _ y: BInt) -> (BInt, BInt, BInt, BInt) {
-            assert(x >= 0)
-            assert(y >= 0)
-            var (A11, A12, A21, A22) = (BInt.ONE, BInt.ZERO, BInt.ZERO, BInt.ONE)
-            var (u, v) = (x, y)
-            while v * v > x {
-                let (q, r) = u.quotientAndRemainder(dividingBy: v)
-                (u, v) = (v, r)
-                (A11, A12, A21, A22) = (A21, A22, A11 - q * A21, A12 - q * A22)
-            }
-            return (A11, A12, A21, A22)
-        }
-        
+
         func hgcd(_ b: Int, _ x: BInt, _ y: BInt) {
             if y.isZero {
                 return
@@ -51,7 +43,16 @@ extension BInt {
             var v = y >> b
             var m = u.bitWidth
             if m < RecursiveGCD.precision {
-                (G11, G12, G21, G22) = shgcd(u, v)
+                
+                // shgcd
+                
+                (G11, G12, G21, G22) = (BInt.ONE, BInt.ZERO, BInt.ZERO, BInt.ONE)
+                let _u = u
+                while v * v > _u {
+                    let (q, r) = u.quotientAndRemainder(dividingBy: v)
+                    (u, v) = (v, r)
+                    (G11, G12, G21, G22) = (G21, G22, G11 - q * G21, G12 - q * G22)
+                }
                 return
             }
             m >>= 1
@@ -104,19 +105,85 @@ extension BInt {
             }
         }
         
+        // [CRANDALL] - algorithm 9.4.6 combined with [KNUTH] section 4.5.2 algorithm X
+        func rgcdExt() -> (BInt, BInt, BInt) {
+            
+            func finalize() {
+                let (g, a, b) = u3.lehmerGCDext(v3)
+                u3 = g
+                if self.x == u3 {
+                    u1 = BInt.ONE
+                    u2 = BInt.ZERO
+                } else if self.x == -u3 {
+                    u1 = -BInt.ONE
+                    u2 = BInt.ZERO
+                } else if self.y == u3 {
+                    u1 = BInt.ZERO
+                    u2 = BInt.ONE
+                } else if self.y == -u3 {
+                    u1 = BInt.ZERO
+                    u2 = -BInt.ONE
+                } else {
+                    u1 = a * u1 + b * v1
+                    if self.x < 0 {
+                        u1 = -u1
+                    }
+                    
+                    // u3 = self.x * u1 + self.y * u2
+                    
+                    u2 = (u3 - self.x * u1) / self.y
+                }
+            }
+
+            var (u1, u2, u3) = (BInt.ONE, BInt.ZERO, self.x.abs)
+            var (v1, v3) = (BInt.ZERO, self.y.abs)
+            while true {
+                if u3 < v3 {
+                    (u1, v1) = (v1, u1)
+                    (u3, v3) = (v3, u3)
+                }
+                if v3 < RecursiveGCD.limit {
+                    finalize()
+                    return (u3, u1, u2)
+                }
+                (G11, G12, G21, G22) = (BInt.ONE, BInt.ZERO, BInt.ZERO, BInt.ONE)
+                hgcd(0, u3, v3)
+                (u1, v1) = (u1 * G11 + v1 * G12, u1 * G21 + v1 * G22)
+                (u3, v3) = (u3 * G11 + v3 * G12, u3 * G21 + v3 * G22)
+                if u3.isNegative {
+                    (u1, u3) = (-u1, -u3)
+                }
+                if v3.isNegative {
+                    (v1, v3) = (-v1, -v3)
+                }
+                if u3 < v3 {
+                    (u1, v1) = (v1, u1)
+                    (u3, v3) = (v3, u3)
+                }
+                if v3 < RecursiveGCD.limit {
+                    finalize()
+                    return (u3, u1, u2)
+                }
+                let q = u3 / v3
+                (u1, v1) = (v1, u1 - q * v1)
+                (u3, v3) = (v3, u3 - q * v3)
+            }
+        }
+
     }
-    
+
     func recursiveGCD(_ x: BInt) -> BInt {
         return RecursiveGCD(self, x).rgcd()
     }
-    
-    /*
-     * Lehmer's gcd algorithm
-     * [KNUTH] - chapter 4.5.2, algorithm L
-     */
+
+    func recursiveGCDext(_ x: BInt) -> (BInt, BInt, BInt) {
+        return RecursiveGCD(self, x).rgcdExt()
+    }
+
     // Leave one bit for the sign and one for a possible overflow
     static let B62 = BInt.ONE << 62
 
+    // Lehmer's gcd algorithm - [KNUTH] chapter 4.5.2, algorithm L
     func lehmerGCD(_ x: BInt) -> BInt {
         var u: BInt
         var v: BInt
@@ -171,4 +238,86 @@ extension BInt {
         assert(v < BInt.ONE << 64)
         return BInt([Limbs.binaryGcd(u.magnitude[0], v.magnitude[0])])
      }
+    
+    // Lehmer's gcd algorithm - [KNUTH] chapter 4.5.2, algorithm L and exercise 18
+    func lehmerGCDext(_ x: BInt) -> (g: BInt, a: BInt, b: BInt) {
+        let selfabs = self.abs
+        let xabs = x.abs
+        if self.isZero {
+            return (xabs, BInt.ZERO, x.isNegative ? -BInt.ONE : BInt.ONE)
+        }
+        if x.isZero {
+            return (selfabs, self.isNegative ? -BInt.ONE : BInt.ONE, BInt.ZERO)
+        }
+        var u: BInt
+        var v: BInt
+        var u2 = BInt.ZERO
+        var v2 = BInt.ONE
+        if selfabs < xabs {
+            u = xabs
+            v = selfabs
+        } else {
+            u = selfabs
+            v = xabs
+        }
+        var u3 = u
+        var v3 = v
+        while v >= BInt.B62 {
+            let size = u.bitWidth - 62
+            var x = (u >> size).asInt()!
+            var y = (v >> size).asInt()!
+            var A = 1
+            var B = 0
+            var C = 0
+            var D = 1
+            while true {
+                let yC = y + C
+                let yD = y + D
+                if yC == 0 || yD == 0 {
+                    break
+                }
+                let q = (x + A) / yC
+                if q != (x + B) / yD {
+                    break
+                }
+                (A, B, x, C, D, y) = (C, D, y, A - q * C, B - q * D, x - q * y)
+            }
+            if B == 0 {
+                (u, v) = (v, u.mod(v))
+                let q = u3 / v3
+                (u2, v2) = (v2, u2 - q * v2)
+                (u3, v3) = (v3, u3 - q * v3)
+            } else {
+                (u, v) = (A * u + B * v, C * u + D * v)
+                (u2, v2) = (A * u2 + B * v2, C * u2 + D * v2)
+                (u3, v3) = (A * u3 + B * v3, C * u3 + D * v3)
+            }
+        }
+        while v3.isNotZero {
+            let q = u3 / v3
+            (u2, v2) = (v2, u2 - v2 * q)
+            (u3, v3) = (v3, u3 - v3 * q)
+        }
+        
+        var u1: BInt
+        if selfabs < xabs {
+            // u3 = u2 * selfabs + u1 * xabs
+            u1 = (u3 - u2 * selfabs) / xabs
+            (u1, u2) = (u2, u1)
+        } else {
+            // u3 = u1 * selfabs + u2 * xabs
+            u1 = (u3 - u2 * xabs) / selfabs
+        }
+        
+        // Fix the signs
+
+        if x.isNegative {
+            u2 = -u2
+        }
+        if self.isNegative {
+            u1 = -u1
+        }
+        return (u3, u1, u2)
+    }
+
 }
