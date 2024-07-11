@@ -124,26 +124,4 @@ class BitSieve {
             x += step
         }
     }
-    
-    /**
-     * Test probable primes in the sieve and return successful candidates.
-     */
-    func retrieve() -> BInt? {
-        // Examine the sieve one word at a time to find possible primes
-        var offset = 1
-        for i in 0 ..< bits.count {
-            let nextWord = ~bits[i]
-            for j in 0 ..< 64 {
-                if nextWord & Limbs.UMasks[j] != 0 {
-                    let candidate = self.base + offset
-                    if candidate.isProbablyPrime(prob) {
-                        return candidate
-                    }
-                }
-                offset += 2
-            }
-        }
-        return nil
-    }
-
 }
