@@ -24,8 +24,7 @@ https://leif-ibsen.github.io/BigInt/documentation/bigint
 
 The documentation is also available in the *BigInt.doccarchive* file.
 
-**Please note:** Due to a bug in the DocC plugin, clicking on certain `BInt` and `BFraction` operators
-in GitHub Pages (f.ex. < and | ) will show the message
+**Please note:** Due to a bug in GitHub Pages, clicking on certain `BInt` and `BFraction` operators (f.ex. < and | ) will show the message
 
     The page you're looking for can't be found.
     

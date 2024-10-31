@@ -173,10 +173,10 @@ Please, see <doc:AboutBInt>
 ### Root Extraction
 
 - ``sqrt()``
-- ``sqrtMod(_:)-44ev6``
-- ``sqrtMod(_:)-5foxz``
 - ``sqrtRemainder()``
 - ``isPerfectSquare()``
+- ``sqrtMod(_:)-44ev6``
+- ``sqrtMod(_:)-5foxz``
 - ``root(_:)``
 - ``rootRemainder(_:)``
 - ``isPerfectRoot()``

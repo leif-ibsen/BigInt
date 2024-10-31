@@ -5,7 +5,7 @@ Signed integers and fractions of unbounded size
 ## 
 
 > Important:
-**Please note:** Due to a bug in the DocC plugin that generated this documentation,
+**Please note:** Due to a bug in GitHub Pages,
 > clicking on certain `BInt` and `BFraction` operators in GitHub Pages (f.ex. < and | ) will show the message
 >
 >    The page you're looking for can't be found.
@@ -36,7 +36,7 @@ To use BigInt, in your project Package.swift file add a dependency like
 
 ```swift
 dependencies: [
-  package(url: "https://github.com/leif-ibsen/BigInt", from: "1.19.0"),
+  package(url: "https://github.com/leif-ibsen/BigInt", from: "1.20.0"),
 ]
 ```
 

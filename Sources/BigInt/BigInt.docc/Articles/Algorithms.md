@@ -24,8 +24,7 @@ Some of the algorithms used in BigInt are described below
 * Lehmer's algorithm [KNUTH] chapter 4.5.2 and exercise 18 for smaller numbers
 
 ### Modular Exponentiation
-Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction for exponents with fewer than 2.048 bits
-and Montgomery reduction for larger exponents
+Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction algorithm 14.42
 
 ### Inverse Modulus
 If the modulus is a (not too large) power of 2, the algorithm from [KOC] section 7,

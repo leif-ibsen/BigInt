@@ -18,14 +18,6 @@ extension BInt {
             self.base = a.magnitude.divMod(self.modulus).remainder
         }
 
-        func toMspace(_ x: Limbs) -> Limbs {
-            return x
-        }
-
-        func fromMspace(_ x: Limbs) -> Limbs {
-            return x
-        }
-
         func reduce(_ t: inout Limbs) {
             fatalError("Modulus.reduce called")
         }
@@ -37,14 +29,14 @@ extension BInt {
 
             let k = x.bitWidth < 512 ? 4 : 5
             var g = Array(repeating: Limbs(repeating: 0, count: 0), count: 1 << k)
-            g[0] = toMspace(self.base)
+            g[0] = self.base
             var g2 = g[0].squared()
-            reduce(&g2)
+            self.reduce(&g2)
             for i in 1 ..< g.count {
                 g[i] = g[i - 1].times(g2)
-                reduce(&g[i])
+                self.reduce(&g[i])
             }
-            var result = toMspace([1])
+            var result: Limbs = [1]
             var i = x.bitWidth - 1
             while i >= 0 {
                 if x.testBit(i) {
@@ -54,7 +46,7 @@ extension BInt {
                     }
                     for _ in 0 ..< i - l + 1 {
                         result.square()
-                        reduce(&result)
+                        self.reduce(&result)
                     }
                     var ndx = 0
                     for j in (l ... i).reversed() {
@@ -65,15 +57,15 @@ extension BInt {
                     }
                     ndx >>= 1
                     result.multiply(g[ndx])
-                    reduce(&result)
+                    self.reduce(&result)
                     i = l - 1
                 } else {
                     result.square()
-                    reduce(&result)
+                    self.reduce(&result)
                     i -= 1
                 }
             }
-            return BInt(fromMspace(result))
+            return BInt(result)
         }
 
     }
@@ -165,79 +157,6 @@ extension BInt {
             while t.compare(self.modulus) >= 0 {
                 _ = t.difference(self.modulus)
             }
-        }
-
-    }
-
-    /*
-     * Subclass for (a ** x) mod m computation using Montgomery reduction. From
-     *
-     *      Montgomery Multiplication
-     *      By Henry S. Warren, Jr.
-     *      July 2012
-     */
-    class MontgomeryModulus: Modulus {
-
-        var Rsize: Int = 0
-        var Rsize64: Int = 0
-        var Rinv: Limbs = [1]
-        var mprime: Limbs = [0]
-        
-        override init(_ a: BInt, _ modulus: BInt) {
-            super.init(a, modulus)
-            self.Rsize = self.modulus.count
-            self.Rsize64 = self.Rsize << 6
-
-            // Compute Rinv and mprime such that R * Rinv - modulus * mprime = 1
-            
-            for _ in 0 ..< Rsize64 {
-                if self.Rinv[0] & 1 == 0 {
-                    self.Rinv.shift1Right()
-                    self.mprime.shift1Right()
-                } else {
-                    self.Rinv.add(self.modulus)
-                    self.Rinv.shift1Right()
-                    self.mprime.shift1Right()
-                    self.mprime.setBitAt(Rsize64 - 1)
-                }
-            }
-        }
-        
-        override func toMspace(_ x: Limbs) -> Limbs {
-            return (x.shiftedLeft(self.Rsize64)).divMod(self.modulus).remainder
-        }
-
-        override func fromMspace(_ x: Limbs) -> Limbs {
-            return (x.times(self.Rinv)).divMod(self.modulus).remainder
-        }
-
-        func moduloR(_ x: inout Limbs) {
-            if x.count > self.Rsize {
-                x.removeLast(x.count - self.Rsize)
-            }
-            x.normalize()
-        }
-        
-        func divideR(_ x: inout Limbs) {
-            if x.count > self.Rsize {
-                x.removeFirst(self.Rsize)
-            } else {
-                x = [0]
-            }
-        }
-        
-        override func reduce(_ t: inout Limbs) {
-            var u = t
-            moduloR(&u)
-            u.multiply(self.mprime)
-            moduloR(&u)
-            u.multiply(self.modulus)
-            u.add(t)
-            divideR(&u)
-            if !u.lessThan(self.modulus) {
-                _ = u.difference(self.modulus)
-            }
-            t = u
         }
 
     }

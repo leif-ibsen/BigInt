@@ -12,12 +12,12 @@ Four large numbers `a1000`, `b1000`, `c2000` and `p1000` were used throughout th
 
 | Operation | Swift code | Time |
 |:----------|:-----------|-----:|
-| As string | `c2000.asString()` | 13 uSec |
-| As signed bytes | `c2000.asSignedBytes()` | 0.30 uSec |
-| Bitwise and | `a1000 & b1000` | 0.083 uSec |
-| Bitwise or | `a1000 \| b1000` | 0.083 uSec |
-| Bitwise xor | `a1000 ^ b1000` | 0.082 uSec |
-| Bitwise not | `~c2000` | 0.087 uSec |
+| As string | `c2000.asString()` | 11 uSec |
+| As signed bytes | `c2000.asSignedBytes()` | 0.24 uSec |
+| Bitwise and | `a1000 & b1000` | 0.065 uSec |
+| Bitwise or | `a1000 \| b1000` | 0.065 uSec |
+| Bitwise xor | `a1000 ^ b1000` | 0.065 uSec |
+| Bitwise not | `~c2000` | 0.092 uSec |
 | Test bit | `c2000.testBit(701)` | 0.017 uSec |
 | Flip bit | `c2000.flipBit(701)` | 0.018 uSec |
 | Set bit | `c2000.setBit(701)` | 0.018 uSec |
@@ -38,10 +38,10 @@ Four large numbers `a1000`, `b1000`, `c2000` and `p1000` were used throughout th
 | Is probably prime | `p1000.isProbablyPrime()` | 5.8 mSec |
 | Make probable 1000 bit prime | `BInt.probablePrime(1000)` | 60 mSec |
 | Next probable prime | `c2000.nextPrime()` | 730 mSec |
-| Primorial | `BInt.primorial(100000)` | 8.5 mSec |
+| Primorial | `BInt.primorial(100000)` | 3.2 mSec |
 | Binomial | `BInt.binomial(100000, 10000)` | 22 mSec |
 | Factorial | `BInt.factorial(100000)` | 57 mSec |
-| Fibonacci | `BInt.fibonacci(100000)` | 0.22 mSec |
+| Fibonacci | `BInt.fibonacci(100000)` | 22 mSec |
 | Greatest common divisor | `a1000.gcd(b1000)` | 29 uSec |
 | Extended gcd | `a1000.gcdExtended(b1000)` | 81 uSec |
 | Least common multiple | `a1000.lcm(b1000)` | 32 uSec |

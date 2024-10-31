@@ -59,7 +59,7 @@ let f = x.asContinuedFraction() // f = [BInt(142), BInt(1), BInt(6)]
 
 ### Operations
 
-The operations available to `BFraction` are:
+The operations available to ``BFraction`` are:
 
 * **Arithmetic:** addition, subtraction, multiplication, division, exponentiation, modulus
 * **Comparison:** The six standard operations ==  !=  <  <=  >  >=

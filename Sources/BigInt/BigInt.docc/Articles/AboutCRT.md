@@ -4,7 +4,7 @@ Chinese Remainder Theorem
 
 ## Overview
 
-Create a CRT instance from a given set of moduli which fullfill the following conditions:
+Create a ``CRT`` instance from a given set of moduli which fullfill the following conditions:
 
 * at least two moduli
 * all moduli are positive

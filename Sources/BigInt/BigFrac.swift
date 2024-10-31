@@ -166,7 +166,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     // MARK: Initializers
 
-    /// Constructs a BFraction from numerator and denominator
+    /// Constructs a `BFraction` from numerator and denominator
     ///
     /// - Precondition: Denominator is not zero
     /// - Parameters:
@@ -179,7 +179,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         self.normalize()
     }
 
-    /// Constructs a BFraction from numerator and denominator
+    /// Constructs a `BFraction` from numerator and denominator
     ///
     /// - Precondition: Denominator is not zero
     /// - Parameters:
@@ -189,7 +189,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         self.init(n, BInt(d))
     }
 
-    /// Constructs a BFraction from numerator and denominator
+    /// Constructs a `BFraction` from numerator and denominator
     ///
     /// - Precondition: Denominator is not zero
     /// - Parameters:
@@ -199,7 +199,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         self.init(BInt(n), d)
     }
 
-    /// Constructs a BFraction from numerator and denominator
+    /// Constructs a `BFraction` from numerator and denominator
     ///
     /// - Precondition: Denominator is not zero
     /// - Parameters:
@@ -209,11 +209,10 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         self.init(BInt(n), BInt(d))
     }
 
-    /// Constructs a BFraction from a decimal value
+    /// Constructs a `BFraction` from a decimal value, `nil` if `d` is infinite or NaN
     ///
     /// - Parameters:
     ///   - d: The decimal value
-    /// - Returns: The BFraction corresponding to `d`, `nil` if `d` is infinite or NaN
     public init?(_ d: Double) {
         if d.isNaN || d.isInfinite {
             return nil
@@ -229,11 +228,10 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         }
     }
 
-    /// Constructs a BFraction from a String representation
+    /// Constructs a `BFraction` from a String representation, `nil` if `x` does not represent a decimal number
     ///
     /// - Parameters:
     ///   - x: The String representation
-    /// - Returns: The BFraction represented by `x`, `nil` if `x` does not represent a decimal number
     ///
     /// Examples:
     ///    * BFraction("3.1415") = 6283 / 2000
@@ -250,12 +248,11 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         }
     }
     
-    /// Constructs a BFraction from a continued fraction - `BInt` version
+    /// Constructs a `BFraction` from a continued fraction - BInt version
     ///
     /// - Precondition: `x` contains at least one element, all elements except possibly the first are positive
     /// - Parameters:
     ///   - x: The continued fraction
-    /// - Returns: The BFraction represented by `x`
     public init(_ x: [BInt]) {
         precondition(x.count > 0)
         var numerator = BInt.ZERO
@@ -269,12 +266,11 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         self.init(numerator, denominator)
     }
 
-    /// Constructs a BFraction from a continued fraction - `Int` version
+    /// Constructs a `BFraction` from a continued fraction - Int version
     ///
     /// - Precondition: `x` contains at least one element, all elements except possibly the first are positive
     /// - Parameters:
     ///   - x: The continued fraction
-    /// - Returns: The BFraction represented by `x`
     public init(_ x: [Int]) {
         var bx = [BInt](repeating: BInt.ZERO, count: x.count)
         for i in 0 ..< bx.count {
@@ -286,9 +282,9 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     // MARK: Stored properties
     
-    /// The numerator - a BInt value
+    /// The numerator - a `BInt` value
     public internal(set) var numerator: BInt
-    /// The denominator - a positive BInt value
+    /// The denominator - a positive `BInt` value
     public internal(set) var denominator: BInt
 
 
@@ -341,7 +337,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     /// `self` as a Decimal String with a specified precision, possibly using exponential notation
     ///
-    /// - Precondition: precision > 0
+    /// - Precondition: `precision` > 0
     /// - Parameters:
     ///   - precision: The number of significant digits
     ///   - exponential: `true` to use exponential notation, `false` to use plain notation, default is `false`
@@ -411,7 +407,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// Prefix plus
     ///
     /// - Parameter x: BFraction value
-    /// - Returns: x
+    /// - Returns: `x`
     public prefix static func +(x: BFraction) -> BFraction {
         return x
     }
@@ -421,7 +417,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First addend
     ///   - y: Second addend
-    /// - Returns: x + y
+    /// - Returns: `x + y`
     public static func +(x: BFraction, y: BFraction) -> BFraction {
         if x.denominator == y.denominator {
             return BFraction(x.numerator + y.numerator, x.denominator)
@@ -435,7 +431,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First addend
     ///   - y: Second addend
-    /// - Returns: x + y
+    /// - Returns: `x + y`
     public static func +(x: BFraction, y: BInt) -> BFraction {
         return BFraction(x.numerator + y * x.denominator, x.denominator)
     }
@@ -445,7 +441,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First addend
     ///   - y: Second addend
-    /// - Returns: x + y
+    /// - Returns: `x + y`
     public static func +(x: BInt, y: BFraction) -> BFraction {
         return BFraction(y.numerator + x * y.denominator, y.denominator)
     }
@@ -455,7 +451,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First addend
     ///   - y: Second addend
-    /// - Returns: x + y
+    /// - Returns: `x + y`
     public static func +(x: BFraction, y: Int) -> BFraction {
         return BFraction(x.numerator + y * x.denominator, x.denominator)
     }
@@ -465,7 +461,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: First addend
     ///   - y: Second addend
-    /// - Returns: x + y
+    /// - Returns: `x + y`
     public static func +(x: Int, y: BFraction) -> BFraction {
         return BFraction(y.numerator + x * y.denominator, y.denominator)
     }
@@ -503,7 +499,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// Negation
     ///
     /// - Parameter x: Operand
-    /// - Returns: -x
+    /// - Returns: `-x`
     public prefix static func -(x: BFraction) -> BFraction {
         return BFraction(-x.numerator, x.denominator)
     }
@@ -518,7 +514,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Minuend
     ///   - y: Subtrahend
-    /// - Returns: x - y
+    /// - Returns: `x - y`
     public static func -(x: BFraction, y: BFraction) -> BFraction {
         if x.denominator == y.denominator {
             return BFraction(x.numerator - y.numerator, x.denominator)
@@ -532,7 +528,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Minuend
     ///   - y: Subtrahend
-    /// - Returns: x - y
+    /// - Returns: `x - y`
     public static func -(x: BFraction, y: BInt) -> BFraction {
         return BFraction(x.numerator - y * x.denominator, x.denominator)
     }
@@ -542,7 +538,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Minuend
     ///   - y: Subtrahend
-    /// - Returns: x - y
+    /// - Returns: `x - y`
     public static func -(x: BInt, y: BFraction) -> BFraction {
         return BFraction(y.numerator - x * y.denominator, y.denominator)
     }
@@ -552,7 +548,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Minuend
     ///   - y: Subtrahend
-    /// - Returns: x - y
+    /// - Returns: `x - y`
     public static func -(x: BFraction, y: Int) -> BFraction {
         return BFraction(x.numerator - y * x.denominator, x.denominator)
     }
@@ -562,7 +558,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Minuend
     ///   - y: Subtrahend
-    /// - Returns: x - y
+    /// - Returns: `x - y`
     public static func -(x: Int, y: BFraction) -> BFraction {
         return BFraction(y.numerator - x * y.denominator, y.denominator)
     }
@@ -602,7 +598,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x \* y
+    /// - Returns: `x * y`
     public static func *(x: BFraction, y: BFraction) -> BFraction {
         return BFraction(x.numerator * y.numerator, x.denominator * y.denominator)
     }
@@ -612,7 +608,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x \* y
+    /// - Returns: `x * y`
     public static func *(x: BFraction, y: BInt) -> BFraction {
         return BFraction(x.numerator * y, x.denominator)
     }
@@ -622,7 +618,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x \* y
+    /// - Returns: `x * y`
     public static func *(x: BInt, y: BFraction) -> BFraction {
         return BFraction(x * y.numerator, y.denominator)
     }
@@ -632,7 +628,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x \* y
+    /// - Returns: `x * y`
     public static func *(x: BFraction, y: Int) -> BFraction {
         return BFraction(x.numerator * y, x.denominator)
     }
@@ -642,12 +638,12 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Multiplier
     ///   - y: Multiplicand
-    /// - Returns: x \* y
+    /// - Returns: `x * y`
     public static func *(x: Int, y: BFraction) -> BFraction {
         return BFraction(x * y.numerator, y.denominator)
     }
 
-    /// x = x \* y
+    /// x = x * y
     ///
     /// - Parameters:
     ///   - x: Left hand multiplier
@@ -656,7 +652,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         x = x * y
     }
 
-    /// x = x \* y
+    /// x = x * y
     ///
     /// - Parameters:
     ///   - x: Left hand multiplier
@@ -665,7 +661,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         x = x * y
     }
 
-    /// x = x \* y
+    /// x = x * y
     ///
     /// - Parameters:
     ///   - x: Left hand multiplier
@@ -683,7 +679,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Dividend
     ///   - y: Divisor
-    /// - Returns: x / y
+    /// - Returns: `x / y`
     public static func /(x: BFraction, y: BFraction) -> BFraction {
         return BFraction(x.numerator * y.denominator, x.denominator * y.numerator)
     }
@@ -694,7 +690,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Dividend
     ///   - y: Divisor
-    /// - Returns: x / y
+    /// - Returns: `x / y`
     public static func /(x: BFraction, y: BInt) -> BFraction {
         return BFraction(x.numerator, x.denominator * y)
     }
@@ -705,7 +701,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Dividend
     ///   - y: Divisor
-    /// - Returns: x / y
+    /// - Returns: `x / y`
     public static func /(x: BInt, y: BFraction) -> BFraction {
         return BFraction(x * y.denominator, y.numerator)
     }
@@ -716,7 +712,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Dividend
     ///   - y: Divisor
-    /// - Returns: x / y
+    /// - Returns: `x / y`
     public static func /(x: BFraction, y: Int) -> BFraction {
         return BFraction(x.numerator, x.denominator * y)
     }
@@ -727,7 +723,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - x: Dividend
     ///   - y: Divisor
-    /// - Returns: x / y
+    /// - Returns: `x / y`
     public static func /(x: Int, y: BFraction) -> BFraction {
         return BFraction(x * y.denominator, y.numerator)
     }
@@ -765,7 +761,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// Invert `self`
     ///
     /// - Precondition: `self` is not zero
-    /// - Returns: 1 / `self`
+    /// - Returns: `1 / self`
     public func invert() -> BFraction  {
         return BFraction(self.denominator, self.numerator)
     }
@@ -773,7 +769,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     // MARK: Modulus functions
 
-    /// Modulus - `BInt` version
+    /// Modulus - BInt version
     ///
     /// - Precondition: Modulus is positive
     /// - Parameter m: Modulus
@@ -786,7 +782,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         return (self.numerator * self.denominator.modInverse(m)).mod(m)
     }
 
-    /// Modulus - `Int` version
+    /// Modulus - Int version
     ///
     /// - Precondition: Modulus is positive
     /// - Parameter m: Modulus
@@ -807,7 +803,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Parameters:
     ///   - a: Operand
     ///   - x: Exponent
-    /// - Returns: a^x
+    /// - Returns: `a^x`
     public static func **(a: BFraction, x: Int) -> BFraction {
         if x > 0 {
             return BFraction(a.numerator ** x, a.denominator ** x)
@@ -1171,7 +1167,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
      */
     /// Bernoulli number
     ///
-    /// - Precondition: n >= 0
+    /// - Precondition: `n >= 0`
     /// - Parameters:
     ///   - n: The Bernoulli index
     /// - Returns: The n'th Bernoulli number
@@ -1203,7 +1199,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     /// Bernoulli numbers
     ///
-    /// - Precondition: n > 0
+    /// - Precondition: `n > 0`
     /// - Parameters:
     ///   - n: The number of Bernoulli numbers to compute
     /// - Returns: The even numbered Bernoulli numbers B(0), B(2), B(4) ... B(2 \* n - 2)
@@ -1232,7 +1228,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
 
     /// Harmonic number: 1 + 1 / 2 + ... + 1 / n
     ///
-    /// - Precondition: n > 0
+    /// - Precondition: `n > 0`
     /// - Parameters:
     ///   - n: The number of fractions to add
     /// - Returns: The n'th harmonic number
@@ -1251,7 +1247,7 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     /// Harmonic sequence: The first n harmonic numbers
     ///
-    /// - Precondition: n > 0
+    /// - Precondition: `n > 0`
     /// - Parameters:
     ///   - n: The number of harmonic numbers
     /// - Returns: The harmonic numbers: H1, H2 ... Hn

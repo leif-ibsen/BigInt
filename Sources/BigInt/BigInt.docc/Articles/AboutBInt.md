@@ -63,7 +63,7 @@ let b2 = x.asSignedBytes() // b2 = [0, 255, 255, 127]
 
 ### Operations
 
-The operations available to `BInt` are:
+The operations available to ``BInt`` are:
 
 * **Arithmetic:** addition, subtraction, multiplication, division, exponentiation, remainder and modulus, gcd and lcm
 * **Comparison:** the six standard operations ==  !=  <  <=  >  >=
