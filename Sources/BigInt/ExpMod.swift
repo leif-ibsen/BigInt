@@ -81,12 +81,13 @@ extension BInt {
         override init(_ a: BInt, _ modulus: BInt) {
             super.init(a, modulus)
             let trailing = modulus.trailingZeroBitCount
-            self.limbCount = trailing / Limb.bitWidth
-            if trailing % Limb.bitWidth != 0 {
-                self.limbCount += 1
-            }
-            for _ in 0 ..< trailing % Limb.bitWidth {
-                self.mask = (self.mask << 1) + 1
+            let (q, r) = trailing.quotientAndRemainder(dividingBy: 64)
+            if r == 0 {
+                self.limbCount = q
+                self.mask = 0xffffffffffffffff
+            } else {
+                self.limbCount = q + 1
+                self.mask = 1 << r - 1
             }
         }
         

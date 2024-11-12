@@ -9,13 +9,11 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     
     mutating func normalize() {
         let g = self.numerator.gcd(self.denominator)
-        if g.magnitude.compare(1) > 0 {
-            self.numerator = self.numerator.quotientExact(dividingBy: g)
-            self.denominator = self.denominator.quotientExact(dividingBy: g)
-        }
+        self.numerator = self.numerator.quotientExact(dividingBy: g)
+        self.denominator = self.denominator.quotientExact(dividingBy: g)
         if self.denominator.isNegative {
-            self.denominator = -self.denominator
-            self.numerator = -self.numerator
+            self.denominator.negate()
+            self.numerator.negate()
         }
     }
 
@@ -1179,22 +1177,23 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
             return BFraction(1, 2)
         } else if n & 1 == 1 {
             return BFraction.ZERO
-        }
-        let n1 = n >> 1
-        var T = [BInt](repeating: BInt.ZERO, count: n1)
-        T[0] = BInt.ONE
-        for k in 1 ..< n1 {
-            T[k] = k * T[k - 1]
-        }
-        for k in 1 ..< n1 {
-            for j in k ..< n1 {
-                T[j] = (j - k) * T[j - 1] + (j - k + 2) * T[j]
+        } else {
+            let n1 = n >> 1
+            var T = [BInt](repeating: BInt.ZERO, count: n1)
+            T[0] = BInt.ONE
+            for k in 1 ..< n1 {
+                T[k] = k * T[k - 1]
             }
+            for k in 1 ..< n1 {
+                for j in k ..< n1 {
+                    T[j] = (j - k) * T[j - 1] + (j - k + 2) * T[j]
+                }
+            }
+            let numerator = T[n1 - 1] * n
+            let N = BInt.ONE << n
+            let denominator = N << n - N
+            return n1 & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
         }
-        let numerator = T[n1 - 1] * n
-        let N = BInt.ONE << n
-        let denominator = N << n - N
-        return n1 & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
     }
 
     /// Bernoulli numbers
@@ -1202,28 +1201,31 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     /// - Precondition: `n > 0`
     /// - Parameters:
     ///   - n: The number of Bernoulli numbers to compute
-    /// - Returns: The even numbered Bernoulli numbers B(0), B(2), B(4) ... B(2 \* n - 2)
+    /// - Returns: The even numbered Bernoulli numbers B(0), B(2), B(4) ... B(2 * n - 2)
     public static func bernoulliSequence(_ n: Int) -> [BFraction] {
         precondition(n > 0, "Bernoulli count must be positive")
-        let n1 = n << 1
-        var x = [BFraction](repeating: BFraction.ONE, count: n)
-        var T = [BInt](repeating: BInt.ONE, count: n1)
-        for k in 1 ..< n1 {
-            T[k] = k * T[k - 1]
-        }
-        for k in 1 ..< n1 {
-            for j in k ..< n1 {
-                T[j] = (j - k) * T[j - 1] + (j - k + 2) * T[j]
+        if n == 1 {
+            return [BFraction.ONE]
+        } else {
+            var x = [BFraction](repeating: BFraction.ONE, count: n)
+            var T = [BInt](repeating: BInt.ONE, count: n)
+            for k in 2 ..< n {
+                T[k] = (k - 1) * T[k - 1]
             }
+            for k in 2 ..< n {
+                for j in k ..< n {
+                    T[j] = (j - k) * T[j - 1] + (j - k + 2) * T[j]
+                }
+            }
+            var p = BInt.ONE
+            for k in 1 ..< n {
+                p <<= 2
+                let denominator = p * (p - 1)
+                let numerator = (k + k) * T[k]
+                x[k] = k & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
+            }
+            return x
         }
-        for i in 1 ..< n {
-            let i2 = i << 1
-            let numerator = T[i - 1] * i2
-            let N = BInt.ONE << i2
-            let denominator = N << i2 - N
-            x[i] = i & 1 == 0 ? BFraction(-numerator, denominator) : BFraction(numerator, denominator)
-        }
-        return x
     }
 
     /// Harmonic number: 1 + 1 / 2 + ... + 1 / n

@@ -37,7 +37,7 @@ Algorithm 1.12 (SqrtRem) from [BRENT] with algorithm 9.2.11 from [CRANDALL] as b
 Algorithm 2.3.8 from [CRANDALL]
 
 ### Random Numbers
-Random BInt numbers are generated using the cryptographically secure function `SecRandomCopyBytes`
+Random `BInt` numbers are generated using the cryptographically secure function `SecRandomCopyBytes`
 
 ### Prime Number Test
 Miller-Rabin test

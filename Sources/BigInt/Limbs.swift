@@ -693,34 +693,37 @@ extension Array where Element == Limb {
         precondition(!v.equalTo(0), "Division by zero")
         if self.equalTo(0) {
             return [0]
-        }
-        var cm = self
-        var am = v
-        let t = am.trailingZeroBitCount()
-        cm.shiftRight(t)
-        am.shiftRight(t)
-        let a1 = Limbs.inverseMod64(am[0])
-        let K = cm.count - am.count + 1
-        var bm = Limbs(repeating: 0, count: K)
-        for k in 0 ..< K {
-            let bk = a1 &* cm[k]
-            bm[k] = bk
-            let n = Swift.min(am.count, K - k)
-            var w = Limbs(repeating: 0, count: n + 1)
-            var ovfl = false
-            w.withUnsafeMutableBufferPointer { unsafew in
-                for i in 0 ..< n {
-                    let (hi, lo) = am[i].multipliedFullWidth(by: bk)
-                    (unsafew[i], ovfl) = unsafew[i].addingReportingOverflow(lo)
-                    unsafew[i + 1] = hi
-                    if ovfl {
-                        unsafew[i + 1] &+= 1
+        } else if v.equalTo(1) {
+            return self
+        } else {
+            var cm = self
+            var am = v
+            let t = am.trailingZeroBitCount()
+            cm.shiftRight(t)
+            am.shiftRight(t)
+            let a1 = Limbs.inverseMod64(am[0])
+            let K = cm.count - am.count + 1
+            var bm = Limbs(repeating: 0, count: K)
+            for k in 0 ..< K {
+                let bk = a1 &* cm[k]
+                bm[k] = bk
+                let n = Swift.min(am.count, K - k)
+                var w = Limbs(repeating: 0, count: n + 1)
+                var ovfl = false
+                w.withUnsafeMutableBufferPointer { unsafew in
+                    for i in 0 ..< n {
+                        let (hi, lo) = am[i].multipliedFullWidth(by: bk)
+                        (unsafew[i], ovfl) = unsafew[i].addingReportingOverflow(lo)
+                        unsafew[i + 1] = hi
+                        if ovfl {
+                            unsafew[i + 1] &+= 1
+                        }
                     }
                 }
+                _ = cm.subtract(w, k)
             }
-            _ = cm.subtract(w, k)
+            return bm
         }
-        return bm
     }
 
     // Binary gcd algorithm

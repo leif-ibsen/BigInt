@@ -321,7 +321,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     public var isPositive: Bool {
         return !self.isNegative && self.isNotZero
     }
-    
+
+    /// Is `true` if `self` is a power of 2: 1, 2, 4, 8 ..., `false` otherwise
+    public var isPow2: Bool {
+        return !self.isNegative && self.bitWidth == self.magnitude.trailingZeroBitCount() + 1
+    }
+
     /// Is `true` if `self` = 0, `false` otherwise
     public var isZero: Bool {
         return self.magnitude.count == 1 && self.magnitude[0] == 0
@@ -1204,7 +1209,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return BInt.ZERO
         }
         let tb = m.trailingZeroBitCount
-        if tb <= 1024 && (m >> tb).isOne {
+        if m.isPow2 && tb <= 1024 {
 
             precondition(self.isOdd, "No inverse modulus")
             
@@ -1303,16 +1308,16 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return BInt.ZERO
         }
         let exponent = x.isNegative ? -x : x
-        let trailing = m.trailingZeroBitCount
         var result: BInt
-        if trailing == 0 {
+        if m.isOdd {
             result = BarrettModulus(self, m).expMod(exponent)
-        } else if m >> trailing == BInt.ONE {
+        } else if m.isPow2 {
             result = Pow2Modulus(self, m).expMod(exponent)
         } else {
             
             // Split the modulus into an odd part and a power of 2 part
 
+            let trailing = m.trailingZeroBitCount
             let oddModulus = m >> trailing
             let pow2Modulus = BInt.ONE << trailing
             let a1 = BarrettModulus(self, oddModulus).expMod(exponent)
@@ -1808,9 +1813,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     /// The next probable prime greater than `self`
     ///
+    /// - Precondition: Probability parameter `p` is positive
     /// - Parameter p: The returned number is prime with probability > 1 - 1/2^p, default value is 30
     /// - Returns: The smallest probable prime greater than `self`, returns 2 if `self` is negative
     public func nextPrime(_ p: Int = 30) -> BInt {
+        precondition(p > 0, "Probability must be positive")
         if self < BInt.TWO {
             return BInt.TWO
         }
@@ -1849,13 +1856,14 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     /// A probable prime number with a given bitwidth
     ///
-    /// - Precondition: `bitWidth > 1`
+    /// - Precondition: `bitWidth > 1` and probability parameter `p` is positive
     /// - Parameters:
     ///   - bitWidth: The bitWidth - must be > 1
     ///   - p: The returned number is prime with probability > 1 - 1/2^p, default value is 30
     /// - Returns: A prime number with the specified bitwidth and probability
     public static func probablePrime(_ bitWidth: Int, _ p: Int = 30) -> BInt {
         precondition(bitWidth > 1, "Bitwidth must be > 1")
+        precondition(p > 0, "Probability must be positive")
         return bitWidth < 100 ? smallPrime(bitWidth) : largePrime(bitWidth, p)
     }
     

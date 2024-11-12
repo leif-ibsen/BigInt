@@ -33,6 +33,7 @@ Please, see <doc:AboutBInt>
 - ``isOdd``
 - ``isOne``
 - ``isPositive``
+- ``isPow2``
 - ``isZero``
 - ``leadingZeroBitCount``
 - ``magnitude``

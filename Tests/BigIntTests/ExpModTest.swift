@@ -158,4 +158,16 @@ class ExpModTest: XCTestCase {
         }
     }
 
+    // To test a bug in Pow2Modulus
+    func test7() {
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 63), basicExpMod(a1, BInt.ONE, BInt.ONE << 63))
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 64), basicExpMod(a1, BInt.ONE, BInt.ONE << 64))
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 65), basicExpMod(a1, BInt.ONE, BInt.ONE << 65))
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 127), basicExpMod(a1, BInt.ONE, BInt.ONE << 127))
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 128), basicExpMod(a1, BInt.ONE, BInt.ONE << 128))
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 129), basicExpMod(a1, BInt.ONE, BInt.ONE << 129))
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 191), basicExpMod(a1, BInt.ONE, BInt.ONE << 191))
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 192), basicExpMod(a1, BInt.ONE, BInt.ONE << 192))
+        XCTAssertEqual(a1.expMod(BInt.ONE, BInt.ONE << 193), basicExpMod(a1, BInt.ONE, BInt.ONE << 193))
+    }
 }

@@ -34,7 +34,7 @@ because not all decimal values can be represented exactly as a floating point nu
 One might think that `BFraction(0.1)` would equal 1/10,
 but in fact it equals 3602879701896397 / 36028797018963968 = 0.1000000000000000055511151231257827021181583404541015625
 
-On the other hand `BFraction("0.1")!` equals 1/10.
+On the other hand, `BFraction("0.1")!` equals 1/10.
 
 ### Converting BFraction's
 
