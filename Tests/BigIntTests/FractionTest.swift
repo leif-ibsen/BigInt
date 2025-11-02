@@ -453,4 +453,20 @@ class FractionTest: XCTestCase {
             XCTAssertEqual(harmonics[i], BFraction.harmonic(i + 1))
         }
     }
+    
+    func testPow2() {
+        let b1 = BFraction(1, 2)
+        for i in -1000 ... 1000 {
+            XCTAssertTrue((b1 ** i).isPow2)
+            XCTAssertFalse((b1 ** i + BFraction(1, 3)).isPow2)
+            XCTAssertFalse((b1 ** i - BFraction(1, 3)).isPow2)
+        }
+        let b2 = BFraction(2, 1)
+        for i in -1000 ... 1000 {
+            XCTAssertTrue((b2 ** i).isPow2)
+            XCTAssertFalse((b2 ** i + BFraction(1, 3)).isPow2)
+            XCTAssertFalse((b2 ** i - BFraction(1, 3)).isPow2)
+        }
+        XCTAssertFalse(BFraction.ZERO.isPow2)
+    }
 }

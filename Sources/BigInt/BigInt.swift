@@ -324,7 +324,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
 
     /// Is `true` if `self` is a power of 2: 1, 2, 4, 8 ..., `false` otherwise
     public var isPow2: Bool {
-        return !self.isNegative && self.bitWidth == self.magnitude.trailingZeroBitCount() + 1
+        return self.isPositive && self.bitWidth == self.magnitude.trailingZeroBitCount() + 1
     }
 
     /// Is `true` if `self` = 0, `false` otherwise
@@ -1692,6 +1692,11 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     
     // MARK: Prime number functions
     
+    static let smallOddPrimes = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
+
+    // Small odd prime product
+    static let SPP = BInt("152125131763605")! // = 3 * 5 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31 * 37 * 41
+
     static internal func randomBytes(_ bytes: inout Bytes) {
         guard SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess else {
             fatalError("randomBytes failed")
@@ -1703,10 +1708,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             fatalError("randomLimbs failed")
         }
     }
-    
-    // Small prime product
-    static let SPP = BInt("152125131763605")! // = 3 * 5 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31 * 37 * 41
-    
+
     static func smallPrime(_ bitLength: Int) -> BInt {
         let multiple8 = bitLength & 0x7 == 0
         let length = multiple8 ? (bitLength + 7) >> 3 + 1 : (bitLength + 7) >> 3
@@ -1714,6 +1716,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         let highBit = Byte(1 << ((bitLength + 7) & 0x7))  // High bit of high int
         let highMask = Byte((Int(highBit) << 1) - 1)  // Bits to keep in high int
         
+    loop:
         while true {
             BInt.randomBytes(&bytes)
             if multiple8 {
@@ -1725,9 +1728,10 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             let x = BInt(signed: bytes)
             if bitLength > 6 {
                 let r = x % SPP
-                if r % 3 == 0 || r % 5 == 0 || r % 7 == 0 || r % 11 == 0 || r % 13 == 0 || r % 17 == 0 ||
-                    r % 19 == 0 || r % 23 == 0 || r % 29 == 0 || r % 31 == 0 || r % 37 == 0 || r % 41 == 0 {
-                    continue
+                for sp in BInt.smallOddPrimes {
+                    if r % sp == 0 {
+                        continue loop
+                    }
                 }
             }
             if x.isProbablyPrime() {
@@ -1735,12 +1739,12 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             }
         }
     }
-    
-    static func largePrime(_ bitLength: Int, _ p: Int) -> BInt {
+
+    static func largePrime(_ bitLength: Int) -> BInt {
         var x = BInt(bitWidth: bitLength)
         x.setBit(bitLength - 1)
         x.clearBit(0)
-        var bs = BitSieve(x, p)
+        var bs = BitSieve(x)
         var candidate = bs.retrieve()
         while candidate == nil || candidate!.bitWidth != bitLength {
             x += BInt(2 * bs.length)
@@ -1749,75 +1753,36 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
                 x.setBit(bitLength - 1)
             }
             x.clearBit(0)
-            bs = BitSieve(x, p)
+            bs = BitSieve(x)
             candidate = bs.retrieve()
         }
         return candidate!
     }
     
-    /// Checks whether `self` is prime using the Miller-Rabin algorithm
+    /// Checks whether `self` is prime using the Baillie-PSW algorithm
     ///
-    /// - Precondition: Probability parameter `p` is positive
-    /// - Parameter p: If `true` is returned, `self` is prime with probability > 1 - 1/2^p
+    /// - Parameter p: Is not used, its value does not matter - it is retained for backward compatibility reasons
     /// - Returns: `true` if `self` is probably prime, `false` if `self` is definitely not prime
     public func isProbablyPrime(_ p: Int = 30) -> Bool {
-        precondition(p > 0, "Probability must be positive")
         if self == BInt.TWO {
             return true
         }
-        if self.isEven || self < 2 {
+        if self < BInt.TWO || self.isEven {
             return false
         }
-        var rounds: Int
-        if self.bitWidth < 100 {
-            rounds = 50
-        } else if self.bitWidth < 256 {
-            rounds = 27
-        } else if bitWidth < 512 {
-            rounds = 15
-        } else if bitWidth < 768 {
-            rounds = 8
-        } else if bitWidth < 1024 {
-            rounds = 4
-        } else {
-            rounds = 2
-        }
-        rounds = Swift.min((p + 1) / 2, rounds)
-        let s1 = self - 1
-        for _ in 0 ..< rounds {
-            if !self.pass(s1.randomLessThan() + 1) {
-                return false
+        for sp in BInt.smallOddPrimes {
+            if self % sp == 0 {
+                return self == sp
             }
         }
-        return true
+        return self.bailliePSW()
     }
-    
-    func pass(_ a: BInt) -> Bool {
-        let s_1 = self - 1
-        let k = s_1.trailingZeroBitCount
-        let m = s_1 >> k
-        var x = a.expMod(m, self)
-        if x == 1 {
-            return true
-        }
-        if k > 0 {
-            for _ in 0 ..< k - 1 {
-                if x == s_1 {
-                    return true
-                }
-                x = (x ** 2) % self
-            }
-        }
-        return x == s_1
-    }
-    
+
     /// The next probable prime greater than `self`
     ///
-    /// - Precondition: Probability parameter `p` is positive
-    /// - Parameter p: The returned number is prime with probability > 1 - 1/2^p, default value is 30
+    /// - Parameter p: Is not used, its value does not matter - it is retained for backward compatibility reasons
     /// - Returns: The smallest probable prime greater than `self`, returns 2 if `self` is negative
     public func nextPrime(_ p: Int = 30) -> BInt {
-        precondition(p > 0, "Probability must be positive")
         if self < BInt.TWO {
             return BInt.TWO
         }
@@ -1826,16 +1791,18 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             if result.isEven {
                 result += BInt.ONE
             }
+        loop:
             while true {
                 if result.bitWidth > 6 {
                     let r = result % BInt.SPP
-                    if r % 3 == 0 || r % 5 == 0 || r % 7 == 0 || r % 11 == 0 || r % 13 == 0 || r % 17 == 0 ||
-                        r % 19 == 0 || r % 23 == 0 || r % 29 == 0 || r % 31 == 0 || r % 37 == 0 || r % 41 == 0 {
-                        result += BInt.TWO
-                        continue
+                    for sp in BInt.smallOddPrimes {
+                        if r % sp == 0 {
+                            result += BInt.TWO
+                            continue loop
+                        }
                     }
                 }
-                if result.bitWidth < 4 || result.isProbablyPrime(p) {
+                if result.bitWidth < 4 || result.isProbablyPrime() {
                     return result
                 }
                 result += BInt.TWO
@@ -1845,7 +1812,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             result -= BInt.ONE
         }
         while true {
-            let sieve = BitSieve(result, p)
+            let sieve = BitSieve(result)
             let candidate = sieve.retrieve()
             if candidate != nil {
                 return candidate!
@@ -1853,18 +1820,17 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             result += 2 * sieve.length
         }
     }
-    
+
     /// A probable prime number with a given bitwidth
     ///
-    /// - Precondition: `bitWidth > 1` and probability parameter `p` is positive
+    /// - Precondition: `bitWidth > 1`
     /// - Parameters:
     ///   - bitWidth: The bitWidth - must be > 1
-    ///   - p: The returned number is prime with probability > 1 - 1/2^p, default value is 30
-    /// - Returns: A prime number with the specified bitwidth and probability
+    ///   - p: Is not used, its value does not matter - it is retained for backward compatibility reasons
+    /// - Returns: A probable prime number with the specified bitwidth
     public static func probablePrime(_ bitWidth: Int, _ p: Int = 30) -> BInt {
         precondition(bitWidth > 1, "Bitwidth must be > 1")
-        precondition(p > 0, "Probability must be positive")
-        return bitWidth < 100 ? smallPrime(bitWidth) : largePrime(bitWidth, p)
+        return bitWidth < 100 ? smallPrime(bitWidth) : largePrime(bitWidth)
     }
     
     /// Product of primes up to n

@@ -189,11 +189,14 @@ Please, see <doc:AboutBInt>
 - ``isProbablyPrime(_:)``
 - ``primorial(_:)``
 
-### Miscellaneous
+### Random
 
 - ``randomLessThan()``
 - ``randomFrom(_:)``
 - ``randomTo(_:)``
+
+### Miscellaneous
+
 - ``binomial(_:_:)``
 - ``factorial(_:)``
 - ``fibonacci(_:)``

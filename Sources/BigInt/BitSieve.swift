@@ -14,7 +14,6 @@ class BitSieve {
     var bits: [UInt64]
     let length: Int
     let base: BInt
-    let prob: Int
 
     static let smallSieve = BitSieve()
 
@@ -22,7 +21,6 @@ class BitSieve {
         self.length = 150 * 64
         self.bits = [UInt64](repeating: 0, count: ((length - 1) >> 6) + 1)
         self.base = BInt.ZERO
-        self.prob = 0
 
         // Mark 1 as composite
         set(0)
@@ -43,7 +41,7 @@ class BitSieve {
      * candidates. The new sieve begins at the specified base, which must
      * be even.
      */
-    init(_ base: BInt, _ prob: Int) {
+    init(_ base: BInt) {
     /*
      * Candidates are indicated by clear bits in the sieve. As a candidates
      * nonprimality is calculated, a bit is set in the sieve to eliminate
@@ -54,7 +52,6 @@ class BitSieve {
         self.base = base
         self.length = 16 * base.bitWidth
         self.bits = [UInt64](repeating: 0, count: ((self.length - 1) >> 6) + 1)
-        self.prob = prob
         var start = 0
     
         var (step, more) = BitSieve.smallSieve.sieveSearch(BitSieve.smallSieve.length, start)
@@ -136,7 +133,7 @@ class BitSieve {
             for j in 0 ..< 64 {
                 if nextWord & Limbs.UMasks[j] != 0 {
                     let candidate = self.base + offset
-                    if candidate.isProbablyPrime(prob) {
+                    if candidate.isProbablyPrime() {
                         return candidate
                     }
                 }

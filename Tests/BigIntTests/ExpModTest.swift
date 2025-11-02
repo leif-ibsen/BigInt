@@ -104,7 +104,7 @@ class ExpModTest: XCTestCase {
         XCTAssertEqual(r1, r2)
     }
     
-    // Barrett reduction must give same result as Montgomery reduction
+    // Barrett reduction must give same result as standard reduction
     func test5() {
         doTest5(a1, x1, mp1)
         doTest5(a2, x2, mp2)

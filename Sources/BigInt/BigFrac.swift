@@ -312,6 +312,11 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     public var isPositive: Bool {
         return self.numerator.isPositive
     }
+    
+    /// Is `true` if `self` is a power of 2: ... 1/8, 1/4, 1/2, 1, 2, 4, 8 ..., `false` otherwise
+    public var isPow2: Bool {
+        return self.numerator == BInt.ONE && self.denominator.isPow2 || self.denominator == BInt.ONE && self.numerator.isPow2
+    }
 
     /// Is `true` if `self` = 0, `false` otherwise
     public var isZero: Bool {

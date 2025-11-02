@@ -26,7 +26,7 @@ struct Fermat {
         x.setBitAt(0)
         self.N = x
         self.theta = self.n >> self.k
-        assert(self.n >= (2 << logBw) >> self.k + self.k)
+        assert(self.n >= (2 << logBw) >> self.k + self.k - 1)
         assert(self.n % self.K == 0)
         assert(self.n % 64 == 0)
     }
@@ -125,9 +125,9 @@ struct Fermat {
             self.forwardFFT(&a, w << 1, level + 1, start + step)
             for i in 0 ..< size2 {
                 let i2 = start + i * step * 2
-                let br = Fermat.bitReversal(i, size2)
+                let brv = Fermat.bitReversal(i, size2)
                 var odd = a[i2 + step]
-                shiftReduce(&odd, w * br)
+                shiftReduce(&odd, w * brv)
                 (a[i2], a[i2 + step]) = (addReduce(a[i2], odd), subReduce(a[i2], odd))
             }
         }

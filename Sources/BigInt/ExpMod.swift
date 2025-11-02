@@ -103,7 +103,7 @@ extension BInt {
         }
         
     }
-
+    
     /*
      * Subclass for (a ** x) mod m computation using Barrett reduction
      */
@@ -117,9 +117,7 @@ extension BInt {
             super.init(a, modulus)
             self.k1 = self.modulus.count + 1
             self.km1 = self.modulus.count - 1
-            var uu = Limbs(repeating: 0, count: 2 * self.modulus.count + 1)
-            uu[2 * self.modulus.count] = 1
-            self.u = uu.divMod(self.modulus).quotient
+            self.u = ([1].shiftedLeft(self.modulus.count << 7)).divMod(self.modulus).quotient
         }
         
         func moduloK1(_ x: inout Limbs) {

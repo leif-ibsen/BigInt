@@ -70,5 +70,6 @@ The operations available to ``BInt`` are:
 * **Shift Operations:** logical left- and right shifts
 * **Bit Operations:** logical and, or, xor, not, bit manipulation
 * **Root Extraction:** sqrt, sqrtMod, sqrtRemainder, isPerfectSquare, root, rootRemainder, isPerfectRoot
-* **Prime Number:** probablePrime, nextPrime, isProbablyPrime, primorial
-* **Miscellaneous:** randomLessThan, binomial, factorial, fibonacci, jacobiSymbol, kroneckerSymbol, lucas
+* **Prime Number:** isProbablyPrime, probablePrime, nextPrime, primorial
+* **Random:** randomLessThan, randomFrom, randomTo
+* **Miscellaneous:** binomial, factorial, fibonacci, jacobiSymbol, kroneckerSymbol, lucas

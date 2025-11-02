@@ -21,6 +21,7 @@ Please, see <doc:AboutBFraction>
 - ``isInteger``
 - ``isNegative``
 - ``isPositive``
+- ``isPow2``
 - ``isZero``
 - ``numerator``
 - ``signum``

@@ -40,7 +40,10 @@ Algorithm 2.3.8 from [CRANDALL]
 Random `BInt` numbers are generated using the cryptographically secure function `SecRandomCopyBytes`
 
 ### Prime Number Test
-Miller-Rabin test
+From release 1.22.0 BigInt uses the Baillie-PSW prime number test. Some facts:
+* It is a combination of a strong Fermat possible prime test to base 2, followed by a strong Lucas possible prime test
+* There is no known composite number that is declared `probablyPrime` by the test
+* It passes all prime number tests from Project Wycheproof
 
 ### Prime Number Generation
 The algorithm from Java BigInteger translated to Swift
