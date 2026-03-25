@@ -39,7 +39,7 @@ Four large numbers `a1000`, `b1000`, `c2000` and `p1000` were used throughout th
 | Is probably prime | `p1000.isProbablyPrime()` | 7.0 mSec |
 | Make probable 1000 bit prime | `BInt.probablePrime(1000)` | 41 mSec |
 | Next probable prime | `c2000.nextPrime()` | 480 mSec |
-| Primorial | `BInt.primorial(100000)` | 2.2 mSec |
+| Primorial | `BInt.primorial(1000000)` | 53 mSec |
 | Binomial | `BInt.binomial(100000, 10000)` | 17 mSec |
 | Factorial | `BInt.factorial(100000)` | 46 mSec |
 | Fibonacci | `BInt.fibonacci(100000)` | 17 mSec |

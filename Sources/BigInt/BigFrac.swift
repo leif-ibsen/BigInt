@@ -350,8 +350,8 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
         if self.isZero {
             return BFraction.displayString(BInt.ZERO, -precision, exponential)
         }
-        let P = BInt.TEN ** precision
-        var exp = 0
+        let P = BInt.TEN ** (precision + 1)
+        var exp = 1
         var q = self.numerator.abs
         while q.quotientAndRemainder(dividingBy: self.denominator).quotient < P {
             q *= BInt.TEN
@@ -361,7 +361,10 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
             q /= BInt.TEN
             exp += 1
         }
-        let x = q.quotientAndRemainder(dividingBy: self.denominator).quotient
+        var (x, r) = q.quotientAndRemainder(dividingBy: self.denominator * BInt.TEN)
+        if 2 * r >= self.denominator * BInt.TEN {
+            x += 1
+        }
         return BFraction.displayString(self.isNegative ? -x : x, exp, exponential)
     }
 
