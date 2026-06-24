@@ -843,23 +843,21 @@ public struct BFraction: CustomStringConvertible, Comparable, Equatable {
     ///
     /// - Returns: `self` rounded to an integer towards 0
     public func truncate() -> BInt {
-        return self.isPositive ? self.floor() : self.ceil()
+        return self.numerator.quotientAndRemainder(dividingBy: self.denominator).quotient
     }
 
     /// Round towards +Infinity
     ///
     /// - Returns: `self` rounded to an integer towards +Infinity
     public func ceil() -> BInt {
-        let (q, r) = self.numerator.quotientAndRemainder(dividingBy: self.denominator)
-        return r.isPositive ? q + 1 : q
+        return self.numerator.quotientAndRemainderCeil(dividingBy: self.denominator).quotient
     }
 
     /// Round towards -Infinity
     ///
     /// - Returns: `self` rounded to an integer towards -Infinity
     public func floor() -> BInt {
-        let (q, r) = self.numerator.quotientAndRemainder(dividingBy: self.denominator)
-        return r.isNegative ? q - 1 : q
+        return self.numerator.quotientAndRemainderFloor(dividingBy: self.denominator).quotient
     }
 
 

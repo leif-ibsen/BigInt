@@ -25,14 +25,6 @@ class ExpModTest: XCTestCase {
     let m3 = BInt("10000000000000000000000000000000000000000")!
     let mp3 = BInt("1527229998585248450016808958343740453059")!
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func test1() {
         XCTAssertEqual(BInt(3).expMod(BInt(7), BInt(1)), BInt(0))
         XCTAssertEqual(BInt(2).expMod(BInt(10), BInt(1000)), BInt(24))

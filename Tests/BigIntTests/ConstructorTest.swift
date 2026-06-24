@@ -10,14 +10,6 @@ import XCTest
 
 class ConstructorTest: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func test1() {
         let x1 = BInt("123", radix: 10)!
         XCTAssertEqual(x1.magnitude.count, 1)

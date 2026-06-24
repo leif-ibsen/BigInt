@@ -96,10 +96,18 @@ Please, see <doc:AboutBInt>
 - ``/(_:_:)-49klv``
 - ``/=(_:_:)-2y3x4``
 - ``/=(_:_:)-5xeas``
-- ``quotientAndRemainder(dividingBy:)-xgn0``
-- ``quotientAndRemainder(dividingBy:_:_:)-7yssj``
-- ``quotientAndRemainder(dividingBy:)-6j8yx``
-- ``quotientAndRemainder(dividingBy:_:_:)-83wsf``
+- ``quotientAndRemainder(dividingBy:)->(_,BInt)``
+- ``quotientAndRemainderCeil(dividingBy:)->(_,BInt)``
+- ``quotientAndRemainderFloor(dividingBy:)->(_,BInt)``
+- ``quotientAndRemainder(dividingBy:_:_:)-(BInt,_,_)``
+- ``quotientAndRemainderCeil(dividingBy:_:_:)-(BInt,_,_)``
+- ``quotientAndRemainderFloor(dividingBy:_:_:)-(BInt,_,_)``
+- ``quotientAndRemainder(dividingBy:)->(_,Int)``
+- ``quotientAndRemainderCeil(dividingBy:)->(_,Int)``
+- ``quotientAndRemainderFloor(dividingBy:)->(_,Int)``
+- ``quotientAndRemainder(dividingBy:_:_:)-(Int,_,_)``
+- ``quotientAndRemainderCeil(dividingBy:_:_:)-(Int,_,_)``
+- ``quotientAndRemainderFloor(dividingBy:_:_:)-(Int,_,_)``
 - ``quotientExact(dividingBy:)``
 
 ### Exponentiation

@@ -5,10 +5,13 @@ Some of the algorithms used in BigInt are described below
 ## 
 
 ### Multiplication
-* Schonhage-Strassen FFT based algorithm for numbers with more than 384.000 bits
-* ToomCook-3 algorithm for numbers with more than 12.800 bits
-* Karatsuba algorithm for numbers with more than 6.400 bits
+* ToomCook-3 algorithm for numbers with more than 16.000 bits
+* Karatsuba algorithm for numbers with more than 9.600 bits
 * Basecase - Knuth algorithm M
+
+Before release 1.24 the Schonhage-Strassen FFT based algorithm was used for very large numbers.
+It turns out however, that the ToomCook-3 implementation is faster than
+the Schonhage-Strassen implementation, even for very large numbers.
 
 ### Division and Remainder
 * Burnikel-Ziegler algorithm for divisors with more than 3.840 bits provided the dividend has at least 3.840 bits more than the divisor
@@ -27,7 +30,7 @@ Some of the algorithms used in BigInt are described below
 Sliding window algorithm 14.85 from [HANDBOOK] using Barrett reduction algorithm 14.42
 
 ### Inverse Modulus
-If the modulus is a (not too large) power of 2, the algorithm from [KOC] section 7,
+If the modulus is a power of 2, it is computed using Newton iteration,
 else it is computed via the extended GCD algorithm
 
 ### Square Root
@@ -40,7 +43,7 @@ Algorithm 2.3.8 from [CRANDALL]
 Random `BInt` numbers are generated using the cryptographically secure function `SecRandomCopyBytes`
 
 ### Prime Number Test
-From release 1.22.0 BigInt uses the Baillie-PSW prime number test. Some facts:
+The Baillie-PSW prime number test. Some facts:
 * It is a combination of a strong Fermat possible prime test to base 2, followed by a strong Lucas possible prime test
 * There is no known composite number that is declared `probablyPrime` by the test
 * It passes all prime number tests from Project Wycheproof

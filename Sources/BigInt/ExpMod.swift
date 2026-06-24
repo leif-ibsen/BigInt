@@ -13,8 +13,8 @@ extension BInt {
         let modulus: Limbs
         let base: Limbs
 
-        init(_ a: BInt, _ modulus: BInt) {
-            self.modulus = modulus.magnitude
+        init(_ a: BInt, _ m: BInt) {
+            self.modulus = m.magnitude
             self.base = a.magnitude.divMod(self.modulus).remainder
         }
 
@@ -78,9 +78,9 @@ extension BInt {
         var limbCount = 0
         var mask: Limb = 0
         
-        override init(_ a: BInt, _ modulus: BInt) {
-            super.init(a, modulus)
-            let trailing = modulus.trailingZeroBitCount
+        override init(_ a: BInt, _ m: BInt) {
+            super.init(a, m)
+            let trailing = m.trailingZeroBitCount
             let (q, r) = trailing.quotientAndRemainder(dividingBy: 64)
             if r == 0 {
                 self.limbCount = q
@@ -113,8 +113,8 @@ extension BInt {
         var k1: Int = 0
         var km1: Int = 0
 
-        override init(_ a: BInt, _ modulus: BInt) {
-            super.init(a, modulus)
+        override init(_ a: BInt, _ m: BInt) {
+            super.init(a, m)
             self.k1 = self.modulus.count + 1
             self.km1 = self.modulus.count - 1
             self.u = ([1].shiftedLeft(self.modulus.count << 7)).divMod(self.modulus).quotient

@@ -10,14 +10,6 @@ import XCTest
 
 class DivModTest: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func doTest1(_ bw1: Int, _ bw2: Int) {
         let x1 = BInt(bitWidth: bw1)
         let x2 = BInt(bitWidth: bw2) + BInt.ONE
@@ -29,6 +21,7 @@ class DivModTest: XCTestCase {
         let q1 = x1 / x2
         XCTAssertEqual(x1, x2 * q1 + r1)
         XCTAssertTrue(r1.abs < x2.abs)
+        XCTAssertTrue(r1.isZero || r1.isNegative == x1.isNegative)
         let (q2, r2) = x1.quotientAndRemainder(dividingBy: x2)
         XCTAssertEqual(q1, q2)
         XCTAssertEqual(r1, r2)
@@ -86,6 +79,10 @@ class DivModTest: XCTestCase {
         doTest2(BInt(-7), BInt(4))
         doTest2(BInt(7), BInt(-4))
         doTest2(BInt(-7), BInt(-4))
+        doTest2(BInt(8), BInt(4))
+        doTest2(BInt(-8), BInt(4))
+        doTest2(BInt(8), BInt(-4))
+        doTest2(BInt(-8), BInt(-4))
         doTest2(BInt(Limbs(repeating: UInt64.max, count: 50)), BInt(Limbs(repeating: UInt64.max, count: 35)))
     }
     

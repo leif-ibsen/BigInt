@@ -12,5 +12,4 @@ Algorithms from the following books and papers have been used in the implementat
 * [HANDBOOK] - Menezes, Oorschot, Vanstone: Handbook of Applied Cryptography. CRC Press 1996
 * [JEBELEAN] - Tudor Jebelean: An Algorithm for Exact Division. Journal of Symbolic Computation, volume 15, 1993
 * [KNUTH] - Donald E. Knuth: Seminumerical Algorithms, Third Edition
-* [KOC] - Cetin Kaya Koc: A New Algorithm for Inversion mod p^k
 

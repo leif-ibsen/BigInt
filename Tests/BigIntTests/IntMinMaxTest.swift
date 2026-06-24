@@ -10,14 +10,6 @@ import XCTest
 
 class IntMinMaxTest: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func test1() {
         XCTAssertEqual(BInt(11) + Int.max, BInt(11) + BInt(Int.max))
         XCTAssertEqual(Int.max + BInt(11), BInt(Int.max) + BInt(11))

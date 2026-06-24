@@ -10,14 +10,6 @@ import XCTest
 
 class MultiplicationTest: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func doTest1(_ i: Int) {
         let a = BInt(bitWidth: 200 * i)
         let b = BInt(bitWidth: 100 * i)

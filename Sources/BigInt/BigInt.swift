@@ -992,7 +992,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     ///
     /// - Precondition: Divisor is not zero
     /// - Parameter x: Divisor - a BInt value
-    /// - Returns: Quotient and remainder of `self / x`
+    /// - Returns: Quotient and remainder of `self / x`, quotient rounded towards `0`
     public func quotientAndRemainder(dividingBy x: BInt) -> (quotient: BInt, remainder: BInt) {
         var quotient = BInt.ZERO
         var remainder = BInt.ZERO
@@ -1009,19 +1009,69 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
     /// Division
     ///
     /// - Precondition: Divisor is not zero
+    /// - Parameter x: Divisor - a BInt value
+    /// - Returns: Quotient and remainder of `self / x`, quotient rounded towards `-Infinity`
+    public func quotientAndRemainderFloor(dividingBy x: BInt) -> (quotient: BInt, remainder: BInt) {
+        var (q, r) = self.quotientAndRemainder(dividingBy: x)
+        if (r + x).abs < x.abs {
+            q -= BInt.ONE
+            r += x
+        }
+        return (q, r)
+    }
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameter x: Divisor - a BInt value
+    /// - Returns: Quotient and remainder of `self / x`, quotient rounded towards `+Infinity`
+    public func quotientAndRemainderCeil(dividingBy x: BInt) -> (quotient: BInt, remainder: BInt) {
+        var (q, r) = self.quotientAndRemainder(dividingBy: x)
+        if (r - x).abs < x.abs {
+            q += BInt.ONE
+            r -= x
+        }
+        return (q, r)
+    }
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
     /// - Parameters:
     ///   - x: Divisor - a BInt value
-    ///   - quotient: Set to the quotient of `self / x`
+    ///   - quotient: Set to the quotient of `self / x`, rounded towards `0`
     ///   - remainder: Set to the remainder of `self / x`
     public func quotientAndRemainder(dividingBy x: BInt, _ quotient: inout BInt, _ remainder: inout BInt) {
         (quotient, remainder) = self.quotientAndRemainder(dividingBy: x)
     }
-    
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameters:
+    ///   - x: Divisor - a BInt value
+    ///   - quotient: Set to the quotient of `self / x`, rounded towards `-Infinity`
+    ///   - remainder: Set to the remainder of `self / x`
+    public func quotientAndRemainderFloor(dividingBy x: BInt, _ quotient: inout BInt, _ remainder: inout BInt) {
+        (quotient, remainder) = self.quotientAndRemainderFloor(dividingBy: x)
+    }
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameters:
+    ///   - x: Divisor - a BInt value
+    ///   - quotient: Set to the quotient of `self / x`, rounded towards `+Infinity`
+    ///   - remainder: Set to the remainder of `self / x`
+    public func quotientAndRemainderCeil(dividingBy x: BInt, _ quotient: inout BInt, _ remainder: inout BInt) {
+        (quotient, remainder) = self.quotientAndRemainderCeil(dividingBy: x)
+    }
+
     /// Division
     ///
     /// - Precondition: Divisor is not zero
     /// - Parameter x: Divisor - an Int value
-    /// - Returns: Quotient and remainder of `self / x`
+    /// - Returns: Quotient and remainder of `self / x`, quotient rounded towards `0`
     public func quotientAndRemainder(dividingBy x: Int) -> (quotient: BInt, remainder: Int) {
         var divisor: Limb
         if x < 0 {
@@ -1036,18 +1086,68 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         let remainder = self.isNegative ? -Int(r) : Int(r)
         return (quotient, remainder)
     }
-    
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameter x: Divisor - an Int value
+    /// - Returns: Quotient and remainder of `self / x`, quotient rounded towards `-Infinity`
+    public func quotientAndRemainderFloor(dividingBy x: Int) -> (quotient: BInt, remainder: Int) {
+        var (q, r) = self.quotientAndRemainder(dividingBy: x)
+        if (BInt(r) + BInt(x)).abs < BInt(x).abs{
+            q -= BInt.ONE
+            r += x
+        }
+        return (q, r)
+    }
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameter x: Divisor - an Int value
+    /// - Returns: Quotient and remainder of `self / x`, quotient rounded towards `+Infinity`
+    public func quotientAndRemainderCeil(dividingBy x: Int) -> (quotient: BInt, remainder: Int) {
+        var (q, r) = self.quotientAndRemainder(dividingBy: x)
+        if (BInt(r) - BInt(x)).abs < BInt(x).abs {
+            q += BInt.ONE
+            r -= x
+        }
+        return (q, r)
+    }
+
     /// Division
     ///
     /// - Precondition: Divisor is not zero
     /// - Parameters:
     ///   - x: Divisor - an Int value
-    ///   - quotient: Set to the quotient of `self / x`
+    ///   - quotient: Set to the quotient of `self / x`, rounded towards `0`
     ///   - remainder: Set to the remainder of `self / x`
     public func quotientAndRemainder(dividingBy x: Int, _ quotient: inout BInt, _ remainder: inout Int) {
         (quotient, remainder) = self.quotientAndRemainder(dividingBy: x)
     }
-    
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameters:
+    ///   - x: Divisor - an Int value
+    ///   - quotient: Set to the quotient of `self / x`, rounded towards `-Infinity`
+    ///   - remainder: Set to the remainder of `self / x`
+    public func quotientAndRemainderFloor(dividingBy x: Int, _ quotient: inout BInt, _ remainder: inout Int) {
+        (quotient, remainder) = self.quotientAndRemainderFloor(dividingBy: x)
+    }
+
+    /// Division
+    ///
+    /// - Precondition: Divisor is not zero
+    /// - Parameters:
+    ///   - x: Divisor - an Int value
+    ///   - quotient: Set to the quotient of `self / x`, rounded towards `+Infinity`
+    ///   - remainder: Set to the remainder of `self / x`
+    public func quotientAndRemainderCeil(dividingBy x: Int, _ quotient: inout BInt, _ remainder: inout Int) {
+        (quotient, remainder) = self.quotientAndRemainderCeil(dividingBy: x)
+    }
+
     /// Exact division - that is, the remainder of the division is known to be 0
     ///
     /// - Precondition: Divisor is not zero
@@ -1209,32 +1309,29 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return BInt.ZERO
         }
         let tb = m.trailingZeroBitCount
-        if m.isPow2 && tb <= 1024 {
+        if m.isPow2 {
 
             precondition(self.isOdd, "No inverse modulus")
             
-            // Fast power of 2 implementation
-            // [KOC] - section 7
-            
-            // Reduce mod m
-            let selfr = self & (BInt.ONE << tb - BInt.ONE)
-            
-            var x = BInt.ZERO
-            var b = BInt.ONE
-            for i in 0 ..< tb {
-                if b.magnitude[0] & 1 == 1 {
-                    x.setBit(i)
-                    b -= selfr
-                }
-                b >>= 1
+            // Algorithm using Newton iteration, doubling the number of valid bits per iteration
+
+            let tbMask = BInt.ONE << tb - BInt.ONE
+            let a = self & tbMask
+            var x = a & BInt.SEVEN
+            var bits = 3
+            var mask = BInt(0x3f)
+            while bits < tb {
+                x = (x << 1 - a * x * x) & mask
+                bits <<= 1
+                mask = mask << bits | mask
             }
-            return x
+            return x & tbMask
         }
         let (g, a, _) = self.mod(m).gcdExtended(m)
         precondition(g.isOne, "No inverse modulus")
         return a.mod(m)
     }
-    
+
     /// Inverse modulus - Int version
     ///
     /// - Precondition: `self` and modulus are coprime, modulus is positive
@@ -1249,24 +1346,21 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         if m >> tb == 1 {
 
             precondition(self.isOdd, "No inverse modulus")
-            
-            // Fast power of 2 implementation
-            // [KOC] - section 7
-            
-            // Reduce mod m
-            let m = self.magnitude[0] & (1 << tb - 1)
-            let selfr = self.isNegative ? -Int(m) : Int(m)
-            
-            var x = 0
-            var b = 1
-            for i in 0 ..< tb {
-                if b & 1 == 1 {
-                    x |= 1 << i
-                    b -= selfr
-                }
-                b >>= 1
+
+            // Algorithm using Newton iteration, doubling the number of valid bits per iteration
+
+            let tbMask = Limb(1 << tb - 1)
+            let a = self.magnitude[0] & tbMask
+            var x = a & 0x7
+            var bits = 3
+            var mask = Limb(0x3f)
+            while bits < tb {
+                x = x &* (2 &- a &* x) & mask
+                bits <<= 1
+                mask = mask << bits | mask
             }
-            return x
+            x &= tbMask
+            return self.isNegative ? m - Int(x): Int(x)
         }
         var a = 1
         var g = self.mod(m)
@@ -1279,7 +1373,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
         precondition(g == 1, "No inverse modulus")
         return a < 0 ? a + m : a
     }
-    
+
     
     // MARK: Exponentiation functions
     
@@ -1308,27 +1402,7 @@ public struct BInt: CustomStringConvertible, Comparable, Equatable, Hashable {
             return BInt.ZERO
         }
         let exponent = x.isNegative ? -x : x
-        var result: BInt
-        if m.isOdd {
-            result = BarrettModulus(self, m).expMod(exponent)
-        } else if m.isPow2 {
-            result = Pow2Modulus(self, m).expMod(exponent)
-        } else {
-            
-            // Split the modulus into an odd part and a power of 2 part
-
-            let trailing = m.trailingZeroBitCount
-            let oddModulus = m >> trailing
-            let pow2Modulus = BInt.ONE << trailing
-            let a1 = BarrettModulus(self, oddModulus).expMod(exponent)
-            let a2 = Pow2Modulus(self, pow2Modulus).expMod(exponent)
-            let y1 = pow2Modulus.modInverse(oddModulus)
-            let y2 = oddModulus.modInverse(pow2Modulus)
-            
-            // Combine via the Chinese Remainder Theorem
-
-            result = (a1 * pow2Modulus * y1 + a2 * oddModulus * y2).mod(m)
-        }
+        var result = m.isPow2 ? Pow2Modulus(self, m).expMod(exponent) : BarrettModulus(self, m).expMod(exponent)
         if x.isNegative {
             result = result.modInverse(m)
         }

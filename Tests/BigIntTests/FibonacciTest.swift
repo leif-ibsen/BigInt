@@ -10,7 +10,6 @@ import XCTest
 
 class FibonacciTest: XCTestCase {
 
-
     func simpleFib(_ n: Int) -> BInt {
         XCTAssertTrue(n >= 0)
         if n == 0 {

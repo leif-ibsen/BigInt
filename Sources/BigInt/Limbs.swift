@@ -415,11 +415,9 @@ extension Array where Element == Limb {
      */
 
     // Limb threshold for Karatsuba multiplication
-    static let KA_THR = 100
+    static let KA_THR = 150
     // Limb threshold for ToomCook multiplication
-    static let TC_THR = 200
-    // Limb threshold for FFT multiplication
-    static let FFT_THR = 6000
+    static let TC_THR = 250
 
     // self = self * x
     // [KNUTH] - chapter 4.3.1, algorithm M
@@ -453,10 +451,8 @@ extension Array where Element == Limb {
             }
         } else if m < Limbs.TC_THR || n < Limbs.TC_THR {
             w = self.karatsubaTimes(x)
-        } else if m < Limbs.FFT_THR || n < Limbs.FFT_THR {
-            w = self.toomCookTimes(x)
         } else {
-            w = self.fftTimes(x)
+            w = self.toomCookTimes(x)
         }
         w.normalize()
         self = w
@@ -556,10 +552,8 @@ extension Array where Element == Limb {
             }
         } else if n < Limbs.TC_THR {
             w = self.karatsubaSquare()
-        } else if n < Limbs.FFT_THR {
-            w = self.toomCookSquare()
         } else {
-            w = self.fftSquare()
+            w = self.toomCookSquare()
         }
         w.normalize()
         self = w

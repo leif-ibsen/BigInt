@@ -9,15 +9,7 @@ import XCTest
 @testable import BigInt
 
 class ModInverseTest: XCTestCase {
-    
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
+
     func doTest(_ n: Int, _ m: Int) {
         for _ in 0 ..< 100 {
             let p1 = BInt.probablePrime(m)

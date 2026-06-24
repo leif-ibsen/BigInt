@@ -10,14 +10,6 @@ import XCTest
 
 class Pow2Test: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func test1() {
         XCTAssertTrue((BInt.ONE << 0).isPow2)
         XCTAssertTrue((BInt.ONE << 1).isPow2)
